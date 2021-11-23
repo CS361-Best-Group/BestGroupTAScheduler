@@ -1,0 +1,82 @@
+:root {
+	--foreground: #222222;
+	--background-header: #eeeeee;
+	--border: #222222;
+}
+
+html {
+	color: var(--foreground);
+	font-family: sans-serif;
+	font-size: 12pt;
+}
+
+body > header {
+	margin-bottom: 0.5in;
+}
+
+body > header > div {
+	margin-bottom: .075in;
+}
+
+body > header > div.assignment {
+	font-weight: bold;
+}
+
+h1 {
+	font-size: 16pt;
+	margin-bottom: .2in;
+	padding-bottom: .1in;
+
+	border-bottom: 1pt dashed var(--foreground);
+}
+
+article {
+	margin-bottom: .2in;
+
+	border: 1pt solid var(--foreground);
+	box-shadow: 2px 2px var(--foreground);
+}
+
+article > header, article > section {
+	padding: .15in .2in;
+	border-bottom: 1px solid var(--foreground);
+}
+
+article > header {
+	font-weight: bold;
+
+	background: var(--background-header);
+}
+
+article > section:last-of-type {
+	border-bottom: none;
+}
+
+article > section.estimate > span {
+	font-weight: bold;
+}
+
+article > section.acceptance div {
+	margin-bottom: .075in;
+}
+
+article > section.acceptance div.indent {
+	margin-left: .2in;
+}
+
+article > section.acceptance div span {
+	font-weight: bold;
+}
+
+@media screen {
+	body {
+		width: 60%;
+		margin: 20px auto;
+	}
+}
+
+@media print {
+	@page {
+		margin: .5in .75in;
+	}
+}
