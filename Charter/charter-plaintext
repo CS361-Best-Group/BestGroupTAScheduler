@@ -1,0 +1,85 @@
+Group Charter for The Best Group
+The Best Group has been formed to produce a Teaching Assistant Scheduling web application for CS361.
+
+Meetings: 
+Wednesday 4:00 PM
+Friday 10:00 AM
+Sunday 10:00 AM
+
+Group Members and Contacts:
+Raphael Azcueta   lunarsignals#5933   608-215-8848
+Leeann Collins    Ultra#9592          920-737-1579
+Justin Gates      Justin Gates#2629   815-543-9282
+Seth Kinney       Kinneyj47#7689      414-412-7560
+Tyler Meulemans   tm6teen#4541        815-543-9282
+
+Goals:
+The Best Group has been formed to learn the skills necessary and produce a Teaching Assistant Scheduling web application for CS361.
+
+Section 2 Work Norms:
+2.1. Time commitment required by each group member:
+The goal is to complete the job. If one member is taking a substational amount of time on a task, they are expected to communicate this to the group, and the group will offer assistance.
+
+2.2. Dealing with different work habits:
+If the team member cannot complete their work, it is expected that the communication of their difficulty is made well enough in time for the group to finish by the established due dates. If the member does not meet these standards, procedures to deal with that member are further detailed in the ground rules.
+
+Section 3 Ground Rules:
+3.a Meetings:
+3.a.1 Length of meetings:
+Meetings take however long it takes to cover the necessary tasks, however meetings may be tabled after an hour. Meetings are meant to connect with group members and provide direction for the remaining portion of the sprint. There are meetings in the front, middle, and end of the two week sprint. Additional meetings are discussed and confirmed via discord. It is understood that if a meeting takes longer than expected, members may freely leave for other obligations.
+3.a.2 Missing a meeting:
+Missing meetings can be accepted. Members are expected to notify the group as soon as they know they will be missing the meeting. Repeatedly missing meetings without good cause means some action must be taken. If a meeting is missed, the affected group members determine whether the justification is considered "good cause". Two missed meetings are a minor offence, and three missed meetings is a major offence.
+3.a.3 Tardiness to meetings:
+Team members are expected not to be late during meetings. If they are late they must post a TikTok begging for mercy. The affected group members determine whether the justification is considered "good cause".
+3.a.4 Procedure for adopting policies (e.g. code style, code check-in steps, documentation updates):
+Three of five members should confirm the policy changes.
+
+3.b Group communication and interaction
+3.b.1 Regular communication:
+Team members are expected to utilize our CS351 Best Group discord server to communicate with each other. Webhooks for Github notifications post automatic updates regarding commits and pull requests to #github-notifications. The #general channel is for small updates on progress and #communication is for updates on large tasks and pinging other members. If a member is pinged they are expected to respond within the next day. Failing to respond may constitute a minor offence based on the wishes of the group.
+3.b.2 Communication ethics:
+Encourage interesting thought by being nice!
+3.b.3 Group structure:
+Meeting Notes - Raphael Azcueta
+Task Management - Leeann Collins
+3.b.4 Decision making:
+Any decisions made about the project will be based on a majority vote.
+3.b.5 Group decisions on delegation:
+The delegation of responsibilities to group members will be decided in the following fashion:
+- Responsibilities are discussed and decided as a group decision
+- Each group member may volunteer for their desired tasks
+- If a group member does not volunteer for a task, they will be assigned on by Task Management
+- If a group member feels the portion of the responsibility is unfair, they may voice their concern
+- If a majority of the group feels the member is correct, the responsibilites are reassigned
+
+3.c Group participation and work quality
+3.c.1 Group participation:
+It is Task Management's duty to ensure fair participation. If a member is found to be in contempt of Task Management it is up to the group to decide if this is a minor offense.
+3.c.2 Work not up to standard:
+A task is complete when the code has been reviewed by two other group members and successfully merged into the main branch. Research tasks are completed when the findings have been placed in a dedicated folder on github, and have been reviewed by two other group members is merged into the main branch. No merges should occur without the apporval of at least 2 other group members.
+Tasks should be committed to Github early enough that valuable feedback may be offered. If the original author is unaable to respond to feedback or complete the task, they must notify the group, and their work will be redistributed. If this behavior is repeated, the group member may incur a minor or major offence depending on group consensus.
+This behavior may be taken into account during future task assignments. 
+3.c.3 Unpreparedness:
+If by group consenus, a member is unprepared to the hinderance of a group meeting, a minor offence will be incurred.
+3.c.4 Excessive Workload:
+Before the halfway point of the sprint, members are expected to report their progress. If it seems likely that the group will not complete the sprint, an email will be sent to Rock by group consensus. 
+
+3.d Disciplinary Procedures:
+3.d.1 Any punishment or disciplinary policy may be overruled by a majority vote
+3.d.2 Records Keeping:
+The note taker will be responsible for maintaining information regarding disciplinary procedures and infractions.
+Incident Reports will include what the member was expected to complete, what they actually did, and measures other group members took. 
+3.d.3 Minor Group Offence:
+If a group member commits a minor offence, the group will be notified and an incident report should be filed. If a group member commits 2 minor offences, this will be escalted to a major offence. Minor offences can be removed by a majority vote. 
+3.d.4 Major Group Offence:
+If a group member commits a major offence, the group will be nofitied and an incident report will be filed. Major offences can be closed by a unanimous group vote.
+3.d.5 Punishment And Dismissal: 
+A group member with an two ongoing major offences becomes a candidate for dismissal. If a unanimous group vote is held, the offending member will be reported to the Professor and TA for punishment, and documentation will be provided.  
+
+
+4.a Signatures: 
+Raphael Azcueta
+Leeann Collins
+Justin Gates
+Seth Kinney
+Tyler Meulemans

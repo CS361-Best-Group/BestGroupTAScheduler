@@ -1,0 +1,391 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>COMPSCI 361 - Product Backlog</title>
+		<meta charset="utf-8"/>
+
+		<link rel="stylesheet" href="css/main.css">
+	</head>
+	<body>
+		<header>
+			<div class="assignment">COMPSCI 361 - Product Backlog</div>
+			<div class="author">Group 4 ("Best Group")</div>
+		</header>
+	
+		<h1>General actions:</h1>
+		
+		<!-- User actions -->
+		
+		<article>
+			<header>As a user, I must be able to log into my account, in order to use the system.</header>
+			<section class="estimate"><span>M: </span>Requires user tables, integration with external auth gateway, implementation of session management, UI design, unit tests.</section>
+			<section class="acceptance">
+				<div><span>WHEN</span> I submit a set of credentials via the UWM SSO gateway (or a dummy equivalent for non-production use).</div>
+				<div><span>THEN</span> the credentials are validated by the system.</div>
+				<div><span>WHEN</span> the credentials are valid and authorized for use with this system.</div>
+				<div class="indent">
+					<div><span>THEN</span> my browser navigates past the login prompt to the system proper.</div>
+				</div>
+				<div><span>WHEN</span> the credentials are invalid.</div>
+				<div class="indent">
+					<div><span>THEN</span> my browser navigates back to the login prompt.</div>
+					<div><span>AND</span> I am informed that my credentials are invalid.</div>
+				</div>
+			</section>
+		</article>
+		
+		<article>
+			<header>As a user, I must be able to log out of my account, in order to ensure my account is not used by someone else.</header>
+			<section class="estimate"><span>S: </span>Requires implementation of session management, a small bit of UI design, unit tests.</section>
+			<section class="acceptance">
+				<div><span>GIVEN</span> I am currently logged into my account.</div>
+				<div><span>WHEN</span> I press the 'log out' button.</div>
+				<div><span>THEN</span> my session is ended.</div>
+				<div><span>AND</span> I am returned to the login prompt.</div>
+			</section>
+		</article>
+		
+		<article>
+			<header>As a user, I must be able to update my own contact information, so that I can continue to receive system notifications.</header>
+			<section class="estimate"><span>S: </span>Requires modification of user tables, UI design, unit tests.</section>
+			<section class="acceptance">
+				<div><span>GIVEN</span> I am currently logged into my account.</div>
+				<div><span>WHEN</span> I view the 'contact information' page.</div>
+				<div><span>THEN</span> I am prompted to update my currently saved contact information.</div>
+				<div><span>WHEN</span> I have finished making changes to my contact information.</div>
+				<div><span>AND</span> I have submitted my changes.</div>
+				<div><span>THEN</span> the updated contact information is sent to the system.</div>
+				<div><span>WHEN</span> the contact information is correctly formatted.</div>
+				<div class="indent">
+					<div><span>THEN</span> my contact information is updated.</div>
+					<div><span>AND</span> I am returned to the previous screen.</div>
+					<div><span>AND</span> I am notified that my contact information has been updated successfully.</div>
+				</div>
+				<div><span>WHEN</span> the contact information is not correctly formatted.</div>
+				<div class="indent">
+					<div><span>THEN</span> I am returned to the prompt.</div>
+					<div><span>AND</span> I am notified that my contact information has not been updated successfully.</div>
+					<div><span>AND</span> the fields which contain invalid information are indicated, followed by a short explanation of why the data was invalid.</div>
+				</div>
+			</section>
+		</article>
+		
+		<article>
+			<header>As a user, I want to reset my password, so that I can regain access to my account.</header>
+			<section class="estimate"><span>S: </span> Requires modifying the users table, UI design, email gateway integration, unit tests, security review.</section>
+			<section class="acceptance">
+				<div><span>GIVEN</span> I have forgotten my password.</div>
+				<div><span>WHEN</span> I view the 'forgotten password' page.</div>
+				<div><span>THEN</span> I am prompted to enter an email address.</div>
+				<div><span>WHEN</span> I have finished inputting my email address.</div>
+				<div><span>AND</span> I have submitted the 'forgotten password' form.</div>
+				<div><span>THEN</span> the email address is sent to the system.</div>
+				<div><span>WHEN</span> the email address is associated with a user present in the system.</div>
+				<div class="indent">
+					<div><span>THEN</span> I am returned to the login prompt.</div>
+					<div><span>AND</span> I am sent a email notification containing a link which allows me to reset my password.</div>
+				</div>
+				<div><span>WHEN</span> the email address is not associated with a user present in the system.</div>
+				<div class="indent">
+					<div><span>THEN</span> I am returned to the login prompt.</div>
+				</div>
+			</section>
+		</article>
+		
+		<h1>Notifications:</h1>
+		
+		<article>
+			<header>As an instructor or an administrator, I want to send a notification to the TAs associated with a particular course or section, in order to inform them of scheduling changes or other events.</header>
+			<section class="estimate"><span>M: </span> Requires a notification table, rich text editing, email gateway integration, UI design, unit tests.</section>
+			<section class="acceptance">
+				<div><span>GIVEN</span> I am currently logged into my account.</div>
+				<div><span>WHEN</span> I view the 'send notification' page.</div>
+				<div><span>WHEN</span> I am an instructor.</div>
+				<div class="indent">
+					<div><span>THEN</span> I am shown a list of courses which have been assigned to me.</div>
+				</div>
+				<div><span>WHEN</span> I am an administrator.</div>
+				<div class="indent">
+					<div><span>THEN</span> I am shown a list of all courses in the system, with options to sort, search, and filter results.</div>
+				</div>
+				<div><span>WHEN</span> I select a particular course.</div>
+				<div><span>THEN</span> I am prompted to select one or more sections of that course.</div>
+				<div><span>WHEN</span> I select one or more sections.</div>
+				<div><span>THEN</span> I am prompted to compose a rich-text message to be sent.</div>
+				<div><span>WHEN</span> I have composed and submitted the message.</div>
+				<div><span>THEN</span> I am shown a preview of the message, along with a list of TAs to whom the message will be sent, and I am asked to confirm that the message and recipients are correct.</div>
+				<div><span>WHEN</span> I confirm that the message and recipients are correct.</div>
+				<div class="indent">
+					<div><span>THEN</span> The message is sent to the list of recipients.</div>
+					<div><span>AND</span> the message is saved to the audit log.</div>
+					<div><span>AND</span> I am returned to the previous screen.</div>
+					<div><span>AND</span> I am notified that the message has been sent.</div>
+				</div>
+			</section>
+		</article>
+		
+		<h1>Data retrieval:</h1>
+		
+		<!-- User -->
+		
+		<article>
+			<header>As a user, I want to view the contact information of other users, in order to be able to contact them directly.</header>
+			<section class="estimate"><span>S: </span> Requires UI and interaction design, unit tests.</section>
+			<section class="acceptance">
+				<div><span>GIVEN</span> I am currently logged into my account.</div>
+				<div><span>WHEN</span> I navigate to the user directory.</div>
+				<div><span>THEN</span> I am shown a listing of users in the system, with options to sort, search, and filter results.</div>
+				<div><span>WHEN</span> I am a TA or an instructor with courses or sections assigned to me.</div>
+				<div class="indent">
+					<div><span>THEN</span> I am given the option to narrow the list results to individuals involved in the particular courses or sections that I am assigned to.</div>
+				</div>
+				<div><span>WHEN</span> I select a particular user.</div>
+				<div><span>THEN</span> I am shown the user's public contact information.</div>
+				<div><span>WHEN</span> I am an administrator.</div>
+				<div class="indent">
+					<div><span>THEN</span> I am also shown the user's private contact information, including their personal phone number and home address.</div>
+				</div>
+			</section>
+		</article>
+		
+		<!-- Course/section assignments -->
+		
+		<article>
+			<header>As a user, I want to view teacher and TA assignments for a particular course or section, in order to determine who is involved with the course or section.</header>
+			<section class="estimate"><span>M: </span> Requires in-depth UI and interaction design, unit tests.</section>
+			<section class="acceptance">
+				<div><span>GIVEN</span> I am currently logged into my account.</div>
+				<div><span>WHEN</span> I navigate to the course listing.</div>
+				<div><span>THEN</span> I am shown a listing of courses in the system, with options to sort, search, and filter results.</div>
+				<div><span>WHEN</span> I am a TA or an instructor with courses assigned to me.</div>
+				<div class="indent">
+					<div><span>THEN</span> The courses I am involved in are noticeably highlighted, so as to stand out from the rest of the results.</div>
+				</div>
+				<div><span>WHEN</span> I select a particular course.</div>
+				<div><span>THEN</span> I am shown a list of instructors and TAs associated with the course.</div>
+				<div><span>AND</span> I am shown a listing of sections for that particular course, sorted by section number.</div>
+				<div><span>WHEN</span> I am a TA with sections assigned to me.</div>
+				<div class="indent">
+					<div><span>THEN</span> The sections I am involved in are noticeably highlighted, so as to stand out from the rest of the results.</div>
+				</div>
+				<div><span>WHEN</span> I select a particular section.</div>
+				<div><span>THEN</span> I am shown a list of instructors and TAs associated with the section.</div>
+			</section>
+		</article>
+		
+		<h1>Data modification:</h1>
+		
+		<!-- Users -->
+		
+		<article>
+			<header>As an administrator, I must be able to create accounts for the system, in order to allow new administrators, instructors, and TAs to access the system.</header>
+			<section class="estimate"><span>M: </span> Requires user tables, integration with external auth gateway, UI design, unit tests.</section>
+			<section class="acceptance">
+				<div><span>GIVEN</span> I am currently logged into my account.</div>
+				<div><span>AND</span> my account has administrative privileges.</div>
+				<div><span>WHEN</span> I press the 'add user' button.</div>
+				<div><span>THEN</span> I am prompted to enter the new user's assigned UWM email address and the role which they should be assigned.</div>
+				<div><span>WHEN</span> I have submitted the new user's email address.</div>
+				<div><span>THEN</span> the system looks up the new user's information via the UWM ePanther account system (or a dummy equivalent for non-production use).</div>
+				<div><span>WHEN</span> the email address does not belong to an active ePanther account.</div>
+				<div class="indent">
+					<div><span>THEN</span> I am returned to the new user prompt.</div>
+					<div><span>AND</span> I am informed that the email address does not belong to an active ePanther account.</div>
+				</div>
+				<div><span>WHEN</span> the email address belongs to an active ePanther account.</div>
+				<div class="indent">
+					<div><span>THEN</span> the system checks whether the account already exists.</div>
+					<div><span>WHEN</span> the account does not already exist.</div>
+					<div class="indent">
+						<div><span>THEN</span> the system gathers the user's information via the UWM SSO gateway (or a dummy equivalent for non-production use).</div>
+						<div><span>AND</span> the system authorizes the user to log on via the UWM SSO gateway, and assigns them the given role.</div>
+						<div><span>AND</span> I am returned to the previous screen.</div>
+						<div><span>AND</span> I am notified that the new user has been added successfully.</div>
+					</div>
+					<div><span>WHEN</span> the account already exists.</div>
+					<div class="indent">
+						<div><span>THEN</span> I am returned to the new user prompt.</div>
+						<div><span>AND</span> I am notified that the account already exists.</div>
+					</div>
+				</div>
+			</section>
+		</article>
+		
+		<article>
+			<header>As an administrator, I must be able to modify information associated with a user, in order to update the contact information or system role associated with the user.</header>
+			<section class="estimate"><span>S: </span> Requires user tables, UI design, unit tests.</section>
+			<section class="acceptance">
+				<div><span>GIVEN</span> I am currently logged into my account.</div>
+				<div><span>AND</span> my account has administrative privileges.</div>
+				<div><span>WHEN</span> I press the 'modify user' button.</div>
+				<div><span>THEN</span> I am shown a listing of users in the system (excluding my own account), with options to sort, search, and filter results.</div>
+				<div><span>WHEN</span> I select a particular user.</div>
+				<div><span>THEN</span> I am prompted to update the system role or currently saved contact information of the user.</div>
+				<div><span>WHEN</span> I have finished making changes to the user's information.</div>
+				<div><span>AND</span> I have submitted my changes.</div>
+				<div><span>THEN</span> the updated information is sent to the system.</div>
+				<div><span>WHEN</span> the user's information is correctly formatted.</div>
+				<div class="indent">
+					<div><span>THEN</span> the role and contact information of the user is updated.</div>
+					<div><span>AND</span> I am returned to the previous screen.</div>
+					<div><span>AND</span> I am notified that the user's role and contact information has been updated successfully.</div>
+				</div>
+				<div><span>WHEN</span> the user's information is not correctly formatted.</div>
+				<div class="indent">
+					<div><span>THEN</span> I am returned to the prompt.</div>
+					<div><span>AND</span> I am notified that the user's information has not been updated successfully.</div>
+					<div><span>AND</span> the fields which contain invalid information are indicated, followed by a short explanation of why the data was invalid.</div>
+				</div>
+			</section>
+		</article>
+		
+		<article>
+			<header>As an administrator, I must be able to remove accounts from the system, in order to prevent unauthorized users from accessing the system.</header>
+			<section class="estimate"><span>S: </span> Requires user tables, UI design, unit tests.</section>
+			<section class="acceptance">
+				<div><span>GIVEN</span> I am currently logged into my account.</div>
+				<div><span>AND</span> my account has administrative privileges.</div>
+				<div><span>WHEN</span> I press the 'remove user' button.</div>
+				<div><span>THEN</span> I am shown a listing of users in the system (excluding my own account), with options to sort, search, and filter results.</div>
+				<div><span>WHEN</span> I select a particular user.</div>
+				<div><span>THEN</span> I am prompted to confirm whether I actually mean to remove the user.</div>
+				<div><span>AND</span> I am shown a summary of the data which will be lost if I confirm my choice.</div>
+				<div><span>WHEN</span> I choose to continue.</div>
+				<div class="indent">
+					<div><span>THEN</span> the user is removed from the system.</div>
+					<div><span>AND</span> I am returned to the previous screen.</div>
+					<div><span>AND</span> I am notified that the user has been removed.</div>
+				</div>
+				<div><span>WHEN</span> I choose not to continue.</div>
+				<div class="indent">
+					<div><span>THEN</span> I am returned to the previous screen, with no further action taken.</div>
+				</div>
+			</section>
+		</article>
+		
+		<!-- Courses -->
+		
+		<article>
+			<header>As an administrator, I must be able to create courses within the system, in order to assign them to instructors and TAs.</header>
+			<section class="estimate"><span>M: </span> Requires creation of course and section tables, integration with UWM schedule of classes, UI design, unit tests.</section>
+			<section class="acceptance">
+				<div><span>GIVEN</span> I am currently logged into my account.</div>
+				<div><span>AND</span> my account has administrative privileges.</div>
+				<div><span>WHEN</span> I press the 'add course' button.</div>
+				<div><span>THEN</span> I am prompted to enter information for the course, including course name, course code, sections, scheduling, and initial instructor / TA assignments. I may enter this information manually, or import it automatically from the UWM schedule of classes.</div>
+				<div><span>WHEN</span> I have submitted the course information.</div>
+				<div><span>THEN</span> the course information is sent to the system.</div>
+				<div><span>WHEN</span> the course information is correctly formatted.</div>
+				<div class="indent">
+					<div><span>THEN</span> the course is added to the system.</div>
+					<div><span>AND</span> I am returned to the previous screen.</div>
+					<div><span>AND</span> I am notified that the new course has been added successfully.</div>
+				</div>
+				<div><span>WHEN</span> the course information is not correctly formatted.</div>
+				<div class="indent">
+					<div><span>THEN</span> I am returned to the prompt.</div>
+					<div><span>AND</span> I am notified that the course has not been added successfully.</div>
+					<div><span>AND</span> the fields which contain invalid information are indicated, followed by a short explanation of why the data was invalid.</div>
+				</div>
+			</section>
+		</article>
+		
+		<article>
+			<header>As an administrator, I must be able to modify courses within the system, in order to keep scheduling and assignments up-to-date.</header>
+			<section class="estimate"><span>S: </span> Requires modification of course and section tables, UI design, unit tests.</section>
+			<section class="acceptance">
+				<div><span>GIVEN</span> I am currently logged into my account.</div>
+				<div><span>AND</span> my account has administrative privileges.</div>
+				<div><span>WHEN</span> I press the 'modify course' button.</div>
+				<div><span>THEN</span> I am prompted to update the course information.</div>
+				<div><span>WHEN</span> I have submitted the updated course information.</div>
+				<div><span>THEN</span> the course information is sent to the system.</div>
+				<div><span>WHEN</span> the course information is correctly formatted.</div>
+				<div class="indent">
+					<div><span>THEN</span> the course is added to the system.</div>
+					<div><span>AND</span> I am returned to the previous screen.</div>
+					<div><span>AND</span> I am notified that the course has been modified successfully.</div>
+				</div>
+				<div><span>WHEN</span> the course information is not correctly formatted.</div>
+				<div class="indent">
+					<div><span>THEN</span> I am returned to the prompt.</div>
+					<div><span>AND</span> I am notified that the course has not been modified successfully.</div>
+					<div><span>AND</span> the fields which contain invalid information are indicated, followed by a short explanation of why the data was invalid.</div>
+				</div>
+			</section>
+		</article>
+		
+		<article>
+			<header>As an administrator, I must be able to remove courses from the system, in order to keep scheduling and assignments up-to-date.</header>
+			<section class="estimate"><span>S: </span> Requires modification of course and section tables, UI design, unit tests.</section>
+			<section class="acceptance">
+				<div><span>GIVEN</span> I am currently logged into my account.</div>
+				<div><span>AND</span> my account has administrative privileges.</div>
+				<div><span>WHEN</span> I press the 'remove course' button.</div>
+				<div><span>THEN</span> I am prompted to confirm whether I actually mean to remove the course.</div>
+				<div><span>AND</span> I am shown a summary of the data which will be lost if I confirm my choice.</div>
+				<div><span>WHEN</span> I choose to continue.</div>
+				<div class="indent">
+					<div><span>THEN</span> the course is removed from the system.</div>
+					<div><span>AND</span> I am returned to the previous screen.</div>
+					<div><span>AND</span> I am notified that the course has been removed.</div>
+				</div>
+				<div><span>WHEN</span> I choose not to continue.</div>
+				<div class="indent">
+					<div><span>THEN</span> I am returned to the previous screen, with no further action taken.</div>
+				</div>
+			</section>
+		</article>
+		
+		<article>
+			<header>As an administrator, I must be able to assign an user to one or more courses, in order to allow the user to manage or participate in the course(s).</header>
+			<section class="estimate"><span>M: </span> Requires course/section assignment table, UI design, unit tests.</section>
+			<section class="acceptance">
+				<div><span>GIVEN</span> I am currently logged into my account.</div>
+				<div><span>AND</span> my account has administrative privileges.</div>
+				<div><span>WHEN</span> I press the 'assign course' button.</div>
+				<div><span>THEN</span> I am shown a listing of users in the system, with options to sort, search, and filter results.</div>
+				<div><span>WHEN</span> I select an user.</div>
+				<div><span>THEN</span> I am shown a listing of courses in the system (excluding courses which were already assigned to the user), with options to sort, search, and filter results. I am allowed to select multiple courses.</div>
+				<div><span>WHEN</span> the selected user is a TA.</div>
+				<div class="indent">
+					<div><span>THEN</span> I am given the option to automatically assign the TA to course sections.</div>
+				</div>
+				<div><span>WHEN</span> I select one or more courses.</div>
+				<div><span>THEN</span> the course(s) are assigned to the user.</div>
+				<div><span>WHEN</span> the selected user is a TA and I have selected the option to automatically assign the TA to course sections.</div>
+				<div class="indent">
+					<div><span>THEN</span> the TA is automatically assigned to course sections.</div>
+				</div>
+				<div><span>AND</span> I am returned to the previous screen.</div>
+				<div><span>AND</span> I am notified that the selected course(s) were assigned to the instructor.</div>
+			</section>
+		</article>
+		
+		<article>
+			<header>As an instructor or an administrator, I must be able to assign a TA to one or more sections, in order to allow them to receive section notifications.</header>
+			<section class="estimate"><span>M: </span> Requires section assignment table, UI design, unit tests.</section>
+			<section class="acceptance">
+				<div><span>GIVEN</span> I am currently logged into my account.</div>
+				<div><span>AND</span> my account has instructor or administrative privileges.</div>
+				<div><span>WHEN</span> I press the 'assign section' button.</div>
+				<div><span>WHEN</span> I am an instructor.</div>
+				<div class="indent">
+					<div><span>THEN</span> I am shown a listing of courses in the system which have been assigned to me.</div>
+				</div>
+				<div><span>WHEN</span> I am an administrator.</div>
+				<div class="indent">
+					<div><span>THEN</span> I am shown a listing of all courses in the system, with options to sort, search, and filter results.</div>
+				</div>
+				<div><span>WHEN</span> I select a course.</div>
+				<div><span>THEN</span> I am shown a listing of TAs assigned to this course.</div>
+				<div><span>WHEN</span> I select a TA.</div>
+				<div><span>THEN</span> I am shown a listing of the course sections. I am allowed to select multiple sections.</div>
+				<div><span>WHEN</span> I select one or more sections.</div>
+				<div><span>THEN</span> the TA is assigned to the selected course section(s).</div>
+				<div><span>AND</span> I am returned to the previous screen.</div>
+				<div><span>AND</span> I am notified that the selected section(s) were assigned to the TA.</div>
+			</section>
+		</article>
+	</body>
+</html>
