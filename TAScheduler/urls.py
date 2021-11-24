@@ -16,6 +16,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from TAScheduler.views import CourseCreation, Login, AccountCreation
+
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('login/', Login.as_view()),
+    path('coursecreation/', CourseCreation.as_view()),
+    path('accountcreation/', AccountCreation.as_view())
 ]
