@@ -23,9 +23,13 @@ html {
 }
 
 form.inputBox{
-  max-width: 400px;
-  padding: 12px;
+  max-width: 12em;
   background-color: var(--light);
+
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  padding: .5em .5em .5em;
+  margin-bottom: 4px;
 }
 
 label, input{
@@ -39,12 +43,42 @@ label, input{
   grid-auto-rows: minmax(30px, auto);
 }
 
-column1{
-  grid-column: 1;
-  grid-row: 1;
+details {
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    padding: .5em .5em 0;
+    margin-bottom: 4px;
 }
 
-column2{
-  grid-column: 2;
-  grid-row: 1;
+summary {
+    font-weight: bold;
+    margin: -.5em -.5em 0;
+    padding: .5em;
+}
+
+details[open] {
+    padding: .5em;
+}
+
+details[open] summary {
+    border-bottom: 1px solid #aaa;
+    margin-bottom: .5em;
+}
+
+details.user > summary {
+  display: flex;
+  align-items: center;
+}
+
+details.user > summary > div.role {
+  margin-left: 1em;
+  padding: .5em;
+  background: var(--light);
+  border-radius: .5em;
+  font-size: 10pt;
+}
+
+details.courses > summary{
+  display: flex;
+  align-items: center;
 }
