@@ -16,12 +16,16 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
-from TAScheduler.views import CourseManagement, Login, AccountManagement
+from TAScheduler.views import CourseManagement, Login, AccountManagement, Home, Profile
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('login/', Login.as_view()),
     path('coursemanagement/', CourseManagement.as_view()),
-    path('accountmanagement/', AccountManagement.as_view())
 
+    path('accountmanagement/', AccountManagement.as_view()),
+
+    path('', Home.as_view()),
+
+    path('profile/', Profile.as_view())
 ]

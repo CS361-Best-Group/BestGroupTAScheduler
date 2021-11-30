@@ -31,3 +31,17 @@ class TestUrls(TestCase):
         r=self.client.get("/accountmanagement/")
         self.assertEqual(r.context.request.path, "/accountmanagement/")
 
+    def test_homeTemplate(self):
+        r=self.client.get("/")
+        self.assertEqual(r.templates[0].name, "home.html")
+    def test_profileTemplate(self):
+        r=self.client.get("/profile/")
+        self.assertEqual(r.templates[0].name, "profile.html")
+
+    def test_homePath(self):
+        r=self.client.get("/")
+        self.assertEqual(r.context.request.path, "/")
+
+    def test_profilePath(self):
+        r=self.client.get("/profile/")
+        self.assertEqual(r.context.request.path, "/profile/")
