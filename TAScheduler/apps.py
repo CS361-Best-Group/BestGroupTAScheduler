@@ -9,7 +9,19 @@ class TASchedulerAppConfig(AppConfig):
         from django.contrib.auth.models import Group, Permission
         from django.contrib.contenttypes.models import ContentType
         
-        print("don't awoo $350 penalty")
-        
         # If they don't already exist, create the TA, Instructor, and Manager groups and assign them the proper permissions.
+        taSchedulerGroups = {
+            'ta': [],
+            'instructor': [],
+            'manager': [],
+        }
+        
+        for groupName, permissions in taSchedulerGroups.items():
+            group, wasCreated = Group.objects.get_or_create(name=groupName)
+            
+            if wasCreated:
+                for permissionCodename in permissions:
+                    permission = Permission.objects.get(codename = permissionCodename)
+                    group.permissions.add(permission)
+                print(f'Created \'{groupName}\' group.')
         pass
