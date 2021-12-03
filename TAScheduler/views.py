@@ -5,11 +5,12 @@ from django.views import View
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User, Group
 
+
 class Login(View):
 
     def get(self, request):
         logout(request)
-        print(Group.objects.all())
+
         return render(request, "login.html")
 
     def post(self, request):
@@ -44,6 +45,7 @@ class AccountManagement(View):
     def get(self, request):
 
 
+
         TA=User.objects.filter(groups__name='ta')
         Instructor=User.objects.filter(groups__name='instructor')
         Admin=User.objects.filter(groups__name='manager')
@@ -75,6 +77,7 @@ class AccountManagement(View):
 
 
         return redirect("/accountmanagement/")
+
 
 
 
