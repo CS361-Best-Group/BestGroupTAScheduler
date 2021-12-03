@@ -21,41 +21,65 @@
     <!-- how do we want to remove a user? tick marks?-->
     <section class="userList">
     <!-- modular stuff bb-->
-      <details class="user">
+
+        {% for i in Admin %}
+        <details class="user">
         <summary>
-          <div class="name">Firstname Lastname</div>
+          <div class="name">{{ i.first_name }}</div>
           <div class="role">Admin</div>
         </summary>
-          <div class="email">AdminEmail@email.edu</div>
+          <div class="email">{{ i.email }}</div>
           <div class="altEmail">AdminAltEmail@email.com</div>
       </details>
+        {% endfor %}
 
-      <details class="user">
+        {% for i in Instructor %}
+        <details class="user">
         <summary>
-          <div class="name">TA Tester</div>
+          <div class="name">{{ i.first_name }}</div>
           <div class="role">TA</div>
         </summary>
-          <div class="email">PublicEmail@email.edu</div>
+          <div class="email">{{ i.email }}</div>
           <div class="altEmail">AlternateEmail@email.com</div>
       </details>
+        {% endfor %}
 
+    {% for i in TA %}
       <details class="user">
         <summary>
-          <div class="name">TALastname, TAFirstname</div>
+          <div class="name">{{ i.first_name }}</div>
           <div class="role">TA</div>
         </summary>
-          <div class="email">PublicEmail@email.edu</div>
+          <div class="email">{{ i.email }}</div>
           <div class="altEmail">AlternateEmail@email.com</div>
       </details>
-
+    {% endfor %}
     </section>
-
+r
     <h1 id="addUser">Add User</h1>
-    <form class="inputBox">
-      <div>
+    <form class="inputBox" action="/accountmanagement/" method="post">
+      {% csrf_token %}
+        <div>
         <label for="user">User Name:</label>
-        <input type="text" id="name" name="name" required minlength="4" maxlength="16" size="10">
+        <input type="text" id="name" name="username" required minlength="4" maxlength="16" size="10">
+
+
+
       </div>
+        <div>
+        <label for="user">Name:</label>
+        <input type="text" id="name" name="name" required minlength="4" maxlength="16" size="10">
+
+
+        </div>
+
+        <div>
+        <label for="user">Password:</label>
+        <input type="password" id="name" name="password" required minlength="4" maxlength="16" size="10">
+
+
+        </div>
+
       <div>
         <label for="role">Role:</label>
         <details><!-- dropdown for admin, but label for other users -->
@@ -65,13 +89,14 @@
           <div>TA</div>
         </details>
       </div>
-      <div>
-        <label for"email">Email:</label>
-        <input type="email" id="name" name="name" required minlength="4" maxlength="16" size="10">
+        <div>
+        <label for="email">Email:</label>
+        <input type="email" id="name" name="email" required minlength="4" maxlength="16" size="10">
       </div>
-      <div>
-        <label for"email">Alternate Email:</label>
-        <input type="email" id="name" name="name" required minlength="4" maxlength="16" size="10">
+
+        <div>
+        <label for=email">Alternate Email:</label>
+        <input type="email" id="name" name="altemail" required minlength="4" maxlength="16" size="10">
       </div>
       <div>
         <input type="submit" value="Cancel">
