@@ -13,11 +13,11 @@ class TestUrls(TestCase):
 
     def test_courseCreationTemplates(self):
         r = self.client.get("/coursemanagement/")
-        self.assertEqual(r.templates[0].name, "courseManagement.html")
+        self.assertEqual(r.templates[0].name, "coursemanagement.html")
 
     def test_accountCreationTemplates(self):
         r = self.client.get("/accountmanagement/")
-        self.assertEqual(r.templates[0].name,  "accountManagement.html")
+        self.assertEqual(r.templates[0].name,  "usermanagement.html")
 
     def test_loginPath(self):
         r=self.client.get("/login/")
@@ -33,7 +33,8 @@ class TestUrls(TestCase):
 
     def test_homeTemplate(self):
         r=self.client.get("/")
-        self.assertEqual(r.templates[0].name, "home.html")
+        self.assertEqual(r.templates[0].name, "index.html")
+
     def test_profileTemplate(self):
         r=self.client.get("/profile/")
         self.assertEqual(r.templates[0].name, "profile.html")
