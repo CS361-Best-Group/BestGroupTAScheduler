@@ -100,6 +100,7 @@ class AccountManagement(View):
 
         #Nothing will be mapped course fields if post is from a section creation form submission
 
+
         TA=User.objects.filter(groups__name='ta')
         Instructor=User.objects.filter(groups__name='instructor')
         Admin=User.objects.filter(groups__name='manager')
