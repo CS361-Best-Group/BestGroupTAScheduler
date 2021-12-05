@@ -3,7 +3,10 @@ from hashlib import sha256
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth import authenticate, login, logout
+
 from django.contrib.auth.models import User, Group
+
+
 
 from TAScheduler.models import Course, Section
 
@@ -11,7 +14,6 @@ class Login(View):
 
     def get(self, request):
         logout(request)
-        print(Group.objects.all())
         return render(request, "login.html")
 
     def post(self, request):
@@ -37,10 +39,14 @@ class CourseManagement(View):
     def get(self, request):
 
 
+
         Courses=Course.objects.all()
         Sections=Section.objects.all()
 
         return render(request, "coursemanagement.html", {"Courses":Courses, "Sections":Sections})
+
+
+
 
     def post(self, request):
 
@@ -91,6 +97,7 @@ class CourseManagement(View):
 class AccountManagement(View):
 
     def get(self, request):
+
         #Nothing will be mapped course fields if post is from a section creation form submission
 
         TA=User.objects.filter(groups__name='ta')
@@ -100,6 +107,7 @@ class AccountManagement(View):
 
 
         return render(request, "usermanagement.html", {"TA":TA, "Instructor":Instructor, "Admin":Admin})
+
 
     def post(self, request):
         user=request.POST["username"]
@@ -120,6 +128,7 @@ class AccountManagement(View):
 
 
         return redirect("/accountmanagement/")
+
 
 
 
