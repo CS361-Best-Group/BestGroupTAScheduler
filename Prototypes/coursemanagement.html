@@ -12,29 +12,41 @@
       <a href="index.html">Home</a>
     </div>
     <!--Course Management Content-->
-    <input type="button" value="Add Course">
+
+
+    {% for i in Courses %}
     <div class="courses">
       <details class="course">
         <summary>Computer Science 361: Introduction to Software Engineering</summary>
         <p>Course synopsis goes here.</p>
-        <details class="instructors">
+
+      <!--Utilize course fields for instructors-->
+        {% for j in i.users %}
+          <details class="instructors">
           <summary>Instructors</summary>
           <ul>
             <li>Azcueta, Raphael: Instructor</li>
             <li>Collins, Leeann: Instructor</li>
           </ul>
         </details>
+        {% endfor %}
+
 
         <details>
           <summary>Sections</summary>
+            {% for j in i.sections %}
             <details>
               <summary>Section 100: Tuesday 3pm</summary>
               <ul>
+                  {% for k in j.users %}
                 <li>Meulmens, Tyler: TA</li>
                 <li>Gates, Justin: TA</li>
+                  {% endfor %}
               </ul>
             </details>
-            <details>
+             {% endfor %}
+
+                <details>
               <summary>Section 200: Thursday 3pm</summary>
               <ul>
                 <li>Kinney, Seth: TA</li>
@@ -45,5 +57,24 @@
 
       </details>
     </div>
+    {% endfor %}
+    <form action="/coursemanagement" method="addsection">
+        <!--Add submit button and do same for instructors-->
+
+
+    </form>
+    <form action="/coursemanagement/" method="post">
+        <label for="name">Name</label>
+
+        <label for="description">Course Description</label>
+
+
+        <input type="submit" value="Add Course">
+
+
+
+
+    </form>
+
   </body>
 </html>
