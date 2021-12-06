@@ -55,7 +55,7 @@ class TestUrls(TestCase):
 
     def test_homePath(self):
         r=self.client.get("/")
-        self.assertRedirects("/login/")
+        self.assertRedirects(r, "/login/")
 
     def test_profilePath(self):
         Users=User.objects.create_user(username="New Guy", password="testing", email="sethkinney6@gmail.com")
