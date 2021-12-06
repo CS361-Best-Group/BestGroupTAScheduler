@@ -137,6 +137,8 @@ class AccountManagement(View):
 
 class Home(View):
     def get(self, request):
+        if(len(request.session.keys())==0):
+            return redirect("/login/")
         return render(request, "index.html")
 
     def post(self, request):

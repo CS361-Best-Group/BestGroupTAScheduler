@@ -32,7 +32,13 @@ class TestUrls(TestCase):
         r=self.client.get("/accountmanagement/")
         self.assertEqual(r.context.request.path, "/accountmanagement/")
 
+
     def test_homeTemplate(self):
+        User1=User.objects.create_user(username="seth", password="bruh")
+        User1.save()
+        session=self.client.session
+        session["_auth_user_id"]=User1.id
+        session.save()
         r=self.client.get("/")
         self.assertEqual(r.templates[0].name, "index.html")
 
@@ -49,7 +55,7 @@ class TestUrls(TestCase):
 
     def test_homePath(self):
         r=self.client.get("/")
-        self.assertEqual(r.context.request.path, "/")
+        self.assertRedirects("/login/")
 
     def test_profilePath(self):
         Users=User.objects.create_user(username="New Guy", password="testing", email="sethkinney6@gmail.com")
