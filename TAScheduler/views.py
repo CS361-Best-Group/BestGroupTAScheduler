@@ -1,9 +1,10 @@
 from hashlib import sha256
 
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth import authenticate, login, logout
-
+from .models import Profile
 from django.contrib.auth.models import User, Group
 
 
@@ -17,6 +18,7 @@ class Login(View):
         return render(request, "login.html")
 
     def post(self, request):
+        print("In post")
         user=request.POST["name"]
         password=request.POST["password"]
 
@@ -26,6 +28,7 @@ class Login(View):
 
 
         if not(userobject == None):
+            print("Login")
             login(request, userobject)
             return redirect("/")
 
@@ -35,7 +38,6 @@ class Login(View):
 
 
 class CourseManagement(View):
-
     def get(self, request):
 
 
@@ -47,7 +49,6 @@ class CourseManagement(View):
 
 
 
-
     def post(self, request):
 
 
@@ -56,13 +57,13 @@ class CourseManagement(View):
 
             coursecreationName = request.POST["coursename"]
 
-            coursecreationDescription = request.POST["coursedescription"]
+            if(len(Course.objects.filter(name=coursecreationName))==0):
+                coursecreationDescription = request.POST["coursedescription"]
+                newcourse=Course(name=coursecreationName, description=coursecreationDescription)
 
-            newcourse=Course(name=coursecreationName, description=coursecreationDescription)
-
-            newcourse.save()
-            newcourse.users.set([])
-            newcourse.save()
+                newcourse.save()
+                newcourse.users.set([])
+                newcourse.save()
 
         elif ("course" in request.POST.keys()):
 
@@ -79,10 +80,10 @@ class CourseManagement(View):
             newsectionname=newsectionname+existingsections
 
 
-            newsection=Section(name=newsectionname)
+            newsection=Section(name=newsectionname, course=targetcourse)
             newsection.save()
             newsection.users.set([])
-            newsection.course=targetcourse
+#            newsection.course=targetcourse
             newsection.save()
 
         return redirect("/coursemanagement/")
@@ -95,7 +96,6 @@ class CourseManagement(View):
 
 
 class AccountManagement(View):
-
     def get(self, request):
 
         #Nothing will be mapped course fields if post is from a section creation form submission
@@ -104,18 +104,20 @@ class AccountManagement(View):
         TA=User.objects.filter(groups__name='ta')
         Instructor=User.objects.filter(groups__name='instructor')
         Admin=User.objects.filter(groups__name='manager')
+        Profiles=Profile.objects.all()
 
 
 
-        return render(request, "usermanagement.html", {"TA":TA, "Instructor":Instructor, "Admin":Admin})
-
+        return render(request, "usermanagement.html", {"TA":TA, "Instructor":Instructor, "Admin":Admin, "Profiles":Profiles})
 
     def post(self, request):
         user=request.POST["username"]
         email=request.POST["email"]
         name=request.POST["name"]
         password=request.POST["password"]
-
+        address=request.POST["address"]
+        phone=request.POST["phone"]
+        altemail=request.POST["altemail"]
         userthere=User.objects.filter(username=user)
         groups=Group.objects.filter(name="manager")
         groupthing=groups[0]
@@ -126,27 +128,61 @@ class AccountManagement(View):
 
             newuser.groups.add(groupthing)
             newuser.save()
-
-
+            newProfile=Profile(user=newuser, address=address, phone=phone, alt_email=altemail)
+            newProfile.save()
         return redirect("/accountmanagement/")
 
 
 
 
 class Home(View):
-
     def get(self, request):
         return render(request, "index.html")
 
-
     def post(self, request):
         pass
 
-class Profile(View):
-
+class ProfilePage(View):
     def get(self, request):
-        return render(request, "profile.html")
 
+        CurrentUserID=request.session["_auth_user_id"]
+
+        CurrentUser=User.objects.filter(id=CurrentUserID)[0]
+
+        CurrentProfile=Profile.objects.filter(user=CurrentUser)[0]
+
+        return render(request, "profile.html", {"email":CurrentUser.email, "firstname":CurrentUser.first_name, "email":CurrentUser.email, "username":CurrentUser.username, "address":CurrentProfile.address, "phone":CurrentProfile.phone, "altemail":CurrentProfile.alt_email})
 
     def post(self, request):
-        pass
+        newname=request.POST["name"]
+        newusername=request.POST["username"]
+        newphone=request.POST["phone"]
+        newaddress=request.POST["address"]
+        newemail = request.POST["email"]
+        newaltemail=request.POST["altemail"]
+
+        currentuser=User.objects.filter(id=request.session["_auth_user_id"])[0]
+        currentprofile=Profile.objects.filter(user=currentuser)[0]
+
+
+        if(newname!=""):
+            currentuser.first_name=newname
+
+        if(newusername!="" and len(User.objects.filter(username=newusername))==0):
+            currentuser.username=newusername
+
+        if(newphone!=""):
+            currentprofile.phone=newphone
+        if(newaddress!=""):
+            print("inside if statement")
+            currentprofile.address=newaddress
+        if(newemail!=""):
+            currentuser.email=newemail
+        if (newaltemail!=""):
+            currentprofile.alt_email=newaltemail
+
+        currentuser.save()
+        currentprofile.save()
+        print("New address")
+        print(currentprofile.address)
+        return redirect("/profile/")

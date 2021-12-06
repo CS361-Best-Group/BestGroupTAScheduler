@@ -15,8 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-
-from TAScheduler.views import CourseManagement, Login, AccountManagement, Home, Profile
+from TAScheduler.views import CourseManagement, Login, AccountManagement, Home, ProfilePage
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -27,6 +26,7 @@ urlpatterns = [
 
     path('', Home.as_view()),
 
-    path('profile/', Profile.as_view())
+    path('profile/', ProfilePage.as_view())
+
 
 ]

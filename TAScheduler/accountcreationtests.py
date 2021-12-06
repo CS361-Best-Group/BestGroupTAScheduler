@@ -2,6 +2,7 @@ from django.test import TestCase
 from django.test import Client
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
+from .models import Profile
 
 class TestAccountCreationGet(TestCase):
 
@@ -11,6 +12,8 @@ class TestAccountCreationGet(TestCase):
         TA=User.objects.create_user("Timmy", "timmy@gmail.com", "password", first_name="TA Timmy")
         self.ta_group, created= Group.objects.get_or_create(name='ta')
         TA.groups.add(self.ta_group)
+
+
 
         Instructor=User.objects.create_user("Isaac", "issac@gmail.com", "betterpassword", first_name="Instructor Isaac")
         self.instructor_group, created=Group.objects.get_or_create(name='instructor')
@@ -25,8 +28,15 @@ class TestAccountCreationGet(TestCase):
         Instructor.save()
         Admin.save()
 
+        TAProfile=Profile(user=TA, address="9999", phone="999-999-9999", alt_email="alt@gmail.com")
+        TAProfile.save()
+
+        InstructorProfile=Profile(user=Instructor, address="9998", phone="999-999-9998", alt_email="alt2@gmail.com")
+        InstructorProfile.save()
 
 
+        AdminProfile=Profile(user=Admin, address="9997", phone="999-999-9997", alt_email="alt3@gmail.com")
+        AdminProfile.save()
     def test_loadTAName(self):
         r=self.client.get("/accountmanagement/")
         self.assertEqual(r.context["TA"][0].first_name, "TA Timmy")
@@ -45,9 +55,24 @@ class TestAccountCreationGet(TestCase):
         self.assertContains(r, '<div class="email">timmy@gmail.com</div>')
 
     def test_loadTAAlternateEmail(self):
-        pass
+        r=self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["Profiles"].filter(user=User.objects.filter(first_name="TA Timmy")[0])[0].alt_email, "alt@gmail.com")
     def test_displayTAAlternameEmail(self):
-        pass
+        r=self.client.get("/accountmanagement/")
+        self.assertContains(r, '<div class="altEmail">alt@gmail.com</div>')
+
+    def test_loadTAAddress(self):
+        r=self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["Profiles"].filter(user=User.objects.filter(first_name="TA Timmy")[0])[0].address, "9999")
+    def test_displayTAAddress(self):
+        r=self.client.get("/accountmanagement/")
+        self.assertContains(r, '<div>9999</div>')
+    def test_loadTAPhoneNumber(self):
+        r=self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["Profiles"].filter(user=User.objects.filter(first_name="TA Timmy")[0])[0].phone, "999-999-9999")
+    def test_displayTAPhoneNumber(self):
+        r=self.client.get("/accountmanagement/")
+        self.assertContains(r, "<div>999-999-9999</div>")
 
     def test_loadInstructorName(self):
         r=self.client.get("/accountmanagement/")
@@ -66,9 +91,23 @@ class TestAccountCreationGet(TestCase):
         self.assertContains(r, '<div class="email">issac@gmail.com</div>')
 
     def test_loadInstructorAltEmail(self):
-        pass
-
-
+        r=self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["Profiles"].filter(user=User.objects.filter(first_name="Instructor Isaac")[0])[0].alt_email, "alt2@gmail.com")
+    def test_displayInstructorAltEmail(self):
+        r=self.client.get("/accountmanagement/")
+        self.assertContains(r, '<div class="altEmail">alt2@gmail.com</div>')
+    def test_loadInstructorAddress(self):
+        r=self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["Profiles"].filter(user=User.objects.filter(first_name="Instructor Isaac")[0])[0].address, "9998")
+    def test_displayInstructorAddress(self):
+        r=self.client.get("/accountmanagement/")
+        self.assertContains(r, "<div>9998</div>")
+    def test_loadInstructorPhoneNumber(self):
+        r=self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["Profiles"].filter(user=User.objects.filter(first_name="Instructor Isaac")[0])[0].phone, "999-999-9998")
+    def test_displayInstructorPhoneNumber(self):
+        r=self.client.get("/accountmanagement/")
+        self.assertContains(r, "<div>999-999-9998</div>")
     def test_loadAdminName(self):
         r=self.client.get("/accountmanagement/")
         self.assertEqual(r.context["Admin"][0].first_name, "Admin Adam")
@@ -83,6 +122,29 @@ class TestAccountCreationGet(TestCase):
     def test_displayAdminEmail(self):
         r=self.client.get("/accountmanagement/")
         self.assertContains(r, '<div class="email">adam@gmail.com</div>')
+
+    def test_loadAdminAltEmail(self):
+        r=self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["Profiles"].filter(user=User.objects.filter(first_name="Admin Adam")[0])[0].alt_email, "alt3@gmail.com")
+
+
+    def test_displayAdminAltEmail(self):
+        r=self.client.get("/accountmanagement/")
+        self.assertContains(r, '<div class="altEmail">alt3@gmail.com</div>')
+    def test_loadAdminAddress(self):
+        r=self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["Profiles"].filter(user=User.objects.filter(first_name="Admin Adam")[0])[0].address, "9997")
+    def test_displayAdminAddress(self):
+        r=self.client.get("/accountmanagement/")
+        self.assertContains(r, "<div>9997</div>")
+    def test_loadAdminPhone(self):
+        r=self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["Profiles"].filter(user=User.objects.filter(first_name="Admin Adam")[0])[0].phone, "999-999-9997")
+    def test_displayAdminPhone(self):
+        r=self.client.get("/accountmanagement/")
+        self.assertContains(r, "<div>999-999-9997</div>")
+
+
     def test_loadMultuipleTAName(self):
         TA2=User.objects.create_user("Tyler", "tyler@gmail.com", "The Black Knight always triumphs!", first_name="TA Tyler")
         TA2.groups.add(self.ta_group)
@@ -213,10 +275,13 @@ class TestAccountCreationPost(TestCase):
         self.client=Client()
         self.admin_group, created = Group.objects.get_or_create(name="manager")
 
-        self.r=self.client.post("/accountmanagement/", {"username":"Testing123", "password":"sword1", "email":"testing@gmail.com", "name":"Manager Marcus"}, follow=True)
+        self.r=self.client.post("/accountmanagement/", {"username":"Testing123", "password":"sword1", "email":"testing@gmail.com", "name":"Manager Marcus", "altemail":"marcus@gmail.com", "phone":"999-999-9999", "address":"9999"}, follow=True)
 
     def test_newAccount(self):
         self.assertEqual(len(User.objects.all()), 1)
+
+    def test_newProfile(self):
+        self.assertEqual(len(Profile.objects.all()),1)
 
     def test_displayNewAccountName(self):
         self.assertContains(self.r ,'<div class="name">Manager Marcus</div>')
@@ -240,29 +305,43 @@ class TestAccountCreationPost(TestCase):
     def test_userGroup(self):
         self.assertEqual(User.objects.all()[0].groups.all()[0].name,'manager')
 
+    def test_altEmailStored(self):
+        self.assertEqual(Profile.objects.all()[0].alt_email, "marcus@gmail.com")
+    def test_altEmailDisplayed(self):
+        self.assertContains(self.r, '<div class="altEmail">marcus@gmail.com</div>')
+    def test_phoneStored(self):
+        self.assertEqual(Profile.objects.all()[0].phone, "999-999-9999")
+    def test_phoneDisplayed(self):
+        self.assertContains(self.r, "<div>999-999-9999</div>")
+    def test_addressStored(self):
+        self.assertEqual(Profile.objects.all()[0].address, "9999")
+    def test_addressDisplayed(self):
+        self.assertContains(self.r, "<div>9999</div>")
+    def test_profileUser(self):
+        self.assertEqual(Profile.objects.all()[0].user, User.objects.all()[0])
     def test_secondNewAccount(self):
-        self.client.post("/accountmanagement/", {"username":"Testing1234", "password":"shield1", "email":"testing4@gmail.com", "name":"Manager Maria"}, follow=True)
+        self.client.post("/accountmanagement/", {"username":"Testing1234", "password":"shield1", "email":"testing4@gmail.com", "name":"Manager Maria", "phone":"999-999-9998", "address":"9998", "altemail":"maria@gmail.com"}, follow=True)
         self.assertEqual(len(User.objects.all()), 2)
     def test_secondNewAccountUser(self):
-        self.client.post("/accountmanagement/", {"username":"Testing1234", "password":"shield1", "email":"testing4@gmail.com", "name":"Manager Maria"}, follow=True)
+        self.client.post("/accountmanagement/", {"username":"Testing1234", "password":"shield1", "email":"testing4@gmail.com", "name":"Manager Maria", "phone":"999-999-9998", "address":"9998", "altemail":"maria@gmail.com"}, follow=True)
         self.assertEqual(User.objects.all()[1].username, "Testing1234")
 
 
     def test_secondNewAccountEmail(self):
-        self.client.post("/accountmanagement/", {"username":"Testing1234", "password":"shield1", "email":"testing4@gmail.com", "name":"Manager Maria"}, follow=True)
+        self.client.post("/accountmanagement/", {"username":"Testing1234", "password":"shield1", "email":"testing4@gmail.com", "name":"Manager Maria", "phone":"999-999-9998", "address":"9998", "altemail":"maria@gmail.com"}, follow=True)
         self.assertEqual(User.objects.all()[1].email, "testing4@gmail.com")
 
     def test_secondNewAccountName(self):
-        self.client.post("/accountmanagement/", {"username":"Testing1234", "password":"shield1", "email":"testing4@gmail.com", "name":"Manager Maria"}, follow=True)
+        self.client.post("/accountmanagement/", {"username":"Testing1234", "password":"shield1", "email":"testing4@gmail.com", "name":"Manager Maria","phone":"999-999-9998", "address":"9998", "altemail":"maria@gmail.com"}, follow=True)
         self.assertEqual(User.objects.all()[1].first_name, "Manager Maria")
 
     def test_secondAccountPassword(self):
-        self.client.post("/accountmanagement/", {"username":"Testing1234", "password":"shield1", "email":"testing4@gmail.com", "name":"Manager Maria"}, follow=True)
+        self.client.post("/accountmanagement/", {"username":"Testing1234", "password":"shield1", "email":"testing4@gmail.com", "name":"Manager Maria", "phone":"999-999-9998", "address":"9998", "altemail":"maria@gmail.com"}, follow=True)
         self.assertNotEqual(User.objects.all()[1].password, None)
 
 
     def test_secondNewAccountGroup(self):
-        self.client.post("/accountmanagement/", {"username":"Testing1234", "password":"shield1", "email":"testing4@gmail.com", "name":"Manager Maria"}, follow=True)
+        self.client.post("/accountmanagement/", {"username":"Testing1234", "password":"shield1", "email":"testing4@gmail.com", "name":"Manager Maria", "phone":"999-999-9998", "address":"9998", "altemail":"maria@gmail.com"}, follow=True)
 
         self.assertEqual(User.objects.all()[1].groups.all()[0].name, 'manager')
 
@@ -270,29 +349,29 @@ class TestAccountCreationPost(TestCase):
 
 
     def test_displaySecondNewAccountName(self):
-        r=self.client.post("/accountmanagement/", {"username":"Testing1234", "password":"shield1", "email":"testing4@gmail.com", "name":"Manager Maria"}, follow=True)
+        r=self.client.post("/accountmanagement/", {"username":"Testing1234", "password":"shield1", "email":"testing4@gmail.com", "name":"Manager Maria", "phone":"999-999-9998", "address":"9998", "altemail":"maria@gmail.com"}, follow=True)
         self.assertContains(r, '<div class="name">Manager Maria</div>')
 
     def test_displaySecondNewAccountEmail(self):
-        r=self.client.post("/accountmanagement/", {"username":"Testing1234", "password":"shield1", "email":"testing4@gmail.com", "name":"Manager Maria"}, follow=True)
+        r=self.client.post("/accountmanagement/", {"username":"Testing1234", "password":"shield1", "email":"testing4@gmail.com", "name":"Manager Maria", "phone":"999-999-9998", "address":"9998", "altemail":"maria@gmail.com"}, follow=True)
         self.assertContains(r, '<div class="email">testing4@gmail.com</div>')
 
 
-    def test_duplicateUser(self):
-        self.client.post("/accountmanagement/", {"username":"Testing123", "password":"shield1", "email":"testing4@gmail.com", "name":"Manager Maria"}, follow=True)
+    def test_duplicateUserName(self):
+        self.client.post("/accountmanagement/", {"name":"New Guy", "username":"Testing123", "password":"shield1", "email":"testing4@gmail.com", "address":"9998", "phone":"999-999-9998", "altemail":"alt99" }, follow=True)
         self.assertEqual(len(User.objects.all()), 1)
 
-    def test_duplicateUserKeepEmail(self):
-        self.client.post("/accountmanagement/", {"username":"Testing123", "password":"shield1", "email":"testing4@gmail.com", "name":"Manager Maria"}, follow=True)
+    def test_duplicateUserNameKeepEmail(self):
+        self.client.post("/accountmanagement/", {"name":"New Guy", "username":"Testing123", "password":"shield1", "email":"testing4@gmail.com", "address":"9998", "phone":"999-999-9998", "altemail":"alt99"}, follow=True)
         self.assertEqual(User.objects.all()[0].email, "testing@gmail.com")
 
     def test_duplicatePassword(self):
-        self.client.post("/accountmanagement/", {"username":"Testing1234", "password":"sword1", "email":"testing4@gmail.com", "name":"Manager Maria"}, follow=True)
+        self.client.post("/accountmanagement/", {"name":"New Guy", "username":"Testing1234", "password":"sword1", "email":"testing4@gmail.com","address":"9998", "phone":"999-999-9998", "altemail":"alt99" }, follow=True)
         self.assertEqual(len(User.objects.all()), 2)
 
     #entering same username and password when creating a geniuenly new account
     def test_duplicateUserandPassword(self):
-        self.client.post("/accountmanagement/", {"username":"shield1", "password":"shield1", "email":"testing4@gmail.com", "name":"Manager Maria"}, follow=True)
+        self.client.post("/accountmanagement/", {"name":"New Guy", "username":"shield1", "password":"shield1", "email":"testing4@gmail.com", "address":"9998", "phone":"999-999-9998", "altemail":"alt99"}, follow=True)
         self.assertEqual(len(User.objects.all()),2)
 
     def test_passwordHashed(self):

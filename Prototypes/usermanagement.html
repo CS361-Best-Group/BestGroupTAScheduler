@@ -1,16 +1,17 @@
 <!DOCTYPE html>
 <html>
- <head>
+{% load static %}
+<head>
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width">
    <title>replit</title>
-   <link href="style.css" rel="stylesheet" type="text/css" />
+   <link href="{% static 'styles/style.css' %}" rel="stylesheet" type="text/css" />
  </head>
  <body>
    <h1>User List</h1>
    <section class="navigationMenu">
      <div>
-       <a href="index.html">Home</a>
+       <a href="/">Home</a>
      </div>
    <!-- do we want this horizontal or vertical?-->
      <div>
@@ -29,7 +30,13 @@
          <div class="role">Admin</div>
        </summary>
          <div class="email">{{ i.email }}</div>
-         <div class="altEmail">AdminAltEmail@email.com</div>
+         {%  for j in Profiles %}
+         {% if j.user == i  %}
+         <div class="altEmail">{{j.alt_email}}</div>
+         <div>{{j.address}}</div>
+         <div>{{j.phone}}</div>
+         {% endif %}
+         {% endfor %}
      </details>
        {% endfor %}
 
@@ -40,7 +47,13 @@
          <div class="role">TA</div>
        </summary>
          <div class="email">{{ i.email }}</div>
-         <div class="altEmail">AlternateEmail@email.com</div>
+         {%  for j in Profiles %} }}
+         {% if j.user == i  %}
+         <div class="altEmail">{{j.alt_email}}</div>
+         <div>{{j.address}}</div>
+         <div>{{j.phone}}</div>
+         {% endif %}
+         {% endfor %}
      </details>
        {% endfor %}
 
@@ -51,11 +64,18 @@
          <div class="role">TA</div>
        </summary>
          <div class="email">{{ i.email }}</div>
-         <div class="altEmail">AlternateEmail@email.com</div>
-     </details>
+         {%  for j in Profiles %} }}
+         {% if j.user == i  %}
+         <div class="altEmail">{{j.alt_email}}</div>
+         <div>{{j.address}}</div>
+         <div>{{j.phone}}</div>
+         {% endif %}
+         {% endfor %}
+
+             </details>
    {% endfor %}
    </section>
-r
+
    <h1 id="addUser">Add User</h1>
    <form class="inputBox" action="/accountmanagement/" method="post">
      {% csrf_token %}
@@ -98,7 +118,16 @@ r
        <label for=email">Alternate Email:</label>
        <input type="email" id="name" name="altemail" required minlength="4" maxlength="16" size="10">
      </div>
-     <div>
+       <div>
+       <label for=address">Address:</label>
+       <input type="text" id="name" name="address" required minlength="4" maxlength="16" size="10">
+       </div>
+
+       <div>
+       <label for="phone">Phone Number:</label>
+       <input type="text" id="name" name="phone" required minlength="4" maxlength="16" size="10">
+       </div>
+
        <input type="submit" value="Cancel">
        <input type="submit" value="Confirm">
      </div>
