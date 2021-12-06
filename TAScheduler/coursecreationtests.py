@@ -19,9 +19,9 @@ class TestCourseCreationGet(TestCase):
 
         self.Course1.users.set([self.dummy])
         #self.Section1=Section(name="CS361-001", course=self.Course1, users=[self.TA])
-        self.Section1=Section(name="CS361-001")
+        self.Section1=Section(name="CS361-001", course=self.Course1)
         self.Section1.save()
-        self.Section1.course=self.Course1
+        #self.Section1.course=self.Course1
         self.Section1.users.set([self.TA])
         self.Section1.save()
         self.r=self.client.get("/coursemanagement/")
@@ -70,14 +70,14 @@ class TestCourseCreationGet(TestCase):
         Course2.save()
         Course2.users.set([dummy2])
         Course2.save()
-        Section2=Section(name="CS423-001")
+        Section2=Section(name="CS423-001", course=Course2)
         Section2.save()
         Section2.users.set([TA2])
-        Section2.course=Course2
+        #Section2.course=Course2
         Section2.save()
 
         r=self.client.get("/coursemanagement/")
-        self.assertEqual(r.context["Courses"][1].name, "CS 423")
+        self.assertEqual(r.context["Courses"][0].name, "CS 423")
 
     def test_displayMultipleCourseName(self):
         dummy2 = User.objects.create_user(username="dummy298", password="passw1rd", email="email2@gmail.com", first_name="dummy2")
@@ -88,10 +88,10 @@ class TestCourseCreationGet(TestCase):
         Course2.save()
         Course2.users.set([dummy2])
         Course2.save()
-        Section2 = Section(name="CS423-001")
+        Section2 = Section(name="CS423-001", course=Course2)
         Section2.save()
         Section2.users.set([TA2])
-        Section2.course=Course2
+#        Section2.course=Course2
         Section2.save()
 
         r=self.client.get("/coursemanagement/")
@@ -106,12 +106,12 @@ class TestCourseCreationGet(TestCase):
         Course2.users.set([dummy2])
         Course2.save()
 
-        Section2 = Section(name="CS423-001")
+        Section2 = Section(name="CS423-001", course=Course2)
         Section2.save()
         Section2.users.set([TA2])
-        Section2.course=Course2
+#        Section2.course=Course2
         r = self.client.get("/coursemanagement/")
-        self.assertEqual(r.context["Courses"][1].description, "also neat")
+        self.assertEqual(r.context["Courses"][0].description, "also neat")
 
     def test_displayMultipleCourseDescription(self):
         dummy2 = User.objects.create_user(username="dummy298", password="passw1rd", email="email2@gmail.com", first_name="dummy2")
@@ -123,10 +123,10 @@ class TestCourseCreationGet(TestCase):
         Course2.users.set([dummy2])
         Course2.save()
 
-        Section2 = Section(name="CS423-001")
+        Section2 = Section(name="CS423-001", course=Course2)
         Section2.save()
         Section2.users.set([TA2])
-        Section2.course=Course2
+#        Section2.course=Course2
         Section2.save()
 
 
@@ -143,9 +143,9 @@ class TestCourseCreationGet(TestCase):
         Course2.users.set([dummy2])
         Course2.save()
 
-        Section2 = Section(name="CS423-001")
+        Section2 = Section(name="CS423-001", course=Course2)
         Section2.save()
-        Section2.users.set([TA2])
+#        Section2.users.set([TA2])
         Section2.course=Course2
         Section2.save()
 
@@ -153,7 +153,7 @@ class TestCourseCreationGet(TestCase):
         r=self.client.get("/coursemanagement/")
 
 
-        self.assertEqual(r.context["Courses"][1].users.all()[0].first_name, "dummy2")
+        self.assertEqual(r.context["Courses"][0].users.all()[0].first_name, "dummy2")
 
     def test_displayMultipleCourseUsers(self):
         dummy2 = User.objects.create_user(username="dummy298", password="passw1rd", email="email2@gmail.com", first_name="dummy2")
@@ -166,10 +166,10 @@ class TestCourseCreationGet(TestCase):
         Course2.save()
         Course2.users.set([dummy2])
         Course2.save()
-        Section2 = Section(name="CS423-001")
+        Section2 = Section(name="CS423-001", course=Course2)
         Section2.save()
         Section2.users.set([TA2])
-        Section2.course=Course2
+#        Section2.course=Course2
         Section2.save()
 
         r=self.client.get("/coursemanagement/")
@@ -187,9 +187,9 @@ class TestCourseCreationGet(TestCase):
 
 
 
-        Section2 = Section(name="CS423-001")
+        Section2 = Section(name="CS423-001", course=Course2)
         Section2.save()
-        Section2.course=Course2
+#        Section2.course=Course2
         Section2.users.set([TA2])
         Section2.save()
         r = self.client.get("/coursemanagement/")
@@ -205,7 +205,7 @@ class TestCourseCreationGet(TestCase):
         Course2.save()
         Course2.users.set([dummy2])
         Course2.save()
-        Section2 = Section(name="CS423-001")
+        Section2 = Section(name="CS423-001", course=Course2)
         Section2.save()
         Section2.users.set([TA2])
         Section2.course=Course2
@@ -225,10 +225,10 @@ class TestCourseCreationGet(TestCase):
         Course2.users.set([dummy2])
         Course2.save()
 
-        Section2 = Section(name="CS423-001")
+        Section2 = Section(name="CS423-001", course=Course2)
         Section2.save()
         Section2.users.set([TA2])
-        Section2.course=Course2
+#        Section2.course=Course2
         Section2.save()
 
 
@@ -245,10 +245,10 @@ class TestCourseCreationGet(TestCase):
         Course2.save()
         Course2.users.set([dummy2])
         Course2.save()
-        Section2 = Section(name="CS423-001")
+        Section2 = Section(name="CS423-001", course=Course2)
         Section2.save()
         Section2.users.set([TA2])
-        Section2.course=Course2
+#        Section2.course=Course2
         Section2.save()
 
         r=self.client.get("/coursemanagement/")
@@ -400,9 +400,9 @@ class TestCourseCreationGet(TestCase):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
 
-        Section2=Section(name="CS361-002")
+        Section2=Section(name="CS361-002", course=self.Course1)
         Section2.save()
-        Section2.course=self.Course1
+        #Section2.course=self.Course1
         Section2.users.set([dummy2])
         Section2.save()
         r=self.client.get("/coursemanagement/")
@@ -412,10 +412,10 @@ class TestCourseCreationGet(TestCase):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
 
-        Section2 = Section(name="CS361-002")
+        Section2 = Section(name="CS361-002", course=self.Course1)
         Section2.save()
         Section2.users.set([dummy2])
-        Section2.course=self.Course1
+#        Section2.course=self.Course1
         Section2.save()
 
         r = self.client.get("/coursemanagement/")
@@ -425,9 +425,9 @@ class TestCourseCreationGet(TestCase):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
 
-        Section2=Section(name="CS361-001")
+        Section2=Section(name="CS361-002", course=self.Course1)
         Section2.save()
-        Section2.course=self.Course1
+#        Section2.course=self.Course1
         Section2.users.set([dummy2])
         Section2.save()
 
@@ -438,10 +438,10 @@ class TestCourseCreationGet(TestCase):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
 
-        Section2 = Section(name="CS361-002")
+        Section2 = Section(name="CS361-002", course=self.Course1)
         Section2.save()
         Section2.users.set([dummy2])
-        Section2.course=self.Course1
+#        Section2.course=self.Course1
         Section2.save()
 
         r = self.client.get("/coursemanagement/")
@@ -450,10 +450,10 @@ class TestCourseCreationGet(TestCase):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
 
-        Section2=Section(name="CS361-002")
+        Section2=Section(name="CS361-002", course=self.Course1)
         Section2.save()
         Section2.users.set([dummy2])
-        Section2.course=self.Course1
+#        Section2.course=self.Course1
         Section2.save()
 
         r=self.client.get("/coursemanagement/")
@@ -463,10 +463,10 @@ class TestCourseCreationGet(TestCase):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
 
-        Section2 = Section(name="CS361-002")
+        Section2 = Section(name="CS361-002", course=self.Course1)
         Section2.save()
         Section2.users.set([dummy2])
-        Section2.course=self.Course1
+#        Section2.course=self.Course1
 
         Section2.save()
 
@@ -476,10 +476,10 @@ class TestCourseCreationGet(TestCase):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
 
-        Section2=Section(name="CS361-002")
+        Section2=Section(name="CS361-002", course=self.Course1)
         Section2.save()
         Section2.users.set([dummy2])
-        Section2.course=self.Course1
+#        Section2.course=self.Course1
         Section2.save()
 
 
@@ -491,10 +491,10 @@ class TestCourseCreationGet(TestCase):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
 
-        Section2 = Section(name="CS361-002")
+        Section2 = Section(name="CS361-002", course=self.Course1)
         Section2.save()
         Section2.users.set([dummy2])
-        Section2.course=self.Course1
+#        Section2.course=self.Course1
         Section2.save()
 
         r = self.client.get("/coursemanagement/")
@@ -503,10 +503,10 @@ class TestCourseCreationGet(TestCase):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
 
-        Section2=Section(name="CS361-002")
+        Section2=Section(name="CS361-002", course=self.Course1)
         Section2.save()
         Section2.users.set([dummy2])
-        Section2.course=self.Course1
+#        Section2.course=self.Course1
         Section2.save()
 
 
@@ -517,10 +517,10 @@ class TestCourseCreationGet(TestCase):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
 
-        Section2 = Section(name="CS361-002")
+        Section2 = Section(name="CS361-002", course=self.Course1)
         Section2.save()
         Section2.users.set([dummy2])
-        Section2.course=self.Course1
+#        Section2.course=self.Course1
 
         Section2.save()
 
@@ -530,10 +530,10 @@ class TestCourseCreationGet(TestCase):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
 
-        Section2=Section(name="CS361-002")
+        Section2=Section(name="CS361-002", course=self.Course1)
         Section2.save()
         Section2.users.set([dummy2])
-        Section2.course=self.Course1
+        #Section2.course=self.Course1
         Section2.save()
         r=self.client.get("/coursemanagement/")
         self.assertEqual(Section.objects.filter(course=self.Course1)[1].users.all()[0].first_name, "dummy2")
@@ -542,10 +542,10 @@ class TestCourseCreationGet(TestCase):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
 
-        Section2 = Section(name="CS361-002")
+        Section2 = Section(name="CS361-002", course=self.Course1)
         Section2.save()
         Section2.users.set([dummy2])
-        Section2.course=self.Course1
+        #Section2.course=self.Course1
         Section2.save()
         r = self.client.get("/coursemanagement/")
         self.assertContains(r, "<li>dummy2</li>")
@@ -561,10 +561,10 @@ class TestCourseCreationGet(TestCase):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
 
-        Section2 = Section(name="CS361-002")
+        Section2 = Section(name="CS361-002", course=self.Course1)
         Section2.save()
         Section2.users.set([dummy2])
-        Section2.course=self.Course1
+#        Section2.course=self.Course1
         Section2.save()
 
         dummy3 = User.objects.create_user(username="dummy321", password="password", email="noemail", first_name="dummy3")
@@ -579,10 +579,10 @@ class TestCourseCreationGet(TestCase):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
 
-        Section2 = Section(name="CS361-002")
+        Section2 = Section(name="CS361-002", course=self.Course1)
         Section2.save()
         Section2.users.set([dummy2])
-        Section2.course=self.Course1
+#        Section2.course=self.Course1
         Section2.save()
 
         dummy3 = User.objects.create_user(username="dummy321", password="password", email="noemail", first_name="dummy3")
@@ -598,10 +598,10 @@ class TestCourseCreationGet(TestCase):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
 
-        Section2 = Section(name="CS361-002")
+        Section2 = Section(name="CS361-002", course=self.Course1)
         Section2.save()
         Section2.users.set([dummy2])
-        Section2.course = self.Course1
+#        Section2.course = self.Course1
         Section2.save()
 
         dummy3 = User.objects.create_user(username="dummy321", password="password", email="noemail",first_name="dummy3")
@@ -617,10 +617,10 @@ class TestCourseCreationGet(TestCase):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
 
-        Section2 = Section(name="CS361-002")
+        Section2 = Section(name="CS361-002", course=self.Course1)
         Section2.save()
         Section2.users.set([dummy2])
-        Section2.course = self.Course1
+#        Section2.course = self.Course1
         Section2.save()
 
         dummy3 = User.objects.create_user(username="dummy321", password="password", email="noemail", first_name="dummy3")
@@ -634,10 +634,10 @@ class TestCourseCreationGet(TestCase):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
 
-        Section2 = Section(name="CS361-002")
+        Section2 = Section(name="CS361-002", course=self.Course1)
         Section2.save()
         Section2.users.set([dummy2])
-        Section2.course = self.Course1
+#        Section2.course = self.Course1
         Section2.save()
 
         dummy3 = User.objects.create_user(username="dummy321", password="password", email="noemail",first_name="dummy3")
@@ -656,8 +656,8 @@ class TestCourseCreationGet(TestCase):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
 
-        Section2 = Section(name="CS361-002")
-        Section2.save()
+        Section2 = Section(name="CS361-002", course=self.Course1)
+#        Section2.save()
         Section2.users.set([dummy2])
         Section2.course = self.Course1
         Section2.save()
@@ -673,10 +673,10 @@ class TestCourseCreationGet(TestCase):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
 
-        Section2 = Section(name="CS361-002")
+        Section2 = Section(name="CS361-002", course=self.Course1)
         Section2.save()
         Section2.users.set([dummy2])
-        Section2.course = self.Course1
+        #Section2.course = self.Course1
         Section2.save()
 
         dummy3 = User.objects.create_user(username="dummy321", password="password", email="noemail",first_name="dummy3")
@@ -691,10 +691,10 @@ class TestCourseCreationGet(TestCase):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
 
-        Section2 = Section(name="CS361-002")
+        Section2 = Section(name="CS361-002", course=self.Course1)
         Section2.save()
         Section2.users.set([dummy2])
-        Section2.course = self.Course1
+#        Section2.course = self.Course1
         Section2.save()
 
         dummy3 = User.objects.create_user(username="dummy321", password="password", email="noemail",first_name="dummy3")
@@ -710,10 +710,10 @@ class TestCourseCreationGet(TestCase):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
 
-        Section2 = Section(name="CS361-002")
+        Section2 = Section(name="CS361-002", course=self.Course1)
         Section2.save()
         Section2.users.set([dummy2])
-        Section2.course = self.Course1
+#        Section2.course = self.Course1
         Section2.save()
 
         dummy3 = User.objects.create_user(username="dummy321", password="password", email="noemail",first_name="dummy3")
@@ -728,10 +728,10 @@ class TestCourseCreationGet(TestCase):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
 
-        Section2 = Section(name="CS361-002")
+        Section2 = Section(name="CS361-002", course=self.Course1)
         Section2.save()
         Section2.users.set([dummy2])
-        Section2.course = self.Course1
+#        Section2.course = self.Course1
         Section2.save()
 
         dummy3 = User.objects.create_user(username="dummy321", password="password", email="noemail",first_name="dummy3")
@@ -846,7 +846,7 @@ class TestCourseCreationPost(TestCase):
     def test_courseCreation(self):
 
         self.client.post("/coursemanagement/", {"coursename":"CS361", "coursedescription":"neat"}, follow=True)
-        print(Course.objects.all())
+
         self.assertEqual(len(Course.objects.all()),1)
 
     def test_courseCreationName(self):
@@ -945,10 +945,10 @@ class TestCourseCreationPost(TestCase):
     def test_secondNewSection(self):
         Course1 = Course(name="CS361", description="neat")
         Course1.save()
-        Section1 = Section(name="CS361-001")
+        Section1 = Section(name="CS361-001", course=Course1)
         Section1.save()
         Section1.users.set([])
-        Section1.course = Course1
+#        Section1.course = Course1
         Section1.save()
 
         self.client.post("/coursemanagement/", {"course": "CS361"}, follow=True)
@@ -957,10 +957,10 @@ class TestCourseCreationPost(TestCase):
     def test_secondNewSectionName(self):
         Course1 = Course(name="CS361", description="neat")
         Course1.save()
-        Section1 = Section(name="CS361-001")
+        Section1 = Section(name="CS361-001", course=Course1)
         Section1.save()
         Section1.users.set([])
-        Section1.course=Course1
+#        Section1.course=Course1
         Section1.save()
 
         self.client.post("/coursemanagement/", {"course":"CS361"}, follow=True)
@@ -968,10 +968,10 @@ class TestCourseCreationPost(TestCase):
     def test_displaySecondNewSectionName(self):
         Course1 = Course(name="CS361", description="neat")
         Course1.save()
-        Section1 = Section(name="CS361-001")
+        Section1 = Section(name="CS361-001", course=Course1)
         Section1.save()
         Section1.users.set([])
-        Section1.course = Course1
+#        Section1.course = Course1
         Section1.save()
         r=self.client.post("/coursemanagement/", {"course":"CS361"}, follow=True)
         self.assertContains(r, "<summary>CS361-002</summary>")
@@ -980,7 +980,7 @@ class TestCourseCreationPost(TestCase):
     def test_secondNewSectionUsers(self):
         Course1 = Course(name="CS361", description="neat")
         Course1.save()
-        Section1 = Section(name="CS361-001")
+        Section1 = Section(name="CS361-001", course=Course1)
         Section1.save()
         Section1.users.set([])
         Section1.course = Course1
@@ -992,10 +992,10 @@ class TestCourseCreationPost(TestCase):
     def test_secondNewSectionCourse(self):
         Course1 = Course(name="CS361", description="neat")
         Course1.save()
-        Section1 = Section(name="CS361-001")
+        Section1 = Section(name="CS361-001", course=Course1)
         Section1.save()
         Section1.users.set([])
-        Section1.course = Course1
+#        Section1.course = Course1
         Section1.save()
 
         self.client.post("/coursemanagement/", {"course": "CS361"}, follow=True)
@@ -1030,22 +1030,22 @@ class TestCourseCreationPost(TestCase):
         Course1.save()
         Course2.save()
 
-        Section11=Section(name="CS361-001")
+        Section11=Section(name="CS361-001", course=Course1)
         Section11.save()
-        Section11.course=Course1
+#        Section11.course=Course1
         Section11.users.set([])
         Section11.save()
 
 
-        Section12=Section(name="CS361-002")
+        Section12=Section(name="CS361-002", course=Course1)
         Section12.save()
-        Section12.course=Course1
+#        Section12.course=Course1
         Section12.users.set([])
         Section12.save()
 
-        Section21=Section(name="CS423-001")
+        Section21=Section(name="CS423-001", course=Course2)
         Section21.save()
-        Section21.course=Course2
+#        Section21.course=Course2
         Section21.users.set([])
         Section21.save()
 
@@ -1066,21 +1066,21 @@ class TestCourseCreationPost(TestCase):
         Course1.save()
         Course2.save()
 
-        Section11 = Section(name="CS361-001")
+        Section11 = Section(name="CS361-001", course=Course1)
         Section11.save()
-        Section11.course = Course1
+        #        Section11.course=Course1
         Section11.users.set([])
         Section11.save()
 
-        Section12 = Section(name="CS361-002")
+        Section12 = Section(name="CS361-002", course=Course1)
         Section12.save()
-        Section12.course = Course1
+        #        Section12.course=Course1
         Section12.users.set([])
         Section12.save()
 
-        Section21 = Section(name="CS423-001")
+        Section21 = Section(name="CS423-001", course=Course2)
         Section21.save()
-        Section21.course = Course2
+        #        Section21.course=Course2
         Section21.users.set([])
         Section21.save()
 
@@ -1102,21 +1102,21 @@ class TestCourseCreationPost(TestCase):
         Course1.save()
         Course2.save()
 
-        Section11 = Section(name="CS361-001")
+        Section11 = Section(name="CS361-001", course=Course1)
         Section11.save()
-        Section11.course = Course1
+        #        Section11.course=Course1
         Section11.users.set([])
         Section11.save()
 
-        Section12 = Section(name="CS361-002")
+        Section12 = Section(name="CS361-002", course=Course1)
         Section12.save()
-        Section12.course = Course1
+        #        Section12.course=Course1
         Section12.users.set([])
         Section12.save()
 
-        Section21 = Section(name="CS423-001")
+        Section21 = Section(name="CS423-001", course=Course2)
         Section21.save()
-        Section21.course = Course2
+        #        Section21.course=Course2
         Section21.users.set([])
         Section21.save()
 
@@ -1124,37 +1124,37 @@ class TestCourseCreationPost(TestCase):
         self.assertEqual(Course1.name, "CS361")
 
     def test_displaysecondCourseSecondSectionCourse1Name(self):
-            Course1 = Course(name="CS361", description="neat")
-            Course1.save()
-            Course1.users.set([])
+        Course1 = Course(name="CS361", description="neat")
+        Course1.save()
+        Course1.users.set([])
 
-            Course2 = Course(name="CS423", description="Also neat")
-            Course2.save()
-            Course2.users.set([])
+        Course2 = Course(name="CS423", description="Also neat")
+        Course2.save()
+        Course2.users.set([])
 
-            Course1.save()
-            Course2.save()
+        Course1.save()
+        Course2.save()
 
-            Section11 = Section(name="CS361-001")
-            Section11.save()
-            Section11.course = Course1
-            Section11.users.set([])
-            Section11.save()
+        Section11 = Section(name="CS361-001", course=Course1)
+        Section11.save()
+        #        Section11.course=Course1
+        Section11.users.set([])
+        Section11.save()
 
-            Section12 = Section(name="CS361-002")
-            Section12.save()
-            Section12.course = Course1
-            Section12.users.set([])
-            Section12.save()
+        Section12 = Section(name="CS361-002", course=Course1)
+        Section12.save()
+        #        Section12.course=Course1
+        Section12.users.set([])
+        Section12.save()
 
-            Section21 = Section(name="CS423-001")
-            Section21.save()
-            Section21.course = Course2
-            Section21.users.set([])
-            Section21.save()
+        Section21 = Section(name="CS423-001", course=Course2)
+        Section21.save()
+        #        Section21.course=Course2
+        Section21.users.set([])
+        Section21.save()
 
-            r = self.client.post("/coursemanagement/", {"course": "CS423"}, follow=True)
-            self.assertContains(r, '<summary name="course">CS361</summary>')
+        r = self.client.post("/coursemanagement/", {"course": "CS423"}, follow=True)
+        self.assertContains(r, '<summary name="course">CS361</summary>')
 
     def test_secondCourseSecondSectionCourse2Name(self):
         Course1 = Course(name="CS361", description="neat")
@@ -1168,21 +1168,21 @@ class TestCourseCreationPost(TestCase):
         Course1.save()
         Course2.save()
 
-        Section11 = Section(name="CS361-001")
+        Section11 = Section(name="CS361-001", course=Course1)
         Section11.save()
-        Section11.course = Course1
+        #        Section11.course=Course1
         Section11.users.set([])
         Section11.save()
 
-        Section12 = Section(name="CS361-002")
+        Section12 = Section(name="CS361-002", course=Course1)
         Section12.save()
-        Section12.course = Course1
+        #        Section12.course=Course1
         Section12.users.set([])
         Section12.save()
 
-        Section21 = Section(name="CS423-001")
+        Section21 = Section(name="CS423-001", course=Course2)
         Section21.save()
-        Section21.course = Course2
+        #        Section21.course=Course2
         Section21.users.set([])
         Section21.save()
 
@@ -1190,38 +1190,37 @@ class TestCourseCreationPost(TestCase):
         self.assertEqual(Course2.name, "CS423")
 
     def test_displaySecondCourseSecondSectionCourse2Name(self):
-        def test_displaysecondCourseSecondSectionCourse1(self):
-            Course1 = Course(name="CS361", description="neat")
-            Course1.save()
-            Course1.users.set([])
+        Course1 = Course(name="CS361", description="neat")
+        Course1.save()
+        Course1.users.set([])
 
-            Course2 = Course(name="CS423", description="Also neat")
-            Course2.save()
-            Course2.users.set([])
+        Course2 = Course(name="CS423", description="Also neat")
+        Course2.save()
+        Course2.users.set([])
 
-            Course1.save()
-            Course2.save()
+        Course1.save()
+        Course2.save()
 
-            Section11 = Section(name="CS361-001")
-            Section11.save()
-            Section11.course = Course1
-            Section11.users.set([])
-            Section11.save()
+        Section11 = Section(name="CS361-001", course=Course1)
+        Section11.save()
+        #        Section11.course=Course1
+        Section11.users.set([])
+        Section11.save()
 
-            Section12 = Section(name="CS361-002")
-            Section12.save()
-            Section12.course = Course1
-            Section12.users.set([])
-            Section12.save()
+        Section12 = Section(name="CS361-002", course=Course1)
+        Section12.save()
+        #        Section12.course=Course1
+        Section12.users.set([])
+        Section12.save()
 
-            Section21 = Section(name="CS423-001")
-            Section21.save()
-            Section21.course = Course2
-            Section21.users.set([])
-            Section21.save()
+        Section21 = Section(name="CS423-001", course=Course2)
+        Section21.save()
+        #        Section21.course=Course2
+        Section21.users.set([])
+        Section21.save()
 
-            r = self.client.post("/coursemanagment/", {"course": "CS423"}, follow=True)
-            self.assertContains(r, "<summary>CS423</summary>")
+        r = self.client.post("/coursemanagement/", {"course": "CS423"}, follow=True)
+        self.assertContains(r, '<summary name="course">CS423</summary>')
 
     def test_secondCourseSecondSectionCourse1Description(self):
         Course1 = Course(name="CS361", description="neat")
@@ -1235,21 +1234,21 @@ class TestCourseCreationPost(TestCase):
         Course1.save()
         Course2.save()
 
-        Section11 = Section(name="CS361-001")
+        Section11 = Section(name="CS361-001", course=Course1)
         Section11.save()
-        Section11.course = Course1
+        #        Section11.course=Course1
         Section11.users.set([])
         Section11.save()
 
-        Section12 = Section(name="CS361-002")
+        Section12 = Section(name="CS361-002", course=Course1)
         Section12.save()
-        Section12.course = Course1
+        #        Section12.course=Course1
         Section12.users.set([])
         Section12.save()
 
-        Section21 = Section(name="CS423-001")
+        Section21 = Section(name="CS423-001", course=Course2)
         Section21.save()
-        Section21.course = Course2
+        #        Section21.course=Course2
         Section21.users.set([])
         Section21.save()
 
@@ -1267,21 +1266,21 @@ class TestCourseCreationPost(TestCase):
         Course1.save()
         Course2.save()
 
-        Section11 = Section(name="CS361-001")
+        Section11 = Section(name="CS361-001", course=Course1)
         Section11.save()
-        Section11.course = Course1
+        #        Section11.course=Course1
         Section11.users.set([])
         Section11.save()
 
-        Section12 = Section(name="CS361-002")
+        Section12 = Section(name="CS361-002", course=Course1)
         Section12.save()
-        Section12.course = Course1
+        #        Section12.course=Course1
         Section12.users.set([])
         Section12.save()
 
-        Section21 = Section(name="CS423-001")
+        Section21 = Section(name="CS423-001", course=Course2)
         Section21.save()
-        Section21.course = Course2
+        #        Section21.course=Course2
         Section21.users.set([])
         Section21.save()
 
@@ -1299,23 +1298,24 @@ class TestCourseCreationPost(TestCase):
         Course1.save()
         Course2.save()
 
-        Section11 = Section(name="CS361-001")
+        Section11 = Section(name="CS361-001", course=Course1)
         Section11.save()
-        Section11.course = Course1
+        #        Section11.course=Course1
         Section11.users.set([])
         Section11.save()
 
-        Section12 = Section(name="CS361-002")
+        Section12 = Section(name="CS361-002", course=Course1)
         Section12.save()
-        Section12.course = Course1
+        #        Section12.course=Course1
         Section12.users.set([])
         Section12.save()
 
-        Section21 = Section(name="CS423-001")
+        Section21 = Section(name="CS423-001", course=Course2)
         Section21.save()
-        Section21.course = Course2
+        #        Section21.course=Course2
         Section21.users.set([])
         Section21.save()
+
 
         self.client.post("/coursemanagment/", {"course": "CS423"}, follow=True)
         self.assertEqual(Course2.description, "Also neat")
@@ -1332,21 +1332,21 @@ class TestCourseCreationPost(TestCase):
         Course1.save()
         Course2.save()
 
-        Section11 = Section(name="CS361-001")
+        Section11 = Section(name="CS361-001", course=Course1)
         Section11.save()
-        Section11.course = Course1
+        #        Section11.course=Course1
         Section11.users.set([])
         Section11.save()
 
-        Section12 = Section(name="CS361-002")
+        Section12 = Section(name="CS361-002", course=Course1)
         Section12.save()
-        Section12.course = Course1
+        #        Section12.course=Course1
         Section12.users.set([])
         Section12.save()
 
-        Section21 = Section(name="CS423-001")
+        Section21 = Section(name="CS423-001", course=Course2)
         Section21.save()
-        Section21.course = Course2
+        #        Section21.course=Course2
         Section21.users.set([])
         Section21.save()
 
@@ -1364,21 +1364,21 @@ class TestCourseCreationPost(TestCase):
         Course1.save()
         Course2.save()
 
-        Section11 = Section(name="CS361-001")
+        Section11 = Section(name="CS361-001", course=Course1)
         Section11.save()
-        Section11.course = Course1
+        #        Section11.course=Course1
         Section11.users.set([])
         Section11.save()
 
-        Section12 = Section(name="CS361-002")
+        Section12 = Section(name="CS361-002", course=Course1)
         Section12.save()
-        Section12.course = Course1
+        #        Section12.course=Course1
         Section12.users.set([])
         Section12.save()
 
-        Section21 = Section(name="CS423-001")
+        Section21 = Section(name="CS423-001", course=Course2)
         Section21.save()
-        Section21.course = Course2
+        #        Section21.course=Course2
         Section21.users.set([])
         Section21.save()
 
@@ -1396,21 +1396,21 @@ class TestCourseCreationPost(TestCase):
         Course1.save()
         Course2.save()
 
-        Section11 = Section(name="CS361-001")
+        Section11 = Section(name="CS361-001", course=Course1)
         Section11.save()
-        Section11.course = Course1
+        #        Section11.course=Course1
         Section11.users.set([])
         Section11.save()
 
-        Section12 = Section(name="CS361-002")
+        Section12 = Section(name="CS361-002", course=Course1)
         Section12.save()
-        Section12.course = Course1
+        #        Section12.course=Course1
         Section12.users.set([])
         Section12.save()
 
-        Section21 = Section(name="CS423-001")
+        Section21 = Section(name="CS423-001", course=Course2)
         Section21.save()
-        Section21.course = Course2
+        #        Section21.course=Course2
         Section21.users.set([])
         Section21.save()
 
@@ -1429,21 +1429,21 @@ class TestCourseCreationPost(TestCase):
         Course1.save()
         Course2.save()
 
-        Section11 = Section(name="CS361-001")
+        Section11 = Section(name="CS361-001", course=Course1)
         Section11.save()
-        Section11.course = Course1
+        #        Section11.course=Course1
         Section11.users.set([])
         Section11.save()
 
-        Section12 = Section(name="CS361-002")
+        Section12 = Section(name="CS361-002", course=Course1)
         Section12.save()
-        Section12.course = Course1
+        #        Section12.course=Course1
         Section12.users.set([])
         Section12.save()
 
-        Section21 = Section(name="CS423-001")
+        Section21 = Section(name="CS423-001", course=Course2)
         Section21.save()
-        Section21.course = Course2
+        #        Section21.course=Course2
         Section21.users.set([])
         Section21.save()
 
@@ -1461,21 +1461,21 @@ class TestCourseCreationPost(TestCase):
         Course1.save()
         Course2.save()
 
-        Section11 = Section(name="CS361-001")
+        Section11 = Section(name="CS361-001", course=Course1)
         Section11.save()
-        Section11.course = Course1
+        #        Section11.course=Course1
         Section11.users.set([])
         Section11.save()
 
-        Section12 = Section(name="CS361-002")
+        Section12 = Section(name="CS361-002", course=Course1)
         Section12.save()
-        Section12.course = Course1
+        #        Section12.course=Course1
         Section12.users.set([])
         Section12.save()
 
-        Section21 = Section(name="CS423-001")
+        Section21 = Section(name="CS423-001", course=Course2)
         Section21.save()
-        Section21.course = Course2
+        #        Section21.course=Course2
         Section21.users.set([])
         Section21.save()
 
@@ -1493,21 +1493,21 @@ class TestCourseCreationPost(TestCase):
         Course1.save()
         Course2.save()
 
-        Section11 = Section(name="CS361-001")
+        Section11 = Section(name="CS361-001", course=Course1)
         Section11.save()
-        Section11.course = Course1
+        #        Section11.course=Course1
         Section11.users.set([])
         Section11.save()
 
-        Section12 = Section(name="CS361-002")
+        Section12 = Section(name="CS361-002", course=Course1)
         Section12.save()
-        Section12.course = Course1
+        #        Section12.course=Course1
         Section12.users.set([])
         Section12.save()
 
-        Section21 = Section(name="CS423-001")
+        Section21 = Section(name="CS423-001", course=Course2)
         Section21.save()
-        Section21.course = Course2
+        #        Section21.course=Course2
         Section21.users.set([])
         Section21.save()
 
@@ -1526,21 +1526,21 @@ class TestCourseCreationPost(TestCase):
         Course1.save()
         Course2.save()
 
-        Section11 = Section(name="CS361-001")
+        Section11 = Section(name="CS361-001", course=Course1)
         Section11.save()
-        Section11.course = Course1
+        #        Section11.course=Course1
         Section11.users.set([])
         Section11.save()
 
-        Section12 = Section(name="CS361-002")
+        Section12 = Section(name="CS361-002", course=Course1)
         Section12.save()
-        Section12.course = Course1
+        #        Section12.course=Course1
         Section12.users.set([])
         Section12.save()
 
-        Section21 = Section(name="CS423-001")
+        Section21 = Section(name="CS423-001", course=Course2)
         Section21.save()
-        Section21.course = Course2
+        #        Section21.course=Course2
         Section21.users.set([])
         Section21.save()
 
@@ -1558,21 +1558,21 @@ class TestCourseCreationPost(TestCase):
         Course1.save()
         Course2.save()
 
-        Section11 = Section(name="CS361-001")
+        Section11 = Section(name="CS361-001", course=Course1)
         Section11.save()
-        Section11.course = Course1
+        #        Section11.course=Course1
         Section11.users.set([])
         Section11.save()
 
-        Section12 = Section(name="CS361-002")
+        Section12 = Section(name="CS361-002", course=Course1)
         Section12.save()
-        Section12.course = Course1
+        #        Section12.course=Course1
         Section12.users.set([])
         Section12.save()
 
-        Section21 = Section(name="CS423-001")
+        Section21 = Section(name="CS423-001", course=Course2)
         Section21.save()
-        Section21.course = Course2
+        #        Section21.course=Course2
         Section21.users.set([])
         Section21.save()
 
@@ -1593,21 +1593,21 @@ class TestCourseCreationPost(TestCase):
         Course1.save()
         Course2.save()
 
-        Section11 = Section(name="CS361-001")
+        Section11 = Section(name="CS361-001", course=Course1)
         Section11.save()
-        Section11.course = Course1
+        #        Section11.course=Course1
         Section11.users.set([])
         Section11.save()
 
-        Section12 = Section(name="CS361-002")
+        Section12 = Section(name="CS361-002", course=Course1)
         Section12.save()
-        Section12.course = Course1
+        #        Section12.course=Course1
         Section12.users.set([])
         Section12.save()
 
-        Section21 = Section(name="CS423-001")
+        Section21 = Section(name="CS423-001", course=Course2)
         Section21.save()
-        Section21.course = Course2
+        #        Section21.course=Course2
         Section21.users.set([])
         Section21.save()
 
@@ -1625,21 +1625,21 @@ class TestCourseCreationPost(TestCase):
         Course1.save()
         Course2.save()
 
-        Section11 = Section(name="CS361-001")
+        Section11 = Section(name="CS361-001", course=Course1)
         Section11.save()
-        Section11.course = Course1
+        #        Section11.course=Course1
         Section11.users.set([])
         Section11.save()
 
-        Section12 = Section(name="CS361-002")
+        Section12 = Section(name="CS361-002", course=Course1)
         Section12.save()
-        Section12.course = Course1
+        #        Section12.course=Course1
         Section12.users.set([])
         Section12.save()
 
-        Section21 = Section(name="CS423-001")
+        Section21 = Section(name="CS423-001", course=Course2)
         Section21.save()
-        Section21.course = Course2
+        #        Section21.course=Course2
         Section21.users.set([])
         Section21.save()
 
@@ -1658,21 +1658,21 @@ class TestCourseCreationPost(TestCase):
         Course1.save()
         Course2.save()
 
-        Section11 = Section(name="CS361-001")
+        Section11 = Section(name="CS361-001", course=Course1)
         Section11.save()
-        Section11.course = Course1
+        #        Section11.course=Course1
         Section11.users.set([])
         Section11.save()
 
-        Section12 = Section(name="CS361-002")
+        Section12 = Section(name="CS361-002", course=Course1)
         Section12.save()
-        Section12.course = Course1
+        #        Section12.course=Course1
         Section12.users.set([])
         Section12.save()
 
-        Section21 = Section(name="CS423-001")
+        Section21 = Section(name="CS423-001", course=Course2)
         Section21.save()
-        Section21.course = Course2
+        #        Section21.course=Course2
         Section21.users.set([])
         Section21.save()
 
@@ -1690,21 +1690,21 @@ class TestCourseCreationPost(TestCase):
         Course1.save()
         Course2.save()
 
-        Section11 = Section(name="CS361-001")
+        Section11 = Section(name="CS361-001", course=Course1)
         Section11.save()
-        Section11.course = Course1
+        #        Section11.course=Course1
         Section11.users.set([])
         Section11.save()
 
-        Section12 = Section(name="CS361-002")
+        Section12 = Section(name="CS361-002", course=Course1)
         Section12.save()
-        Section12.course = Course1
+        #        Section12.course=Course1
         Section12.users.set([])
         Section12.save()
 
-        Section21 = Section(name="CS423-001")
+        Section21 = Section(name="CS423-001", course=Course2)
         Section21.save()
-        Section21.course = Course2
+        #        Section21.course=Course2
         Section21.users.set([])
         Section21.save()
 
@@ -1723,21 +1723,21 @@ class TestCourseCreationPost(TestCase):
         Course1.save()
         Course2.save()
 
-        Section11 = Section(name="CS361-001")
+        Section11 = Section(name="CS361-001", course=Course1)
         Section11.save()
-        Section11.course = Course1
+        #        Section11.course=Course1
         Section11.users.set([])
         Section11.save()
 
-        Section12 = Section(name="CS361-002")
+        Section12 = Section(name="CS361-002", course=Course1)
         Section12.save()
-        Section12.course = Course1
+        #        Section12.course=Course1
         Section12.users.set([])
         Section12.save()
 
-        Section21 = Section(name="CS423-001")
+        Section21 = Section(name="CS423-001", course=Course2)
         Section21.save()
-        Section21.course = Course2
+        #        Section21.course=Course2
         Section21.users.set([])
         Section21.save()
 
@@ -1755,21 +1755,21 @@ class TestCourseCreationPost(TestCase):
         Course1.save()
         Course2.save()
 
-        Section11 = Section(name="CS361-001")
+        Section11 = Section(name="CS361-001", course=Course1)
         Section11.save()
-        Section11.course = Course1
+        #        Section11.course=Course1
         Section11.users.set([])
         Section11.save()
 
-        Section12 = Section(name="CS361-002")
+        Section12 = Section(name="CS361-002", course=Course1)
         Section12.save()
-        Section12.course = Course1
+        #        Section12.course=Course1
         Section12.users.set([])
         Section12.save()
 
-        Section21 = Section(name="CS423-001")
+        Section21 = Section(name="CS423-001", course=Course2)
         Section21.save()
-        Section21.course = Course2
+        #        Section21.course=Course2
         Section21.users.set([])
         Section21.save()
 
@@ -1787,21 +1787,21 @@ class TestCourseCreationPost(TestCase):
         Course1.save()
         Course2.save()
 
-        Section11 = Section(name="CS361-001")
+        Section11 = Section(name="CS361-001", course=Course1)
         Section11.save()
-        Section11.course = Course1
+        #        Section11.course=Course1
         Section11.users.set([])
         Section11.save()
 
-        Section12 = Section(name="CS361-002")
+        Section12 = Section(name="CS361-002", course=Course1)
         Section12.save()
-        Section12.course = Course1
+        #        Section12.course=Course1
         Section12.users.set([])
         Section12.save()
 
-        Section21 = Section(name="CS423-001")
+        Section21 = Section(name="CS423-001", course=Course2)
         Section21.save()
-        Section21.course = Course2
+        #        Section21.course=Course2
         Section21.users.set([])
         Section21.save()
 
@@ -1821,5 +1821,5 @@ class TestCourseCreationPost(TestCase):
         Course1.users.set([])
         Course1.save()
         self.client.post("/coursemanagement/", {"coursename": "CS361", "coursedescription": "A really cool course"},follow=True)
-        self.assertEqual(Course.objects.all()[0].description, "A really cool course")
+        self.assertEqual(Course.objects.all()[0].description, "A really neat course")
 #duplicates also
