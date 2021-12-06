@@ -32,6 +32,7 @@ class TestUrls(TestCase):
         r=self.client.get("/accountmanagement/")
         self.assertEqual(r.context.request.path, "/accountmanagement/")
 
+
     def test_homeTemplate(self):
         User1=User.objects.create_user(username="seth", password="bruh")
         User1.save()
