@@ -101,13 +101,14 @@
        </div>
 
      <div>
-       <label for="role">Role:</label>
-       <details><!-- dropdown for admin, but label for other users -->
-         <summary>Current Role</summary>
-         <div>Admin</div>
-         <div>Instructor</div>
-         <div>TA</div>
-       </details>
+         <label for="role">Role:</label>
+         <select name="role" id="role-select">
+             <option value="">--Please choose an option--</option>
+             <option value="admin">Admin</option>
+             <option value="instructor">Instructor</option>
+             <option value="TA">Teaching Assistant</option>
+         </select>
+
      </div>
        <div>
        <label for="email">Email:</label>
