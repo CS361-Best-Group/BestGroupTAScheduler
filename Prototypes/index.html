@@ -4,25 +4,17 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <title>replit</title>
+    <title>TA Scheduler | Home</title>
     <link href="{% static 'styles/style.css' %}" rel="stylesheet" type="text/css" />
   </head>
   <body>
-    <h1>Home</h1>
+    <h1>TA Scheduler | Home</h1>
     <section class="navigationMenu">
-      <div>
-        <a href=/profile/>Profile</a>
-      </div>
-      <div>
-        <a href="/accountmanagement/">User Management</a>
-      </div>
-      <div>
-        <a href=/coursemanagement/>Course Management</a>
-      </div>
-      <div>
-        <a href="/login/">Logout</a>
-        <!-- Needs a model to logout the user -->
-      </div>
-    </section>
+		<div class="current"><a href="/">Home</a></div>
+		<div><a href="/profile/">Profile</a></div>
+		<div><a href="/accountmanagement/">Users</a></div>
+		<div><a href="/coursemanagement/">Courses</a></div>
+		<div><a href="/login/">Logout</a></div>
+	</section>
   </body>
 </html>

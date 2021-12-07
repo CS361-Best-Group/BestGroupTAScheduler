@@ -4,51 +4,46 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width">
-    <title>replit</title>
+    <title>TA Scheduler | Profile</title>
     <link href="{% static 'styles/style.css' %}" rel="stylesheet" type="text/css" />
   </head>
   <body>
-    <h1>Profile</h1>
-    <!--MProfile Content-->
-    <section class="inputBox">
-      <div>
-        <a href="/">Home</a>
-      </div>
+    <h1>TA Scheduler | Profile</h1>
+    
+    <section class="navigationMenu">
+		<div><a href="/">Home</a></div>
+		<div class="current"><a href="/profile/">Profile</a></div>
+		<div><a href="/accountmanagement/">Users</a></div>
+		<div><a href="/coursemanagement/">Courses</a></div>
+		<div><a href="/login/">Logout</a></div>
+	</section>
+    
+    <!-- Profile Content-->
+    <section class="profile">
         <form action="/profile/" method="post">
-        {% csrf_token %}
-            <div>
-        <label for="firstname">Name:</label>
-        <input value="{{ firstname }}" type="text" id="firstname" name="name" required minlength="4" maxlength="20" size="20">
-      </div>
+			<h2>Profile information:</h2>
+			
+			{% csrf_token %}
+			
+			<label for="firstname">Name:</label>
+			<input value="{{ firstname }}" type="text" id="firstname" name="name" required minlength="4" maxlength="20">
 
+			<label for="username">Username:</label>
+			<input value="{{ username }}" type="text" id="username" name="username" required minlength="4" maxlength="20">
 
-        <div>
-        <label for="username">Username:</label>
-        <input value="{{ username }}" type="text" id="username" name="username" required minlength="4" maxlength="20" size="20">
-      </div>
+			<label for="address">Address:</label>
+			<input value="{{ address }}" type="text" id="address" name="address" required minlength="12" maxlength="40">
 
-      <div>
-        <label for="address">Address:</label>
-        <input value="{{ address }}" type="text" id="address" name="address" required minlength="12" maxlength="40" size="40">
-      </div>
+			<label for="phone">Phone:</label>
+			<input value="{{ phone }}" type="text" id="phone" name="phone" required minlength="10" maxlength="11">
 
-        <div>
-        <label for="phone">Phone:</label>
-        <input value="{{ phone }}" type="text" id="phone" name="phone" required minlength="10" maxlength="11" size=="11">
-      </div>
+			<label for="email">Email:</label>
+			<input value="{{email }}" type="email" id="email" name="email" required minlength="4" maxlength="20">
 
-
-
-       <div>
-        <label for="email">Email:</label>
-        <input value="{{email }}" type="email" id="email" name="email" required minlength="4" maxlength="20" size="20">
-      </div>
-
-        <div>
-        <label for="altemail">Alt. Email:</label>
-        <input value="{{ altemail }}" type="email" id="altemail" name="altemail" required minlength="4" maxlength="20" size="20">
-      </div>
-        <input type="submit" value="Save Changes">
+			<label for="altemail">Alt. Email:</label>
+			<input value="{{ altemail }}" type="email" id="altemail" name="altemail" required minlength="4" maxlength="20">
+			
+			<input type="submit" value="Save Changes">
         </form>
     </section>
   </body>
