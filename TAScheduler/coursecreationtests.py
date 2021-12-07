@@ -24,6 +24,8 @@ class TestCourseCreationGet(TestCase):
         #self.Section1.course=self.Course1
         self.Section1.users.set([self.TA])
         self.Section1.save()
+        
+        self.client.force_login(self.dummy)
         self.r=self.client.get("/coursemanagement/")
 
 
@@ -835,6 +837,11 @@ class TestCourseCreationPost(TestCase):
 
     def setUp(self):
         self.client=Client()
+        
+        self.dummy=User.objects.create_user(username="dummy23", password="password", email="email@email.com", first_name="dummy")
+        self.dummy.save()
+        
+        self.client.force_login(self.dummy)
 
     def test_sectionCreation(self):
         Course1=Course(name="CS361", description="neat")

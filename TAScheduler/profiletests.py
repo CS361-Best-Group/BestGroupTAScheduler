@@ -15,10 +15,7 @@ class TestProfileGet(TestCase):
         Profile1=Profile(user=User1, address="9999", alt_email="nottimmy@gmail.com", phone="999-999-9999")
         Profile1.save()
 
-        mysession=self.client.session
-        mysession['_auth_user_id']=User1.id
-        mysession.save()
-        self.client.session.save()
+        self.client.force_login(User1)
 
 
     def test_loadFirstName(self):
@@ -83,10 +80,7 @@ class TestProfilePost(TestCase):
         self.Profile1 = Profile(user=self.User1, address="9999", alt_email="nottimmy@gmail.com", phone="999-999-9999")
         self.Profile1.save()
 
-        mysession = self.client.session
-        mysession['_auth_user_id'] = self.User1.id
-        mysession.save()
-        self.client.session.save()
+        self.client.force_login(self.User1)
 
     def test_noChangeName(self):
         r=self.client.post("/profile/", {"username":self.User1.username, "name":self.User1.first_name, "address":self.Profile1.address, "phone":self.Profile1.phone, "email":self.User1.email, "altemail":self.Profile1.alt_email}, follow=True)

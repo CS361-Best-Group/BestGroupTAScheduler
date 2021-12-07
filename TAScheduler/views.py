@@ -1,13 +1,11 @@
 from hashlib import sha256
 
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth import authenticate, login, logout
 from .models import Profile
 from django.contrib.auth.models import User, Group
-
-
 
 from TAScheduler.models import Course, Section
 
@@ -36,8 +34,7 @@ class Login(View):
             return render(request, "login.html")
 
 
-
-class CourseManagement(View):
+class CourseManagement(LoginRequiredMixin, View):
     def get(self, request):
 
 
@@ -94,8 +91,7 @@ class CourseManagement(View):
 
 
 
-
-class AccountManagement(View):
+class AccountManagement(LoginRequiredMixin, View):
     def get(self, request):
 
         #Nothing will be mapped course fields if post is from a section creation form submission
@@ -133,18 +129,14 @@ class AccountManagement(View):
         return redirect("/accountmanagement/")
 
 
-
-
-class Home(View):
+class Home(LoginRequiredMixin, View):
     def get(self, request):
-        if(len(request.session.keys())==0):
-            return redirect("/login/")
         return render(request, "index.html")
 
     def post(self, request):
         pass
 
-class ProfilePage(View):
+class ProfilePage(LoginRequiredMixin, View):
     def get(self, request):
 
         CurrentUserID=request.session["_auth_user_id"]
