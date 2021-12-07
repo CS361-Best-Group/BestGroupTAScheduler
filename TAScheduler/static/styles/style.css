@@ -1,84 +1,248 @@
+/* Base styling. */
+
 :root {
-  /*
-  Let's set up colors here. I think alternating would be really cool
-  */
-	--dark: #222222;
-  --light: #DDDDFF;
-  --light2: #EEEEEE;
+	/*
+	Let's set up colors here. I think alternating would be really cool
+	*/
+	--fore-dark: #222222;
+	--fore-light: #FFFFFF;
+	
+	--main: #DDDDFF;
+	--accent: #5A5A79;
+	--border: #ACACAC;
+	
+	--back: #FFFFFF;
+	
+	--transparent: rgba(0, 0, 0, 0);
 }
 
-.navToLogin{
-  display: block;
-  text-align: center;
-  margin-top: 100px;
-  background-color: var(--light);
-  height: 50px;
+* {
+	box-sizing: border-box;
 }
 
 html {
-	color: var(--dark);
-
+	color: var(--fore-dark);
 	font-family: sans-serif;
 	font-size: 12pt;
+	
+	background: var(--back);
 }
 
-form.inputBox{
-  max-width: 12em;
-  background-color: var(--light);
-
-  border: 1px solid #aaa;
-  border-radius: 4px;
-  padding: .5em .5em .5em;
-  margin-bottom: 4px;
+body {
+	margin: 0 auto;
 }
 
-label, input{
-  display: table-cell;
+h1 {
+	margin: 0;
+	padding: 2em 0 1em 2vw;
+	
+	color: var(--fore-light);
+	font-size: 16pt;
+	
+	background: var(--accent);
+	border: solid var(--border);
+	border-width: 0 0 1pt 0;
 }
 
-.courses{
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 10px;
-  grid-auto-rows: minmax(30px, auto);
+h2 {
+	margin: 0 0 .25em 0;
+	padding: 0 0 .25em 0;
+	
+	font-size: 14pt;
+	
+	border: solid var(--border);
+	border-width: 0 0 1pt 0;
+}
+
+input {
+	padding: .5em 1em;
+	
+	border: 1pt solid var(--fore-dark);
+	border-radius: .5em;
+}
+
+form {
+	display: inline-grid;
+	width: 100%;
+	max-width: 400px;
+	margin: 0 0 0 2vw;
+	padding: 1em;
+	align-items: center;
+	grid-template-columns: auto 1fr;
+	grid-gap: .25em 1em;
+	
+	background: var(--main);
+	border: 1pt solid var(--border);
+	border-radius: .5em;
+}
+
+form > h2 {
+	grid-column: 1 / -1;
+}
+
+form > input[type=submit] {
+	min-width: 50%;
+	grid-column: 2;
+	justify-self: right;
 }
 
 details {
-    border: 1px solid #aaa;
-    border-radius: 4px;
-    padding: .5em .5em 0;
-    margin-bottom: 4px;
+	padding: 1em;
+	
+	background: var(--main);
+	border: 1pt solid var(--border);
+	border-radius: .5em;
 }
 
-summary {
-    font-weight: bold;
-    margin: -.5em -.5em 0;
-    padding: .5em;
+details > summary {
+	display: flex;
+	margin: 0;
+	padding: .5em 0;
+	column-gap: .5em;
+	align-items: center;
+	
+	background: inherit;
 }
 
-details[open] {
-    padding: .5em;
+details > summary::before {
+	display: block;
+	content: '▶';
+	
+	color: var(--accent);
+	text-align: right;
 }
 
-details[open] summary {
-    border-bottom: 1px solid #aaa;
-    margin-bottom: .5em;
+details[open] > summary::before {
+	transform: rotate(90deg);
 }
 
-details.user > summary {
-  display: flex;
-  align-items: center;
+details > * {
+	margin: 0 -1em;
+	padding: 0.5em 1em;
+	background: var(--back);
 }
 
-details.user > summary > div.role {
-  margin-left: 1em;
-  padding: .5em;
-  background: var(--light);
-  border-radius: .5em;
-  font-size: 10pt;
+/* Styling for navigational menu. */
+
+section.navigationMenu {
+	display: flex;
+	margin: 0 0 1em 0;
+	padding: 0;
+	flex-wrap: wrap;
+	
+	background: var(--main);
+	border: solid var(--border);
+	border-width: 0 0 1pt 0;
 }
 
-details.courses > summary{
-  display: flex;
-  align-items: center;
+section.navigationMenu > div {
+	padding: .5em;
+	
+	border: solid var(--border);
+	border-width: 0 0 0 1pt;
+}
+
+section.navigationMenu > div:first-of-type {
+	margin-left: 2vw;
+}
+
+section.navigationMenu > div:last-of-type {
+	border-width: 0 1pt;
+}
+
+section.navigationMenu > div.current {
+	margin-bottom: -1pt;
+	
+	background: var(--back);
+}
+
+section.navigationMenu > div > a, section.navigationMenu > div > a:visited {
+	color: var(--alt);
+}
+
+/* Styling for '/login'. */
+
+form.login {
+	margin: 1em 0 0 2vw;
+}
+
+/* Styling for '/accountmanagement'. */
+
+section.accountmanagement {
+	display: flex;
+	margin: 0 2vw 0 2vw;
+	gap: 1em;
+	flex-wrap: wrap;
+	align-items: flex-start;
+}
+
+section.accountmanagement > section.userList {
+	min-width: 50vw;
+	flex-grow: 1;
+}
+
+section.accountmanagement > section.userList > details {
+	margin-bottom: 1em;
+}
+
+section.accountmanagement > form {
+	margin: 0;
+}
+
+section.accountmanagement > section.userList > details > summary > div.role {
+	padding: .25em 1em;
+	
+	color: var(--fore-light);
+	
+	background: var(--accent);
+	border-radius: 1em;
+}
+
+/* Styling for '/coursemanagement'. */
+
+section.coursemanagement {
+	display: flex;
+	margin: 0 2vw 0 2vw;
+	gap: 1em;
+	flex-wrap: wrap;
+	align-items: flex-start;
+}
+
+section.coursemanagement > section.courses {
+	min-width: 50vw;
+	flex-grow: 1;
+}
+
+section.coursemanagement > section.courses > details {
+	margin-bottom: 1em;
+}
+
+section.coursemanagement > section.courses > details details {
+	border: none;
+	border-radius: 0;
+}
+
+section.coursemanagement > section.courses > details details > summary {	
+	margin: 0 0 .25em 0;
+	padding: 0 0 .25em 0;
+	
+	border: solid var(--border);
+	border-width: 0 0 1pt 0;
+}
+
+section.coursemanagement > section.courses > details > details details {
+	margin-left: 1em;
+}
+
+section.coursemanagement > section.courses form {
+	display: block;
+	margin: 0 0 0 2em;
+	padding: 0;
+	
+	border: none;
+	border-radius: 0;
+}
+
+section.coursemanagement > form {
+	margin: 0;
 }

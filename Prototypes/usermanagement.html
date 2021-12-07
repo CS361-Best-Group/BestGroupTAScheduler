@@ -4,23 +4,24 @@
 <head>
    <meta charset="utf-8">
    <meta name="viewport" content="width=device-width">
-   <title>replit</title>
+   <title>TA Scheduler | Account Management</title>
    <link href="{% static 'styles/style.css' %}" rel="stylesheet" type="text/css" />
  </head>
  <body>
-   <h1>User List</h1>
+   <h1>TA Scheduler | Account Management</h1>
    <section class="navigationMenu">
-     <div>
-       <a href="/">Home</a>
-     </div>
-   <!-- do we want this horizontal or vertical?-->
-     <div>
-       <a href="#addUser">Add User</a>
-     </div>
-   </section>
+		<div><a href="/">Home</a></div>
+		<div><a href="/profile/">Profile</a></div>
+		<div class="current"><a href="/accountmanagement/">Users</a></div>
+		<div><a href="/coursemanagement/">Courses</a></div>
+		<div><a href="/login/">Logout</a></div>
+	</section>
 
+   <section class="accountmanagement">
+   
    <!-- how do we want to remove a user? tick marks?-->
    <section class="userList">
+      <h2>User List:</h2>
    <!-- modular stuff bb-->
 
        {% for i in Admin %}
@@ -29,12 +30,12 @@
          <div class="name">{{ i.first_name }}</div>
          <div class="role">Admin</div>
        </summary>
-         <div class="email">{{ i.email }}</div>
+         <div class="email"><span>Email address:</span> {{ i.email }}</div>
          {%  for j in Profiles %}
          {% if j.user == i  %}
-         <div class="altEmail">{{j.alt_email}}</div>
-         <div>{{j.address}}</div>
-         <div>{{j.phone}}</div>
+         <div class="altEmail"><span>Alternate email address:</span> {{ j.alt_email }}</div>
+         <div class="address"><span>Mailing address:</span>{{ j.address }}</div>
+         <div class="phone"><span>Phone number:</span>{{ j.phone }}</div>
          {% endif %}
          {% endfor %}
      </details>
@@ -46,12 +47,12 @@
          <div class="name">{{ i.first_name }}</div>
          <div class="role">TA</div>
        </summary>
-         <div class="email">{{ i.email }}</div>
-         {%  for j in Profiles %} }}
+         <div class="email"><span>Email address:</span> {{ i.email }}</div>
+         {%  for j in Profiles %}
          {% if j.user == i  %}
-         <div class="altEmail">{{j.alt_email}}</div>
-         <div>{{j.address}}</div>
-         <div>{{j.phone}}</div>
+         <div class="altEmail"><span>Alternate email address:</span> {{ j.alt_email }}</div>
+         <div class="address"><span>Mailing address:</span>{{ j.address }}</div>
+         <div class="phone"><span>Phone number:</span>{{ j.phone }}</div>
          {% endif %}
          {% endfor %}
      </details>
@@ -63,12 +64,12 @@
          <div class="name">{{ i.first_name }}</div>
          <div class="role">TA</div>
        </summary>
-         <div class="email">{{ i.email }}</div>
-         {%  for j in Profiles %} }}
+         <div class="email"><span>Email address:</span> {{ i.email }}</div>
+         {%  for j in Profiles %}
          {% if j.user == i  %}
-         <div class="altEmail">{{j.alt_email}}</div>
-         <div>{{j.address}}</div>
-         <div>{{j.phone}}</div>
+         <div class="altEmail"><span>Alternate email address:</span> {{ j.alt_email }}</div>
+         <div class="address"><span>Mailing address:</span>{{ j.address }}</div>
+         <div class="phone"><span>Phone number:</span>{{ j.phone }}</div>
          {% endif %}
          {% endfor %}
 
@@ -76,51 +77,34 @@
    {% endfor %}
    </section>
 
-   <h1 id="addUser">Add User</h1>
    <form class="inputBox" action="/accountmanagement/" method="post">
+    <h2>Create User:</h2>
      {% csrf_token %}
-       <div>
-           <label for="user">User Name:</label>
-           <input type="text" id="name" name="username" required minlength="1">
-       </div>
-       <div>
-           <label for="user">Name:</label>
-           <input type="text" id="name" name="name" required minlength="1">
-       </div>
-       <div>
-           <label for="user">Password:</label>
-           <input type="password" id="name" name="password" required minlength="4" maxlength="64">
-       </div>
-
-     <div>
-         <label for="role">Role:</label>
-         <select name="role" id="role-select">
-             <option value="">--Please choose an option--</option>
-             <option value="admin">Admin</option>
-             <option value="instructor">Instructor</option>
-             <option value="TA">Teaching Assistant</option>
-         </select>
-     </div>
-       <div>
-       <label for="email">Email:</label>
-       <input type="email" id="name" name="email" required minlength="4" maxlength="256">
-     </div>
-       <div>
-           <label for=email">Alternate Email:</label>
-           <input type="email" id="name" name="altemail" maxlength="256">
-       </div>
-       <div>
-           <label for=address">Address:</label>
-           <input type="text" id="name" name="address" maxlength="256">
-       </div>
-       <div>
-           <label for="phone">Phone Number:</label>
-           <input type="text" id="name" name="phone" maxlength="256">
-       </div>
-
-       <input type="submit" value="Cancel">
-       <input type="submit" value="Confirm">
+        <label for="user">User Name:</label>
+        <input type="text" id="name" name="username" required minlength="1">
+        <label for="user">Name:</label>
+        <input type="text" id="name" name="name" required minlength="1">
+        <label for="user">Password:</label>
+        <input type="password" id="name" name="password" required minlength="4" maxlength="64">
+        <label for="role">Role:</label>
+        <select name="role" id="role-select">
+          <option value="">--Please choose an option--</option>
+          <option value="admin">Admin</option>
+          <option value="instructor">Instructor</option>
+          <option value="TA">Teaching Assistant</option>
+        </select>
+        <label for="email">Email:</label>
+        <input type="email" id="name" name="email" required minlength="4" maxlength="256">
+        <label for=email">Alternate Email:</label>
+        <input type="email" id="name" name="altemail" maxlength="256">
+        <label for=address">Address:</label>
+        <input type="text" id="name" name="address" maxlength="256">
+        <label for="phone">Phone Number:</label>
+        <input type="text" id="name" name="phone" maxlength="256">
+           
+       <input type="submit" value="Create">
      </div>
    </form>
+   </section>
  </body>
 </html>
