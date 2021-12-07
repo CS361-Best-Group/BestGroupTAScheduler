@@ -63,7 +63,7 @@ class CourseManagement(LoginRequiredMixin, View):
                 newcourse.save()
 
         elif ("course" in request.POST.keys()):
-
+            
             sectioncreationcourse = request.POST["course"]
             targetcourse=Course.objects.filter(name=sectioncreationcourse)[0]
 
@@ -107,25 +107,27 @@ class AccountManagement(LoginRequiredMixin, View):
         return render(request, "usermanagement.html", {"TA":TA, "Instructor":Instructor, "Admin":Admin, "Profiles":Profiles})
 
     def post(self, request):
-        user=request.POST["username"]
-        email=request.POST["email"]
-        name=request.POST["name"]
-        password=request.POST["password"]
-        address=request.POST["address"]
-        phone=request.POST["phone"]
-        altemail=request.POST["altemail"]
-        userthere=User.objects.filter(username=user)
-        groups=Group.objects.filter(name="manager")
-        groupthing=groups[0]
+        if all([(field in request.POST) and (request.POST[field] != '') for field in ['username', 'email', 'name', 'password']]):
+            user=request.POST["username"]
+            email=request.POST["email"]
+            name=request.POST["name"]
+            password=request.POST["password"]
+            address= request.POST.get("address", "")
+            phone=request.POST.get("phone", "")
+            altemail=request.POST.get("altemail", "")
+            userthere=User.objects.filter(username=user)
+            groups=Group.objects.filter(name="manager")
+            groupthing=groups[0]
 
-        if(len(userthere)==0):
+            if(len(userthere)==0):
 
-            newuser=User.objects.create_user(username=user, email=email, first_name=name, password=password)
+                newuser=User.objects.create_user(username=user, email=email, first_name=name, password=password)
 
-            newuser.groups.add(groupthing)
-            newuser.save()
-            newProfile=Profile(user=newuser, address=address, phone=phone, alt_email=altemail)
-            newProfile.save()
+                newuser.groups.add(groupthing)
+                newuser.save()
+                newProfile=Profile(user=newuser, address=address, phone=phone, alt_email=altemail)
+                newProfile.save()
+                
         return redirect("/accountmanagement/")
 
 
