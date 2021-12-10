@@ -26,9 +26,14 @@
 		<h2>Courses:</h2>
     {% for i in Courses %}
       <details class="course">
-        <summary name="course">{{ i.name }}</summary>
+        <summary name="course">
+            {{ i.name }}
+            <form>
+              <input type="submit" value="Delete Course">
+            </form>
+        </summary>
         <p>{{ i.description }}</p>
-
+        <!--Button for course deletion - correct code needs to be added-->
       <!--Utilize course fields for instructors-->
        <details class="instructors">
           <summary>Instructors</summary>

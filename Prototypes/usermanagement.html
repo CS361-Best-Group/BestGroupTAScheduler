@@ -46,6 +46,9 @@
        <summary>
          <div class="name">{{ i.first_name }}</div>
          <div class="role">TA</div>
+         <form>
+            <input type="submit" value="Assign Course">
+         </form>
        </summary>
          <div class="email"><span>Email address:</span> {{ i.email }}</div>
          {%  for j in Profiles %}
@@ -63,6 +66,12 @@
        <summary>
          <div class="name">{{ i.first_name }}</div>
          <div class="role">TA</div>
+         <form>
+            <input type="submit" value="Assign Course">
+         </form>
+         <form>
+            <input type="submit" value="Assign Section">
+         </form>
        </summary>
          <div class="email"><span>Email address:</span> {{ i.email }}</div>
          {%  for j in Profiles %}
