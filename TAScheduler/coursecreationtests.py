@@ -33,31 +33,31 @@ class TestCourseCreationGet(TestCase):
         self.assertEqual(self.r.context["Courses"][0].name, "CS361")
 
     def test_displayCourseName(self):
-        self.assertContains(self.r, '<summary name="course">CS361</summary>')
+        self.assertContains(self.r, 'CS361')
 
     def test_loadCourseDescription(self):
         self.assertEqual(self.r.context["Courses"][0].description, "Neat")
 
     def test_displayCourseDescription(self):
-        self.assertContains(self.r, '<p>Neat</p>')
+        self.assertContains(self.r, 'Neat')
 
     def test_loadCourseUser(self):
         self.assertEqual(self.r.context["Courses"][0].users.all()[0].first_name, "dummy")
 
     def test_displayCourseUser(self):
-        self.assertContains(self.r, "<li>dummy</li>")
+        self.assertContains(self.r, "dummy")
 
     def test_loadCourseSectionsName(self):
         self.assertEqual(Section.objects.filter(course=self.Course1)[0].name, self.Section1.name)
 
     def test_displayCourseSectionsName(self):
-        self.assertContains(self.r, "<summary>CS361-001")
+        self.assertContains(self.r, "CS361-001")
 
     def test_loadSectionUser(self):
         self.assertEqual(Section.objects.filter(course=self.Course1)[0].users.all()[0].first_name, "TA")
 
     def test_displaySectionUser(self):
-        self.assertContains(self.r, "<li>TA</li>")
+        self.assertContains(self.r, "TA")
 
 
     ###########################################END LOAD/DISPLAY BASIC ELEMENTS #####################
@@ -97,7 +97,7 @@ class TestCourseCreationGet(TestCase):
         Section2.save()
 
         r=self.client.get("/coursemanagement/")
-        self.assertContains(r, '<summary name="course">CS 423</summary>')
+        self.assertContains(r, 'CS 423')
     def test_loadMultipleCourseDescription(self):
         dummy2 = User.objects.create_user(username="dummy298", password="passw1rd", email="email2@gmail.com", first_name="dummy2")
         dummy2.save()
@@ -133,7 +133,7 @@ class TestCourseCreationGet(TestCase):
 
 
         r=self.client.get("/coursemanagement/")
-        self.assertContains(r, "<p>also neat</p>")
+        self.assertContains(r, "also neat")
 
     def test_loadMultipleCourseUsers(self):
         dummy2 = User.objects.create_user(username="dummy298", password="passw1rd", email="email2@gmail.com", first_name="dummy2")
@@ -175,7 +175,7 @@ class TestCourseCreationGet(TestCase):
         Section2.save()
 
         r=self.client.get("/coursemanagement/")
-        self.assertContains(r, "<li>dummy2</li>")
+        self.assertContains(r, "dummy2")
 
     def test_loadMultipleCourseSectionsName(self):
         dummy2 = User.objects.create_user(username="dummy298", password="passw1rd", email="email2@gmail.com", first_name="dummy2")
@@ -215,7 +215,7 @@ class TestCourseCreationGet(TestCase):
 
         r=self.client.get("/coursemanagement/")
 
-        self.assertContains(r, "<summary>CS423-001</summary>")
+        self.assertContains(r, "CS423-001")
     #users of the section is what is being tested here
     def test_loadMultipleCourseSectionsUsers(self):
         dummy2 = User.objects.create_user(username="dummy298", password="passw1rd", email="email2@gmail.com", first_name="dummy2")
@@ -254,7 +254,7 @@ class TestCourseCreationGet(TestCase):
         Section2.save()
 
         r=self.client.get("/coursemanagement/")
-        self.assertContains(r, "<li>TA2</li>")
+        self.assertContains(r, "TA2")
 
 
 ####################################END MULTIPLE COURSE TESTS##########################################
@@ -267,7 +267,7 @@ class TestCourseCreationGet(TestCase):
     def test_displayNoUsersName(self):
         self.Course1.users.set([])
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, '<summary name="course">CS361</summary>')
+        self.assertContains(r, 'CS361')
     def test_loadNoUsersDescription(self):
         self.Course1.users.set([])
         r=self.client.get("/coursemanagement/")
@@ -275,7 +275,7 @@ class TestCourseCreationGet(TestCase):
     def test_displayNoUsersDescription(self):
         self.Course1.users.set([])
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, "<p>Neat</p>")
+        self.assertContains(r, "Neat")
     def test_loadNoUsersSectionName(self):
         self.Course1.users.set([])
         r=self.client.get("/coursemanagement/")
@@ -283,7 +283,7 @@ class TestCourseCreationGet(TestCase):
     def test_displayNoUsersSectionName(self):
         self.Course1.users.set([])
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, "<summary>CS361-001</summary>")
+        self.assertContains(r, "CS361-001")
     def test_loadNoUsersSectionUsers(self):
         self.Course1.users.set([])
         r=self.client.get("/coursemanagement/")
@@ -292,7 +292,7 @@ class TestCourseCreationGet(TestCase):
     def test_displayNoUsersSectionsUsers(self):
         self.Course1.users.set([])
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, "<li>TA</li>")
+        self.assertContains(r, "TA")
 
 
 #############################################END NO USERS TESTS ################################################
@@ -316,7 +316,7 @@ class TestCourseCreationGet(TestCase):
         self.Course1.users.set([self.dummy, dummy2])
         self.Course1.save()
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, "<li>dummy</li>")
+        self.assertContains(r, "dummy")
 
     def test_displayCourseMultipleUsers2(self):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
@@ -324,7 +324,7 @@ class TestCourseCreationGet(TestCase):
         self.Course1.users.set([self.dummy, dummy2])
         self.Course1.save()
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, "<li>dummy2</li>")
+        self.assertContains(r, "dummy2")
     def test_loadCourseMultipleUsersName(self):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
@@ -340,7 +340,7 @@ class TestCourseCreationGet(TestCase):
         self.Course1.users.set([self.dummy, dummy2])
         self.Course1.save()
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, '<summary name="course">CS361</summary>')
+        self.assertContains(r, 'CS361')
 
     def test_loadCoursesMultipleUsersDescription(self):
         dummy2=User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
@@ -356,7 +356,7 @@ class TestCourseCreationGet(TestCase):
         self.Course1.users.set([self.dummy, dummy2])
         self.Course1.save()
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, "<p>Neat</p>")
+        self.assertContains(r, "Neat")
 
 
     def test_loadCoursesMultipleUsersSectionName(self):
@@ -375,7 +375,7 @@ class TestCourseCreationGet(TestCase):
         self.Course1.save()
         r = self.client.get("/coursemanagement/")
 
-        self.assertContains(r, "<summary>CS361-001</summary>")
+        self.assertContains(r, "CS361-001")
 
     def test_loadCoursesMultipleUsersSectionUsers(self):
         dummy2=User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
@@ -392,7 +392,7 @@ class TestCourseCreationGet(TestCase):
         self.Course1.save()
         r = self.client.get("/coursemanagement/")
 
-        self.assertContains(r, "<li>TA</li>")
+        self.assertContains(r, "TA")
 
 
     ##################################END SINGLE COURSE MULTIPLE USER TESTS########################################
@@ -421,7 +421,7 @@ class TestCourseCreationGet(TestCase):
         Section2.save()
 
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, '<summary name="course">CS361</summary>')
+        self.assertContains(r, 'CS361')
 
     def test_loadCourseMultipleSectionsUser(self):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
@@ -447,7 +447,7 @@ class TestCourseCreationGet(TestCase):
         Section2.save()
 
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, "<li>dummy</li>")
+        self.assertContains(r, "dummy")
     def test_loadCourseMultipleSectionsDescription(self):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
@@ -473,7 +473,7 @@ class TestCourseCreationGet(TestCase):
         Section2.save()
 
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, "<p>Neat</p>")
+        self.assertContains(r, "Neat")
     def test_loadCourseMultipleSectionsSections(self):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
@@ -500,7 +500,7 @@ class TestCourseCreationGet(TestCase):
         Section2.save()
 
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, "<summary>CS361-002</summary>")
+        self.assertContains(r, "CS361-002")
     def test_loadCourseMultipleSectionsUser1(self):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
@@ -527,7 +527,7 @@ class TestCourseCreationGet(TestCase):
         Section2.save()
 
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, "<li>TA</li>")
+        self.assertContains(r, "TA")
     def test_loadCourseMultipleSectionUser2(self):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
         dummy2.save()
@@ -550,7 +550,7 @@ class TestCourseCreationGet(TestCase):
         #Section2.course=self.Course1
         Section2.save()
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, "<li>dummy2</li>")
+        self.assertContains(r, "dummy2")
 
 
 #########################################END COURSES WITH MULTIPLE SECTIONS TESTS############################
@@ -593,7 +593,7 @@ class TestCourseCreationGet(TestCase):
         self.Course1.users.set([self.dummy, dummy3])
         self.Course1.save()
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, '<summary name="course">CS361</summary>')
+        self.assertContains(r, 'CS361')
 
 
     def test_loadCoursesMultipleUsersSectionsDescription(self):
@@ -630,7 +630,7 @@ class TestCourseCreationGet(TestCase):
 
         self.Course1.users.set([self.dummy, dummy3])
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, "<p>Neat</p>")
+        self.assertContains(r, "Neat")
 
     def test_loadCoursesMultipleUsersSectionsUsers(self):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
@@ -669,7 +669,7 @@ class TestCourseCreationGet(TestCase):
 
         self.Course1.users.set([self.dummy, dummy3])
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, "<li>dummy</li>")
+        self.assertContains(r, "dummy")
 
     def test_displayCoursesMultipleUsersSectionsUsers2(self):
         dummy2 = User.objects.create_user(username="dummy298", password="passw0rd", email="email2", first_name="dummy2")
@@ -686,7 +686,7 @@ class TestCourseCreationGet(TestCase):
 
         self.Course1.users.set([self.dummy, dummy3])
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, "<li>dummy3</li>")
+        self.assertContains(r, "dummy3")
 
 
     def test_loadCourseMultipleUsersSectionsSections(self):
@@ -723,7 +723,7 @@ class TestCourseCreationGet(TestCase):
 
         self.Course1.users.set([self.dummy, dummy3])
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, "<summary>CS361-001</summary>")
+        self.assertContains(r, "CS361-001")
 
 
     def test_displayCourseMultipleUsersSectionsSections2(self):
@@ -741,7 +741,7 @@ class TestCourseCreationGet(TestCase):
 
         self.Course1.users.set([self.dummy, dummy3])
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, "<summary>CS361-002</summary>")
+        self.assertContains(r, "CS361-002")
 
     #################################END COURSE WITH MULTIPLE SECTIONS AND USERS TESTING####################
     #################################Begin course with multiple users in a section testing###################
@@ -763,7 +763,7 @@ class TestCourseCreationGet(TestCase):
         self.Section1.users.set([self.TA, dummy2])
 
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, '<summary name="course">CS361</summary>')
+        self.assertContains(r, 'CS361')
 
     def test_loadCourseSectionMultipleUsersDescription(self):
         dummy2 = User.objects.create_user(username="dummy298", password="password", email="email23", first_name="dummy2")
@@ -780,7 +780,7 @@ class TestCourseCreationGet(TestCase):
         dummy2.save()
         self.Section1.users.set([self.TA, dummy2])
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, "<p>Neat</p>")
+        self.assertContains(r, "Neat")
     def test_loadCourseSectionMultipleUsersUser(self):
         dummy2 = User.objects.create_user(username="dummy298", password="password", email="email23", first_name="dummy2")
         dummy2.save()
@@ -796,7 +796,7 @@ class TestCourseCreationGet(TestCase):
         dummy2.save()
         self.Section1.users.set([self.TA, dummy2])
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, "<li>dummy</li>")
+        self.assertContains(r, "dummy")
     def test_loadCoursesSectionMultipleUsersSectionName(self):
         dummy2 = User.objects.create_user(username="dummy298", password="password", email="email23", first_name="dummy2")
         dummy2.save()
@@ -810,7 +810,7 @@ class TestCourseCreationGet(TestCase):
         self.Section1.users.set([self.TA, dummy2])
 
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r,"<summary>CS361-001")
+        self.assertContains(r,"CS361-001")
     def test_loadCourseSectionMultipleUsersSectionUsers(self):
         dummy2 = User.objects.create_user(username="dummy298", password="password", email="email23", first_name="dummy2")
         dummy2.save()
@@ -824,13 +824,13 @@ class TestCourseCreationGet(TestCase):
         dummy2.save()
         self.Section1.users.set([self.TA, dummy2])
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, "<li>TA</li>")
+        self.assertContains(r, "TA")
     def test_displayCourseSectionMultipleUsersSectionUsers1(self):
         dummy2 = User.objects.create_user(username="dummy298", password="password", email="email23", first_name="dummy2")
         dummy2.save()
         self.Section1.users.set([self.TA, dummy2])
         r = self.client.get("/coursemanagement/")
-        self.assertContains(r, "<li>dummy2</li>")
+        self.assertContains(r, "dummy2")
 
 
 class TestCourseCreationPost(TestCase):
@@ -897,15 +897,15 @@ class TestCourseCreationPost(TestCase):
         Course1=Course(name="CS361", description="neat")
         Course1.save()
         r=self.client.post("/coursemanagement/", {"course":"CS361"}, follow=True)
-        self.assertContains(r, "<summary>CS361-001</summary>")
+        self.assertContains(r, "CS361-001")
 
     def test_displayCourseName(self):
         r=self.client.post("/coursemanagement/", {"coursename":"CS361", "coursedescription":"Neat"}, follow=True)
-        self.assertContains(r, '<summary name="course">CS361</summary>')
+        self.assertContains(r, 'CS361')
 
     def test_displayCourseDescription(self):
         r=self.client.post("/coursemanagement/", {"coursename":"CS361", "coursedescription":"Neat"}, follow=True)
-        self.assertContains(r, "<p>Neat</p>")
+        self.assertContains(r, "Neat")
 
     def test_secondNewCourse(self):
         Course1 = Course(name="CS361", description="neat")
@@ -922,7 +922,7 @@ class TestCourseCreationPost(TestCase):
         Course1 = Course(name="CS361", description="neat")
         Course1.save()
         r = self.client.post("/coursemanagement/", {"coursename": "CS423", "coursedescription": "Also neat"},follow=True)
-        self.assertContains(r, '<summary name="course">CS423</summary>')
+        self.assertContains(r, 'CS423')
 
     def test_secondNewCourseDescription(self):
         Course1 = Course(name="CS361", description="neat")
@@ -934,7 +934,7 @@ class TestCourseCreationPost(TestCase):
         Course1 = Course(name="CS361", description="neat")
         Course1.save()
         r = self.client.post("/coursemanagement/", {"coursename": "CS423", "coursedescription": "Also neat"},follow=True)
-        self.assertContains(r, "<p>Also neat</p>")
+        self.assertContains(r, "Also neat")
 
     def test_secondNewCourseUsers(self):
         Course1 = Course(name="CS361", description="neat")
@@ -981,7 +981,7 @@ class TestCourseCreationPost(TestCase):
 #        Section1.course = Course1
         Section1.save()
         r=self.client.post("/coursemanagement/", {"course":"CS361"}, follow=True)
-        self.assertContains(r, "<summary>CS361-002</summary>")
+        self.assertContains(r, "CS361-002")
 
 
     def test_secondNewSectionUsers(self):
@@ -1161,7 +1161,7 @@ class TestCourseCreationPost(TestCase):
         Section21.save()
 
         r = self.client.post("/coursemanagement/", {"course": "CS423"}, follow=True)
-        self.assertContains(r, '<summary name="course">CS361</summary>')
+        self.assertContains(r, 'CS361')
 
     def test_secondCourseSecondSectionCourse2Name(self):
         Course1 = Course(name="CS361", description="neat")
@@ -1227,7 +1227,7 @@ class TestCourseCreationPost(TestCase):
         Section21.save()
 
         r = self.client.post("/coursemanagement/", {"course": "CS423"}, follow=True)
-        self.assertContains(r, '<summary name="course">CS423</summary>')
+        self.assertContains(r, 'CS423')
 
     def test_secondCourseSecondSectionCourse1Description(self):
         Course1 = Course(name="CS361", description="neat")
@@ -1292,7 +1292,7 @@ class TestCourseCreationPost(TestCase):
         Section21.save()
 
         r=self.client.post("/coursemanagement/", {"course": "CS423"}, follow=True)
-        self.assertContains(r, "<p>neat</p>")
+        self.assertContains(r, "neat")
     def test_secondCourseSecondSectionCourse2Description(self):
         Course1 = Course(name="CS361", description="neat")
         Course1.save()
@@ -1358,7 +1358,7 @@ class TestCourseCreationPost(TestCase):
         Section21.save()
 
         r=self.client.post("/coursemanagement/", {"course": "CS423"}, follow=True)
-        self.assertContains(r, "<p>Also neat</p>")
+        self.assertContains(r, "Also neat")
     def test_secondCourseSecondSectionCourse1Users(self):
         Course1 = Course(name="CS361", description="neat")
         Course1.save()
@@ -1487,7 +1487,7 @@ class TestCourseCreationPost(TestCase):
         Section21.save()
 
         r=self.client.post("/coursemanagement/", {"course": "CS423"}, follow=True)
-        self.assertContains(r, "<summary>CS361-001</summary>")
+        self.assertContains(r, "CS361-001")
     def test_secondCourseSecondSectionCourse2Section1Name(self):
         Course1 = Course(name="CS361", description="neat")
         Course1.save()
@@ -1552,7 +1552,7 @@ class TestCourseCreationPost(TestCase):
         Section21.save()
 
         r=self.client.post("/coursemanagement/", {"course": "CS423"}, follow=True)
-        self.assertContains(r, "<summary>CS423-001</summary>")
+        self.assertContains(r, "CS423-001")
     def test_secondCourseSecondSectionCourse1Section1Users(self):
         Course1 = Course(name="CS361", description="neat")
         Course1.save()
@@ -1684,7 +1684,7 @@ class TestCourseCreationPost(TestCase):
         Section21.save()
 
         r=self.client.post("/coursemanagement/", {"course": "CS423"}, follow=True)
-        self.assertContains(r, "<summary>CS361-002</summary>")
+        self.assertContains(r, "CS361-002")
     def test_secondCourseSecondSectionCourse2SecondSectionName(self):
         Course1 = Course(name="CS361", description="neat")
         Course1.save()
@@ -1749,7 +1749,7 @@ class TestCourseCreationPost(TestCase):
         Section21.save()
 
         r=self.client.post("/coursemanagement/", {"course": "CS423"}, follow=True)
-        self.assertContains(r, "<summary>CS423-002</summary>")
+        self.assertContains(r, "CS423-002")
     def test_secondCourseSecondSectionCourse1SecondSectionUsers(self):
         Course1 = Course(name="CS361", description="neat")
         Course1.save()
