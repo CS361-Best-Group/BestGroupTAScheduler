@@ -34,3 +34,7 @@ class Section(models.Model):
     
     def __str__(self):
         return f'{self.course.name} ({self.course.description}) - {self.name}'
+
+class Button(models.Model):
+    value=models.CharField("Value", max_length=256,  default="This should never appear")
+

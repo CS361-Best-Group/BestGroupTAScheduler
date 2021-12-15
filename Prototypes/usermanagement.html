@@ -38,7 +38,16 @@
          <div class="phone"><span>Phone number:</span>{{ j.phone }}</div>
          {% endif %}
          {% endfor %}
-     </details>
+        {% for j in UserButtons %}
+        <form action="/accountmanagement/" method="post">
+
+
+            <input type="submit" value="{{ j.value }}">
+        </form>
+         {% endfor %}
+
+
+       </details>
        {% endfor %}
 
        {% for i in Instructor %}
@@ -55,7 +64,16 @@
          <div class="phone"><span>Phone number:</span>{{ j.phone }}</div>
          {% endif %}
          {% endfor %}
-     </details>
+        {% for j in UserButtons %}
+        <form action="/accountmanagement/" method="post">
+
+
+            <input type="submit" value="{{ j.name }}">
+        </form>
+         {% endfor %}
+
+
+       </details>
        {% endfor %}
 
    {% for i in TA %}
@@ -72,11 +90,17 @@
          <div class="phone"><span>Phone number:</span>{{ j.phone }}</div>
          {% endif %}
          {% endfor %}
+        {% for j in UserButtons %}
+        <form action="/accountmanagement/" method="post">
 
+
+            <input type="submit" value="{{ j.name }}">
+        </form>
+         {% endfor %}
              </details>
    {% endfor %}
    </section>
-
+    {% for i in SideButtons %}
    <form class="inputBox" action="/accountmanagement/" method="post">
     <h2>Create User:</h2>
      {% csrf_token %}
@@ -103,7 +127,9 @@
         <input type="text" id="name" name="phone" maxlength="256">
            
        <input type="submit" value="Create">
-     </div>
+       {% endfor %}
+
+       </div>
    </form>
    </section>
  </body>
