@@ -8,6 +8,7 @@ from .models import Profile
 from django.contrib.auth.models import User, Group
 
 from TAScheduler.models import Course, Section
+import TAScheduler.coursemanagement
 
 class Login(View):
 
@@ -36,60 +37,14 @@ class Login(View):
 
 class CourseManagement(LoginRequiredMixin, View):
     def get(self, request):
-
-
-
         Courses=Course.objects.all()
         Sections=Section.objects.all()
-
+        
         return render(request, "coursemanagement.html", {"Courses":Courses, "Sections":Sections})
 
-
-
     def post(self, request):
-
-
-
-        if("coursename" in request.POST.keys() and "coursedescription" in request.POST.keys() and request.POST["coursename"] != "" and request.POST["coursedescription"] != ""):
-
-            coursecreationName = request.POST["coursename"]
-
-            if(len(Course.objects.filter(name=coursecreationName))==0):
-                coursecreationDescription = request.POST["coursedescription"]
-                newcourse=Course(name=coursecreationName, description=coursecreationDescription)
-
-                newcourse.save()
-                newcourse.users.set([])
-                newcourse.save()
-
-        elif ("course" in request.POST.keys()):
-            
-            sectioncreationcourse = request.POST["course"]
-            targetcourse=Course.objects.filter(name=sectioncreationcourse)[0]
-
-            existingsections=str(len(Section.objects.filter(course=targetcourse))+1)
-            newsectionname=targetcourse.name+"-"
-
-            x=0
-            while x+len(existingsections)<3:
-                newsectionname=newsectionname+"0"
-                x=x+1
-            newsectionname=newsectionname+existingsections
-
-
-            newsection=Section(name=newsectionname, course=targetcourse)
-            newsection.save()
-            newsection.users.set([])
-#            newsection.course=targetcourse
-            newsection.save()
-
+        TAScheduler.coursemanagement.handleForm(request.POST)
         return redirect("/coursemanagement/")
-
-
-
-    #how can I handle multiple forms on the same page?
-
-
 
 class AccountManagement(LoginRequiredMixin, View):
     def get(self, request):
