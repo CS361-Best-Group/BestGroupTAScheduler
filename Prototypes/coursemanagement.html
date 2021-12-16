@@ -67,7 +67,7 @@
             {% csrf_token %}
                 <input type="hidden" value="{{ i.name }}" name="course">
 		<label for="sectionInput">Section:</label><br>
-		<input type="text" id="sectionInput" name="sectionInput" value="{{ j.name }}">
+		<input type="text" id="sectionInput" value="{{ j.name }}" name="sectionInput">
                 <input type="submit" value="Add Section">
             </form>
         </details>
