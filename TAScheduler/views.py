@@ -68,10 +68,10 @@ class CourseManagement(LoginRequiredMixin, View):
             targetcourse=Course.objects.filter(name=sectioncreationcourse)[0]
 
             existingsections=str(len(Section.objects.filter(course=targetcourse))+1)
-            newsectionname=targetcourse.name+"-"
+            newsectionname=targetcourse.name+"-8"
 
             x=0
-            while x+len(existingsections)<3:
+            while x+len(existingsections)<2:
                 newsectionname=newsectionname+"0"
                 x=x+1
             newsectionname=newsectionname+existingsections
