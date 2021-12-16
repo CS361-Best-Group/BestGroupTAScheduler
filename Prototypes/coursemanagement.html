@@ -66,6 +66,7 @@
             <form action="/coursemanagement/" method="post">
             {% csrf_token %}
                 <input type="hidden" value="{{ i.name }}" name="course">
+		<label for="sectionInput">Section:</label><br>
 		<input type="text" id="sectionInput" name="sectionInput" value="801">
                 <input type="submit" value="Add Section">
             </form>
