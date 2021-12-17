@@ -48,9 +48,10 @@ class TestCreateUser(unittest.TestCase):
         self.assertTrue(len(User.objects.filter(username="UserI")) == 1)
 
     def tests_Init_TA(self):
-        AccountManagement.crewateUser(self, self.userT)
+        AccountManagement.createUser(self, self.userT)
         self.assertTrue(len(User.objects.filter(username="UserT")) == 1)
 
+    # throws error if trying to create a duplicate username --> user
     def test_DupUser(self):
         AccountManagement.createUser(self, self.userA)
         # Throw error as userA2 uses the same username as userA
@@ -104,6 +105,7 @@ class TestDeleteUser(unittest.TestCase):
         AccountManagement.deleteUser(self, self.userT["username"])
         self.assertTrue(len(User.objects.filter(username="UserTA")) == 0)
 
+    # throws error if trying to delete a user that does not exist
     def test_delete_NoUser(self):
         with self.assertRaises(KeyError, msg="No user to delete"):
             AccountManagement.deleteUser(self, self.userA["username"])
@@ -132,10 +134,8 @@ class TestDetermineForm(unittest.TestCase):
         AccountManagement.determineForm(self, self.delete)
         self.assertTrue(len(User.objects.filter(username="UserN")) == 0)
 
+    # throws error if it gets passed a form other than whats expected (create or delete)
     def test_otherForm(self):
         with self.assertRaises(ValueError, msg="Didn't receive 'deleteUser' xor 'createUser'"):
             AccountManagement.determineForm(self, self.other)
 
-    def test_emptyForm(self):
-        with self.assertRaises(ValueError, msg="Can't have empty key for input"):
-            AccountManagement.determineForm(self, self.empty)
