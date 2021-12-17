@@ -3,102 +3,139 @@ from django.contrib.auth.models import User
 from TAScheduler.views import AccountManagement
 
 
-class TestUserPostMethods(unittest.TestCase):
+class TestCreateUser(unittest.TestCase):
+    def setUp(self):
+        self.userA = {"username": "User",
+                      "email": "user@uwm.edu",
+                      "name": "NewUser",
+                      "password": "password",
+                      "address": "123 Some St",
+                      "phone": "1234567890",
+                      "altemail": "user@gmail.com",
+                      "groups": "admin"}
+        self.userA2 = {"username": "User",
+                       "email": "user@uwm.edu",
+                       "name": "NewUser",
+                       "password": "password",
+                       "address": "123 Some St",
+                       "phone": "1234567890",
+                       "altemail": "user@gmail.com",
+                       "groups": "admin"}
+        self.userI = {"username": "UserI",
+                      "email": "useri@uwm.edu",
+                      "name": "Instructor",
+                      "password": "passstudent",
+                      "address": "123 This St",
+                      "phone": "1234567899",
+                      "altemail": "useri@gmail.com",
+                      "groups": "instructor"}
+        self.userT = {"username": "UserT",
+                      "email": "usert@uwm.edu",
+                      "name": "TA",
+                      "password": "passclass",
+                      "address": "123 That St",
+                      "phone": "1234567888",
+                      "altemail": "usert@gmail.com",
+                      "groups": "ta"}
 
-    def test_createUser(self):
-        # create a valid user: non repeating username, assumes all info given
-        # username, email, name, password, address, phone, altemail, group(ta,instructor,manager)
-
-        gooduser = AccountManagement.createUser(username="NewUser", email="nu@uwm.edu", name="User",
-                                                password="password", address="123 Some St", phone="1234567890",
-                                                altemail="nu@gmail.com", groups__name="ta")
+    def test_Init_Admin(self):
+        AccountManagement.createUser(self, self.userA)
         # check that gooduser was added to database
-        self.assertTrue(len(User.objects.filter(username=gooduser.username)) == 1)
-        # confirm that the current user is good
-        self.assertTrue(gooduser.username == "NewUser")
-        self.assertTrue(gooduser.email == "nu@uwm.edu")
-        self.assertTrue(gooduser.name == "User")
-        self.assertTrue(gooduser.password == "password")
-        self.assertTrue(gooduser.address == "123 Some St")
-        self.assertTrue(gooduser.phone == "1234567890")
-        self.assertTrue(gooduser.altemail == "nu@gmail.com")
-        self.assertTrue(gooduser.groups__name == "ta")
-        # Throw error as baduser uses the same username as gooduser, and does not add baduser
+        self.assertTrue(len(User.objects.filter(username="User")) == 1)
+
+    def tests_Init_Instructor(self):
+        AccountManagement.createUser(self, self.userI)
+        self.assertTrue(len(User.objects.filter(username="UserI")) == 1)
+
+    def tests_Init_TA(self):
+        AccountManagement.crewateUser(self, self.userT)
+        self.assertTrue(len(User.objects.filter(username="UserT")) == 1)
+
+    def test_DupUser(self):
+        AccountManagement.createUser(self, self.userA)
+        # Throw error as userA2 uses the same username as userA
+        # Do not add userA2
         with self.assertRaises(ValueError, msg="Duplicate Username"):
-            baduser = AccountManagement.createUser(username="NewUser", email="nu@uwm.edu", name="User",
-                                                   password="password", address="123 Some St", phone="1234567890",
-                                                   altemail="nu@gmail.com", groups__name="ta")
-        # confirm that only gooduser is in the database
-        # this also confirms if gooduser is still in the database
-        self.assertTrue(len(User.objects.filter(username=gooduser.username)) == 1)
+            AccountManagement.createUser(self, self.userA2)
 
-    def test_deleteUser(self):
-        # correct user is deleted
-        AccountManagement.createUser(username="NewUser", email="nu@uwm.edu", name="User",
-                                     password="password", address="123 Some St", phone="1234567890",
-                                     altemail="nu@gmail.com", groups__name="ta")
-        AccountManagement.deleteUser(username="NewUser")
-        self.assertTrue(len(User.objects.filter(username="NewUser")) == 0)
-        self.assertTrue(len(User.objects.filter(email="nu@uwm.edu")) == 0)
-        self.assertTrue(len(User.objects.filter(name="User")) == 0)
-        self.assertTrue(len(User.objects.filter(password="password")) == 0)
-        self.assertTrue(len(User.objects.filter(address="123 Some St")) == 0)
-        self.assertTrue(len(User.objects.filter(phone="1234567890")) == 0)
-        self.assertTrue(len(User.objects.filter(altemail="nu@gmail.com")) == 0)
-        self.assertTrue(len(User.objects.filter(group__name="ta")) == 0)
 
-    def test_determineForm(self, request):
-        # Calls the appropriate form method.
-        # Determines which form method to call based on the presence/absence of certain keys in the post dictionary.
-        # if form==deleteUser then deleteUserForm
-        # else if form==createUser then createUserForm
-        # else error
-        # Need dummy dictionary to pass into determineForm
-
-        dictcreate = {"input": "createUser",
-                      "username": "UserN",
-                      "email": "usern@uwm.edu",
+class TestDeleteUser(unittest.TestCase):
+    def setUp(self):
+        self.userA = {"username": "UserAdm",
+                      "email": "user@uwm.edu",
                       "name": "NewUser",
-                      "password": "passdrow",
+                      "password": "password",
+                      "address": "123 Some St",
+                      "phone": "1234567890",
+                      "altemail": "user@gmail.com",
+                      "groups": "admin"}
+        self.userI = {"username": "UserIns",
+                      "email": "useri@uwm.edu",
+                      "name": "Instructor",
+                      "password": "passstudent",
                       "address": "123 This St",
                       "phone": "1234567899",
-                      "altemail": "usern@gmail.com",
-                      "group__name": "admin"}
-        dictdelete = {"input": "createUser",
-                      "username": "UserN",
-                      "email": "usern@uwm.edu",
-                      "name": "NewUser",
-                      "password": "passdrow",
-                      "address": "123 This St",
-                      "phone": "1234567899",
-                      "altemail": "usern@gmail.com",
-                      "group__name": "admin"}
-        dictanother = {"input": "anotherMethod"}
-        dictempty = {"input": ""}
+                      "altemail": "useri@gmail.com",
+                      "groups": "instructor"}
+        self.userT = {"username": "UserTA",
+                      "email": "usert@uwm.edu",
+                      "name": "TA",
+                      "password": "passclass",
+                      "address": "123 That St",
+                      "phone": "1234567888",
+                      "altemail": "usert@gmail.com",
+                      "groups": "ta"}
 
-        AccountManagement.determineForm(self, dictcreate)
+    def test_delete_Admin(self):
+        # Creating a user to test delete
+        AccountManagement.createUser(self, self.userA)
+        # delete user
+        AccountManagement.deleteUser(self, self.userA["username"])
+        # check that user was fully deleted
+        self.assertTrue(len(User.objects.filter(username="UserAdm")) == 0)
 
+    def test_delete_Instructor(self):
+        AccountManagement.createUser(self, self.userI)
+        AccountManagement.deleteUser(self, self.userI["username"])
+        self.assertTrue(len(User.objects.filter(username="UserIns")) == 0)
+
+    def test_delete_TA(self):
+        AccountManagement.createUser(self, self.userT)
+        AccountManagement.deleteUser(self, self.userT["username"])
+        self.assertTrue(len(User.objects.filter(username="UserTA")) == 0)
+
+    def test_delete_NoUser(self):
+        with self.assertRaises(KeyError, msg="No user to delete"):
+            AccountManagement.deleteUser(self, self.userA["username"])
+
+
+class TestDetermineForm(unittest.TestCase):
+    def setUp(self):
+        self.create = {"username": "UserN",
+                       "email": "usern@uwm.edu",
+                       "name": "NewUser",
+                       "password": "passdrow",
+                       "address": "123 This St",
+                       "phone": "1234567899",
+                       "altemail": "usern@gmail.com",
+                       "group__name": "admin"}
+        self.delete = {"username": "UserN"}
+        self.other = {"name": "NewUser"}
+        self.empty = {""}
+
+    def test_createForm(self):
+        AccountManagement.determineForm(self, self.create)
         self.assertTrue(len(User.objects.filter(username="UserN")) == 1)
-        self.assertTrue(len(User.objects.filter(email="usern@uwm.edu")) == 1)
-        self.assertTrue(len(User.objects.filter(name="UserN")) == 1)
-        self.assertTrue(len(User.objects.filter(password="passdrow")) == 1)
-        self.assertTrue(len(User.objects.filter(address="123 This St")) == 1)
-        self.assertTrue(len(User.objects.filter(phone="1234567899")) == 1)
-        self.assertTrue(len(User.objects.filter(altemail="usern@gmail.com")) == 1)
-        self.assertTrue(len(User.objects.filter(group__name="admin")) == 1)
 
-        AccountManagement.determineForm(self, dictdelete)
-
+    def test_deleteForm(self):
+        AccountManagement.determineForm(self, self.create)
+        AccountManagement.determineForm(self, self.delete)
         self.assertTrue(len(User.objects.filter(username="UserN")) == 0)
-        self.assertTrue(len(User.objects.filter(email="usern@uwm.edu")) == 0)
-        self.assertTrue(len(User.objects.filter(name="UserN")) == 0)
-        self.assertTrue(len(User.objects.filter(password="passdrow")) == 0)
-        self.assertTrue(len(User.objects.filter(address="123 This St")) == 0)
-        self.assertTrue(len(User.objects.filter(phone="1234567899")) == 0)
-        self.assertTrue(len(User.objects.filter(altemail="usern@gmail.com")) == 0)
-        self.assertTrue(len(User.objects.filter(group__name="admin")) == 0)
 
+    def test_otherForm(self):
         with self.assertRaises(ValueError, msg="Didn't receive 'deleteUser' xor 'createUser'"):
-            AccountManagement.determineForm(self, dictanother)
+            AccountManagement.determineForm(self, self.other)
+
+    def test_emptyForm(self):
         with self.assertRaises(ValueError, msg="Can't have empty key for input"):
-            AccountManagement.determineForm(self, dictempty)
+            AccountManagement.determineForm(self, self.empty)
