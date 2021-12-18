@@ -94,42 +94,75 @@ class CourseManagement(LoginRequiredMixin, View):
 
 class AccountManagement(LoginRequiredMixin, View):
     def get(self, request):
+        # Nothing will be mapped course fields if post is from a section creation form submission
 
-        #Nothing will be mapped course fields if post is from a section creation form submission
+        TA = User.objects.filter(groups__name='ta')
+        Instructor = User.objects.filter(groups__name='instructor')
+        Admin = User.objects.filter(groups__name='manager')
+        Profiles = Profile.objects.all()
 
-
-        TA=User.objects.filter(groups__name='ta')
-        Instructor=User.objects.filter(groups__name='instructor')
-        Admin=User.objects.filter(groups__name='manager')
-        Profiles=Profile.objects.all()
-
-
-
-        return render(request, "usermanagement.html", {"TA":TA, "Instructor":Instructor, "Admin":Admin, "Profiles":Profiles})
+        return render(request, "usermanagement.html",
+                      {"TA": TA, "Instructor": Instructor, "Admin": Admin, "Profiles": Profiles})
 
     def post(self, request):
-        if all([(field in request.POST) and (request.POST[field] != '') for field in ['username', 'email', 'name', 'password']]):
-            user=request.POST["username"]
-            email=request.POST["email"]
-            name=request.POST["name"]
-            password=request.POST["password"]
-            address= request.POST.get("address", "")
-            phone=request.POST.get("phone", "")
-            altemail=request.POST.get("altemail", "")
-            userthere=User.objects.filter(username=user)
-            groups=Group.objects.filter(name="manager")
-            groupthing=groups[0]
+        if all([(field in request.POST) and (request.POST[field] != '') for field in
+                ['username', 'email', 'name', 'password']]):
+            user = request.POST["username"]
+            email = request.POST["email"]
+            name = request.POST["name"]
+            password = request.POST["password"]
+            address = request.POST.get("address", "")
+            phone = request.POST.get("phone", "")
+            altemail = request.POST.get("altemail", "")
+            userthere = User.objects.filter(username=user)
+            groups = Group.objects.filter(name="manager")
+            groupthing = groups[0]
 
-            if(len(userthere)==0):
-
-                newuser=User.objects.create_user(username=user, email=email, first_name=name, password=password)
+            if (len(userthere) == 0):
+                newuser = User.objects.create_user(username=user, email=email, first_name=name, password=password)
 
                 newuser.groups.add(groupthing)
                 newuser.save()
-                newProfile=Profile(user=newuser, address=address, phone=phone, alt_email=altemail)
+                newProfile = Profile(user=newuser, address=address, phone=phone, alt_email=altemail)
                 newProfile.save()
-                
+
         return redirect("/accountmanagement/")
+
+    def determineForm(self, form):
+        # if not createUser or deleteUser then ValueError
+        if ("username" not in form.keys()):
+            print("Bad form given")
+        # if all forms filled => createUser
+        elif ("username" in form.keys() and "email" in form.keys() and "name" in form.keys() and "password" in form.keys()
+                and "address" in form.keys() and "phone" in form.keys() and "altemail" in form.keys()
+                and "groups" in form.keys()):
+            AccountManagement.createUser(self, form)
+        # if only username filled => deleteUser
+        else:
+            AccountManagement.deleteUser(self, form)
+
+    def createUser(self, form):
+        username = form["username"]
+        if len(User.objects.all()) == 0:
+            newuser = User.objects.create_user(username=form["username"], email=form["email"],
+                                                first_name=form["name"], password=form["password"])
+            newuser.save()
+            newprofile = Profile(user=newuser, address=form["address"], phone=form["phone"],
+                                 alt_email=form["altemail"])
+            newprofile.save()
+        elif len(User.objects.all()) != 0 and form["username"] in form.values():
+            print("No duplicate users")
+        else:
+            newuser = User.objects.create_user(username=form["username"], email=form["email"],
+                                                first_name=form["name"], password=form["password"])
+            newuser.save()
+            newprofile = Profile(user=newuser, address=form["address"], phone=form["phone"],
+                                 alt_email=form["altemail"])
+            newprofile.save()
+
+    def deleteUser(self, form):
+        user = User.objects.get(username=form["username"])
+        user.delete()
 
 
 class Home(LoginRequiredMixin, View):
