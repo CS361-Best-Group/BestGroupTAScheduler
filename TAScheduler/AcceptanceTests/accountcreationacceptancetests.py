@@ -1,8 +1,8 @@
 from django.test import TestCase
 from django.test import Client
 from django.contrib.auth.models import User, Group
-from .apps import TASchedulerAppConfig
-from .models import Profile
+from TAScheduler.apps import TASchedulerAppConfig
+from TAScheduler.models import Profile
 
 # As an administrator, I must be able to create accounts for the system, in order to allow new administrators, instructors and TAs to access the system.
 class TestCourseCreationAcceptance(TestCase):

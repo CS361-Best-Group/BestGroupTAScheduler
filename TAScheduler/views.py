@@ -6,6 +6,7 @@ from django.views import View
 from django.contrib.auth import authenticate, login, logout
 from .models import Profile
 from django.contrib.auth.models import User, Group
+from TAScheduler.determinerole import determineRole
 
 from TAScheduler.models import Course, Section
 
@@ -140,45 +141,52 @@ class Home(LoginRequiredMixin, View):
 
 class ProfilePage(LoginRequiredMixin, View):
     def get(self, request):
-
         CurrentUserID=request.session["_auth_user_id"]
-
         CurrentUser=User.objects.filter(id=CurrentUserID)[0]
-
         CurrentProfile=Profile.objects.filter(user=CurrentUser)[0]
 
-        return render(request, "profile.html", {"email":CurrentUser.email, "firstname":CurrentUser.first_name, "email":CurrentUser.email, "username":CurrentUser.username, "address":CurrentProfile.address, "phone":CurrentProfile.phone, "altemail":CurrentProfile.alt_email})
+        return render(request, "profile.html", {"email":CurrentUser.email, "firstname":CurrentUser.first_name, "email":CurrentUser.email, "username":CurrentUser.username, "address":CurrentProfile.address, "phone":CurrentProfile.phone, "altemail":CurrentProfile.alt_email, "skills":CurrentProfile.skills})
 
     def post(self, request):
-        newname=request.POST["name"]
-        newusername=request.POST["username"]
-        newphone=request.POST["phone"]
-        newaddress=request.POST["address"]
-        newemail = request.POST["email"]
-        newaltemail=request.POST["altemail"]
-
         currentuser=User.objects.filter(id=request.session["_auth_user_id"])[0]
         currentprofile=Profile.objects.filter(user=currentuser)[0]
 
+        self.otherProfile(currentuser, currentprofile, request.POST)
+        role = determineRole(currentuser)
+        if role == 'ta':
+            self.TAProfile(currentprofile, request.POST["skills"])
 
-        if(newname!=""):
-            currentuser.first_name=newname
-
-        if(newusername!="" and len(User.objects.filter(username=newusername))==0):
-            currentuser.username=newusername
-
-        if(newphone!=""):
-            currentprofile.phone=newphone
-        if(newaddress!=""):
-            print("inside if statement")
-            currentprofile.address=newaddress
-        if(newemail!=""):
-            currentuser.email=newemail
-        if (newaltemail!=""):
-            currentprofile.alt_email=newaltemail
-
-        currentuser.save()
-        currentprofile.save()
         print("New address")
         print(currentprofile.address)
         return redirect("/profile/")
+
+    def otherProfile(self, user, profile, post):
+        newname=post["name"]
+        newusername=post["username"]
+        newemail=post["email"]
+        if(newname!=""):
+            user.first_name=newname
+        if(newusername!="" and len(User.objects.filter(username=newusername))==0):
+            user.username=newusername
+        if(newemail!=""):
+            user.email=newemail
+        user.save()
+
+        newphone=post["phone"]
+        newaddress=post["address"]
+        newaltemail=post["altemail"]
+        if(newphone!=""):
+            profile.phone=newphone
+        if(newaddress!=""):
+            print("inside if statement")
+            profile.address=newaddress
+        if (newaltemail!=""):
+            profile.alt_email=newaltemail
+        profile.save()
+        pass
+
+    def TAProfile(self, profile, skills):
+        profile.skills = skills
+        profile.save()
+        pass
+
