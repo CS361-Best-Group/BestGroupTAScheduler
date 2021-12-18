@@ -8,7 +8,7 @@ from .models import Profile
 from django.contrib.auth.models import User, Group
 
 from TAScheduler.models import Course, Section
-import TAScheduler.coursemanagement
+from TAScheduler.determinerole import determineRole
 
 class Login(View):
 
@@ -20,9 +20,6 @@ class Login(View):
         print("In post")
         user=request.POST["name"]
         password=request.POST["password"]
-
-
-
         userobject=authenticate(request, username=user, password=password)
 
 
@@ -37,14 +34,93 @@ class Login(View):
 
 class CourseManagement(LoginRequiredMixin, View):
     def get(self, request):
-        Courses=Course.objects.all()
-        Sections=Section.objects.all()
-        
-        return render(request, "coursemanagement.html", {"Courses":Courses, "Sections":Sections})
+        courses, sections = CourseManagement.load(request.user)
+        print(courses)
+        print(sections)
+        return render(request, "coursemanagement.html", {"Courses": courses, "Sections": sections})
 
     def post(self, request):
-        TAScheduler.coursemanagement.handleForm(request.POST)
+        CourseManagement.handleForm(request.POST)
         return redirect("/coursemanagement/")
+
+    # Data filtering and display functions.
+
+    def getAssociatedInstructors(course):
+        # To be implemented.
+        pass
+        
+    def getAssociatedTAs(course):
+        # To be implemented.
+        pass
+
+    def load(user):
+        role = determineRole(user)
+        
+        if role == 'manager':
+            courses = list(Course.objects.all())
+            sections = list(Section.objects.all())
+        elif role == 'instructor':
+            courses = list(Course.objects.filter(users__in = [ user ]))
+            sections = list(Section.objects.filter(users__in = [ user ]) | Section.objects.filter(course__in = courses))
+        else:
+            courses = list(Course.objects.filter(users__in = [ user ]))
+            sections = list(Section.objects.filter(users__in = [ user ]))
+            
+            for section in sections:
+                if section.course not in courses:
+                    courses.append(section.course)
+        
+        return (courses, sections)
+
+    # Form handling functions.
+
+    def handleForm(context):
+        formHandlers = {
+            'createCourse': createCourse,
+            'createSection': createSection,
+            'deleteCourse': deleteCourse,
+            'deleteSection': deleteSection,
+            'assignUser': assignUser
+        }
+        
+        if 'kind' in context.keys():
+            formHandlers.get(context['kind'], lambda *args, **keyArgs: None)(context)
+
+    def createCourse(context):
+        # TODO: group membership check.
+        name = context.get('course', '')
+
+        if name != '' and len(Course.objects.filter(name = name)) == 0:
+            description = context.get('description', 'No description')
+            
+            course = Course(name = name, description = description)
+            course.users.set([])
+
+            course.save()
+
+    def createSection(context):
+        # TODO: group membership check.
+        course = Course.objects.get(name = context.get('course', ''))
+        
+        if course is not None:
+            name = context.get('section', '')
+            
+            if name != '' and len(Section.objects.filter(course = course, name = name)) == 0:
+                section = Section(name = name, course = course)
+                section.users.set([])
+                section.save()
+
+    def deleteCourse(context):
+        # To be implemented.
+        pass
+
+    def deleteSection(context):
+        # To be implemented.
+        pass
+
+    def assignUser(context):
+        # To be implemented.
+        pass
 
 class AccountManagement(LoginRequiredMixin, View):
     def get(self, request):
