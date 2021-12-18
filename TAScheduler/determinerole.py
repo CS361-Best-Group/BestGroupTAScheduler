@@ -5,5 +5,5 @@ def determineRole(user):
         return 'manager'
     elif user.groups.filter(name='instructor').exists():
         return 'instructor'
-    else:
+    elif user.groups.filter(name="ta").exists():
         return 'ta'
