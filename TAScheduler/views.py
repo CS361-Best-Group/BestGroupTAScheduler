@@ -137,26 +137,35 @@ class AccountManagement(LoginRequiredMixin, View):
         return render(request, "usermanagement.html", {"TA":TA, "Instructor":Instructor, "Admin":Admin, "Profiles":Profiles, "SideButtons":SideButtons, "UserButtons":UserButtons})
 
     def post(self, request):
-        if all([(field in request.POST) and (request.POST[field] != '') for field in ['username', 'email', 'name', 'password']]):
-            user=request.POST["username"]
-            email=request.POST["email"]
-            name=request.POST["name"]
-            password=request.POST["password"]
-            address= request.POST.get("address", "")
-            phone=request.POST.get("phone", "")
-            altemail=request.POST.get("altemail", "")
-            userthere=User.objects.filter(username=user)
-            groups=Group.objects.filter(name="manager")
-            groupthing=groups[0]
+        if all([(field in request.POST) and (request.POST[field] != '') for field in
+                ['username', 'email', 'name', 'password']]):
+            user = request.POST["username"]
+            email = request.POST["email"]
+            name = request.POST["name"]
+            password = request.POST["password"]
+            address = request.POST.get("address", "")
+            phone = request.POST.get("phone", "")
+            altemail = request.POST.get("altemail", "")
+            userthere = User.objects.filter(username=user)
+            groups = Group.objects.filter(name="manager")
+            groupthing = groups[0]
 
-            if(len(userthere)==0):
-
-                newuser=User.objects.create_user(username=user, email=email, first_name=name, password=password)
-
-                newuser.groups.add(groupthing)
-                newuser.save()
-                newProfile = Profile(user=newuser, address=address, phone=phone, alt_email=altemail)
-                newProfile.save()
+            form = {"username": userthere,
+                    "email": email,
+                    "name": name,
+                    "password": password,
+                    "address": address,
+                    "phone": phone,
+                    "altemail": altemail,
+                    "groups": groupthing}
+            self.determineForm(form)
+            # if (len(userthere) == 0):
+            #     newuser = User.objects.create_user(username=user, email=email, first_name=name, password=password)
+            #
+            #     newuser.groups.add(groupthing)
+            #     newuser.save()
+            #     newProfile = Profile(user=newuser, address=address, phone=phone, alt_email=altemail)
+            #     newProfile.save()
 
         return redirect("/accountmanagement/")
 
@@ -174,15 +183,7 @@ class AccountManagement(LoginRequiredMixin, View):
             AccountManagement.deleteUser(self, form)
 
     def createUser(self, form):
-        username = form["username"]
-        if len(User.objects.all()) == 0:
-            newuser = User.objects.create_user(username=form["username"], email=form["email"],
-                                                first_name=form["name"], password=form["password"])
-            newuser.save()
-            newprofile = Profile(user=newuser, address=form["address"], phone=form["phone"],
-                                 alt_email=form["altemail"])
-            newprofile.save()
-        elif len(User.objects.all()) != 0 and form["username"] in form.values():
+        if len(User.objects.all()) != 0 and form["username"] in form.values():
             print("No duplicate users")
         else:
             newuser = User.objects.create_user(username=form["username"], email=form["email"],
