@@ -26,28 +26,20 @@ class TestdetermineRole(TestCase):
     def test_adminRole(self):
         admingroup = Group.objects.get(name="manager")
         self.User1.groups.add(admingroup)
-        self.assertEqual(1, determineRole(self.User1))
+        self.assertEqual("manager", determineRole(self.User1))
 
     def test_instructorRole(self):
         instructorgroup = Group.objects.get(name="instructor")
         self.User1.groups.add(instructorgroup)
-        self.assertEqual(2, determineRole(self.User1))
+        self.assertEqual("instructor", determineRole(self.User1))
 
     def test_taRole(self):
         tagroup = Group.objects.get(name="ta")
         self.User1.groups.add(tagroup)
-        self.assertEqual(3, determineRole(self.User1))
+        self.assertEqual("ta", determineRole(self.User1))
 
 
 
-
-    def test_noGroup(self):
-        self.assertEqual(-1, determineRole(self.User1))
-
-
-
-    def test_noUser(self):
-        self.assertEqual(-1, determineRole(None))
 
 
 

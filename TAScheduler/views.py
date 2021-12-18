@@ -90,22 +90,6 @@ class CourseManagement(LoginRequiredMixin, View):
 
 
     #how can I handle multiple forms on the same page?
-def determineRole(User1):
-    if(User1==None):
-        return -1
-    adminGroup=Group.objects.filter(name="manager")[0]
-    taGroup=Group.objects.filter(name="ta")[0]
-    instructorGroup=Group.objects.filter(name="instructor")[0]
-
-    if(len(User1.groups.all())!=1):
-        return -1
-
-    if(User1.groups.all()[0]==adminGroup):
-        return 1
-    elif(User1.groups.all()[0]==taGroup):
-        return 3
-    elif (User1.groups.all()[0]==instructorGroup):
-        return 2
 
 
 
@@ -128,11 +112,11 @@ class AccountManagement(LoginRequiredMixin, View):
         Admin=[]
 
         for i in Largelist[0]:
-            if(determineRole(i)==1):
+            if(determineRole(i)=="manager"):
                 Admin.append(i)
-            elif (determineRole(i)==2):
+            elif (determineRole(i)=="instructor"):
                 Instructor.append(i)
-            elif (determineRole(i)==3):
+            elif (determineRole(i)=="ta"):
                 TA.append(i)
         return render(request, "usermanagement.html", {"TA":TA, "Instructor":Instructor, "Admin":Admin, "Profiles":Profiles, "SideButtons":SideButtons, "UserButtons":UserButtons})
 
@@ -202,8 +186,8 @@ class AccountManagement(LoginRequiredMixin, View):
         currentrole=determineRole(currentUser)
         #admin
         UserList = User.objects.all()
-
-        if(currentrole==1):
+        print(UserList)
+        if(currentrole=="manager"):
             ProfileList=Profile.objects.all()
 
             sidebutton=Button()
@@ -214,12 +198,12 @@ class AccountManagement(LoginRequiredMixin, View):
             SideButtons=[sidebutton]
             UserButtons=[userbutton]
         #instructor
-        elif(currentrole==2):
+        elif(currentrole=="instructor"):
             ProfileList=[]
             SideButtons=[]
             UserButtons=[]
         #ta
-        elif(currentrole==3):
+        elif(currentrole=="ta"):
             ProfileList=[]
             SideButtons=[]
             UserButtons=[]
