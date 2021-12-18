@@ -7,8 +7,8 @@
 	--fore-dark: #222222;
 	--fore-light: #FFFFFF;
 	
-	--main: #DDDDFF;
-	--accent: #5A5A79;
+	--main: #249FF6; /* #DDDDFF; */
+	--accent: #1A1919; /* #5A5A79; */
 	--border: #ACACAC;
 	
 	--back: #FFFFFF;
@@ -38,6 +38,7 @@ h1 {
 	
 	color: var(--fore-light);
 	font-size: 16pt;
+	text-align: center;
 	
 	background: var(--accent);
 	border: solid var(--border);
@@ -129,6 +130,7 @@ section.navigationMenu {
 	margin: 0 0 1em 0;
 	padding: 0;
 	flex-wrap: wrap;
+	justify-content: center;
 	
 	background: var(--main);
 	border: solid var(--border);
@@ -162,8 +164,20 @@ section.navigationMenu > div > a, section.navigationMenu > div > a:visited {
 
 /* Styling for '/login'. */
 
+section.login {
+	display: flex;
+	justify-content: center;
+}
+
 form.login {
 	margin: 1em 0 0 2vw;
+}
+
+/* Styling for '/profile'. */
+
+section.profile {
+	display: flex;
+	justify-content: center;
 }
 
 /* Styling for '/accountmanagement'. */
@@ -246,3 +260,4 @@ section.coursemanagement > section.courses form {
 section.coursemanagement > form {
 	margin: 0;
 }
+

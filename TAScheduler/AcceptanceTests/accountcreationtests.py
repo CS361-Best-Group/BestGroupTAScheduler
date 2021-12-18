@@ -45,7 +45,7 @@ class TestAccountCreationGet(TestCase):
 
     def test_displayTAName(self):
         r=self.client.get("/accountmanagement/")
-        self.assertContains(r, '<div class="name">TA Timmy</div>' )
+        self.assertContains(r, 'TA Timmy' )
 
 
     def test_loadTAPrimaryEmail(self):
@@ -54,27 +54,27 @@ class TestAccountCreationGet(TestCase):
 
     def test_displayTAPrimaryEmail(self):
         r=self.client.get("/accountmanagement/")
-        self.assertContains(r, '<div class="email">timmy@gmail.com</div>')
+        self.assertContains(r, 'timmy@gmail.com')
 
     def test_loadTAAlternateEmail(self):
         r=self.client.get("/accountmanagement/")
         self.assertEqual(r.context["Profiles"].filter(user=User.objects.filter(first_name="TA Timmy")[0])[0].alt_email, "alt@gmail.com")
     def test_displayTAAlternameEmail(self):
         r=self.client.get("/accountmanagement/")
-        self.assertContains(r, '<div class="altEmail">alt@gmail.com</div>')
+        self.assertContains(r, 'alt@gmail.com')
 
     def test_loadTAAddress(self):
         r=self.client.get("/accountmanagement/")
         self.assertEqual(r.context["Profiles"].filter(user=User.objects.filter(first_name="TA Timmy")[0])[0].address, "9999")
     def test_displayTAAddress(self):
         r=self.client.get("/accountmanagement/")
-        self.assertContains(r, '<div>9999</div>')
+        self.assertContains(r, '9999')
     def test_loadTAPhoneNumber(self):
         r=self.client.get("/accountmanagement/")
         self.assertEqual(r.context["Profiles"].filter(user=User.objects.filter(first_name="TA Timmy")[0])[0].phone, "999-999-9999")
     def test_displayTAPhoneNumber(self):
         r=self.client.get("/accountmanagement/")
-        self.assertContains(r, "<div>999-999-9999</div>")
+        self.assertContains(r, "999-999-9999")
 
     def test_loadInstructorName(self):
         r=self.client.get("/accountmanagement/")
@@ -82,7 +82,7 @@ class TestAccountCreationGet(TestCase):
 
     def test_displayInstructorName(self):
         r=self.client.get("/accountmanagement/")
-        self.assertContains(r, '<div class="name">Instructor Isaac</div>')
+        self.assertContains(r, 'Instructor Isaac')
 
     def test_loadInstructorEmail(self):
         r=self.client.get("/accountmanagement/")
@@ -90,40 +90,40 @@ class TestAccountCreationGet(TestCase):
 
     def test_displayInstructorEmail(self):
         r=self.client.get("/accountmanagement/")
-        self.assertContains(r, '<div class="email">issac@gmail.com</div>')
+        self.assertContains(r, 'issac@gmail.com')
 
     def test_loadInstructorAltEmail(self):
         r=self.client.get("/accountmanagement/")
         self.assertEqual(r.context["Profiles"].filter(user=User.objects.filter(first_name="Instructor Isaac")[0])[0].alt_email, "alt2@gmail.com")
     def test_displayInstructorAltEmail(self):
         r=self.client.get("/accountmanagement/")
-        self.assertContains(r, '<div class="altEmail">alt2@gmail.com</div>')
+        self.assertContains(r, 'alt2@gmail.com')
     def test_loadInstructorAddress(self):
         r=self.client.get("/accountmanagement/")
         self.assertEqual(r.context["Profiles"].filter(user=User.objects.filter(first_name="Instructor Isaac")[0])[0].address, "9998")
     def test_displayInstructorAddress(self):
         r=self.client.get("/accountmanagement/")
-        self.assertContains(r, "<div>9998</div>")
+        self.assertContains(r, "9998")
     def test_loadInstructorPhoneNumber(self):
         r=self.client.get("/accountmanagement/")
         self.assertEqual(r.context["Profiles"].filter(user=User.objects.filter(first_name="Instructor Isaac")[0])[0].phone, "999-999-9998")
     def test_displayInstructorPhoneNumber(self):
         r=self.client.get("/accountmanagement/")
-        self.assertContains(r, "<div>999-999-9998</div>")
+        self.assertContains(r, "999-999-9998")
     def test_loadAdminName(self):
         r=self.client.get("/accountmanagement/")
         self.assertEqual(r.context["Admin"][0].first_name, "Admin Adam")
 
     def test_displayAdminName(self):
         r=self.client.get("/accountmanagement/")
-        self.assertContains(r, '<div class="name">Admin Adam</div>')
+        self.assertContains(r, 'Admin Adam')
 
     def test_loadAdminEmail(self):
         r=self.client.get("/accountmanagement/")
         self.assertEqual(r.context["Admin"][0].email, "adam@gmail.com")
     def test_displayAdminEmail(self):
         r=self.client.get("/accountmanagement/")
-        self.assertContains(r, '<div class="email">adam@gmail.com</div>')
+        self.assertContains(r, 'adam@gmail.com')
 
     def test_loadAdminAltEmail(self):
         r=self.client.get("/accountmanagement/")
@@ -132,19 +132,19 @@ class TestAccountCreationGet(TestCase):
 
     def test_displayAdminAltEmail(self):
         r=self.client.get("/accountmanagement/")
-        self.assertContains(r, '<div class="altEmail">alt3@gmail.com</div>')
+        self.assertContains(r, 'alt3@gmail.com')
     def test_loadAdminAddress(self):
         r=self.client.get("/accountmanagement/")
         self.assertEqual(r.context["Profiles"].filter(user=User.objects.filter(first_name="Admin Adam")[0])[0].address, "9997")
     def test_displayAdminAddress(self):
         r=self.client.get("/accountmanagement/")
-        self.assertContains(r, "<div>9997</div>")
+        self.assertContains(r, "9997")
     def test_loadAdminPhone(self):
         r=self.client.get("/accountmanagement/")
         self.assertEqual(r.context["Profiles"].filter(user=User.objects.filter(first_name="Admin Adam")[0])[0].phone, "999-999-9997")
     def test_displayAdminPhone(self):
         r=self.client.get("/accountmanagement/")
-        self.assertContains(r, "<div>999-999-9997</div>")
+        self.assertContains(r, "999-999-9997")
 
 
     def test_loadMultuipleTAName(self):
@@ -159,13 +159,13 @@ class TestAccountCreationGet(TestCase):
         TA2.groups.add(self.ta_group)
         TA2.save()
         r=self.client.get("/accountmanagement/")
-        self.assertContains(r, '<div class="name">TA Timmy</div>')
+        self.assertContains(r, 'TA Timmy')
     def test_displayMultipleTAName2(self):
         TA2 = User.objects.create_user("Tyler", "tyler@gmail.com", "The Black Knight always triumphs!", first_name="TA Tyler")
         TA2.groups.add(self.ta_group)
         TA2.save()
         r = self.client.get("/accountmanagement/")
-        self.assertContains(r, '<div class="name">TA Tyler</div>')
+        self.assertContains(r, 'TA Tyler')
     def test_loadMultipleTAEmail(self):
         TA2 = User.objects.create_user("Tyler", "tyler@gmail.com", "The Black Knight always triumphs!", first_name="TA Tyler")
         TA2.groups.add(self.ta_group)
@@ -178,13 +178,13 @@ class TestAccountCreationGet(TestCase):
         TA2.groups.add(self.ta_group)
         TA2.save()
         r = self.client.get("/accountmanagement/")
-        self.assertContains(r, '<div class="email">timmy@gmail.com</div>')
+        self.assertContains(r, 'timmy@gmail.com')
     def test_displayMultipleTAEmail2(self):
         TA2 = User.objects.create_user("Tyler", "tyler@gmail.com", "The Black Knight always triumphs!", first_name="TA Tyler")
         TA2.groups.add(self.ta_group)
         TA2.save()
         r = self.client.get("/accountmanagement/")
-        self.assertContains(r, '<div class="email">tyler@gmail.com</div>')
+        self.assertContains(r, 'tyler@gmail.com')
 
     def test_loadMultipleInstructorName(self):
         IN2=User.objects.create_user("Ivy", "ivy@gmail.com", "pAssword", first_name="Instructor Ivy")
@@ -198,13 +198,13 @@ class TestAccountCreationGet(TestCase):
         IN2.groups.add(self.instructor_group)
         IN2.save()
         r = self.client.get("/accountmanagement/")
-        self.assertContains(r, '<div class="name">Instructor Isaac</div>')
+        self.assertContains(r, 'Instructor Isaac')
     def test_displayMultipleInstructorName2(self):
         IN2 = User.objects.create_user("Ivy", "ivy@gmail.com", "pAssword", first_name="Instructor Ivy")
         IN2.groups.add(self.instructor_group)
         IN2.save()
         r = self.client.get("/accountmanagement/")
-        self.assertContains(r, '<div class="name">Instructor Ivy</div>')
+        self.assertContains(r, 'Instructor Ivy')
 
     def test_loadMultipleInstructorEmail(self):
         IN2=User.objects.create_user("Ivy", "ivy@gmail.com", "pAssword", first_name="Instructor Ivy")
@@ -218,13 +218,13 @@ class TestAccountCreationGet(TestCase):
         IN2.groups.add(self.instructor_group)
         IN2.save()
         r=self.client.get("/accountmanagement/")
-        self.assertContains(r, '<div class="email">issac@gmail.com</div>')
+        self.assertContains(r, 'issac@gmail.com')
     def test_displayMultipleInstructorEmail2(self):
         IN2 = User.objects.create_user("Ivy", "ivy@gmail.com", "pAssword", first_name="Instructor Ivy")
         IN2.groups.add(self.instructor_group)
         IN2.save()
         r = self.client.get("/accountmanagement/")
-        self.assertContains(r, '<div class="email">ivy@gmail.com</div>')
+        self.assertContains(r, 'ivy@gmail.com')
 
 
     def test_loadMultipleAdminName(self):
@@ -239,13 +239,13 @@ class TestAccountCreationGet(TestCase):
         AD2.groups.add(self.admin_group)
         AD2.save()
         r = self.client.get("/accountmanagement/")
-        self.assertContains(r, '<div class="name">Admin Adam</div>')
+        self.assertContains(r, 'Admin Adam')
     def test_displayMultipleAdminName2(self):
         AD2 = User.objects.create_user("Avery", "avery@gmail.com", "bestcharacter", first_name="Admin Avery")
         AD2.groups.add(self.admin_group)
         AD2.save()
         r = self.client.get("/accountmanagement/")
-        self.assertContains(r, '<div class="name">Admin Avery</div>')
+        self.assertContains(r, 'Admin Avery')
 
 
     def test_loadMultipleAdminEmail(self):
@@ -260,13 +260,13 @@ class TestAccountCreationGet(TestCase):
         AD2.groups.add(self.admin_group)
         AD2.save()
         r = self.client.get("/accountmanagement/")
-        self.assertContains(r, '<div class="email">adam@gmail.com</div>')
+        self.assertContains(r, 'adam@gmail.com')
     def test_displayMultipleAdminEmail2(self):
         AD2 = User.objects.create_user("Avery", "avery@gmail.com", "bestcharacter", first_name="Admin Avery")
         AD2.groups.add(self.admin_group)
         AD2.save()
         r = self.client.get("/accountmanagement/")
-        self.assertContains(r, '<div class="email">avery@gmail.com</div>')
+        self.assertContains(r, 'avery@gmail.com')
 
 
 
@@ -288,10 +288,10 @@ class TestAccountCreationPost(TestCase):
         self.assertEqual(len(Profile.objects.all()),1)
 
     def test_displayNewAccountName(self):
-        self.assertContains(self.r ,'<div class="name">Manager Marcus</div>')
+        self.assertContains(self.r ,'Manager Marcus')
 
     def test_displayNewAccountEmail(self):
-        self.assertContains(self.r, '<div class="email">testing@gmail.com</div>')
+        self.assertContains(self.r, 'testing@gmail.com')
 
     def test_usernameStored(self):
         self.assertEqual(User.objects.all()[1].username, "Testing123")
@@ -312,15 +312,15 @@ class TestAccountCreationPost(TestCase):
     def test_altEmailStored(self):
         self.assertEqual(Profile.objects.all()[0].alt_email, "marcus@gmail.com")
     def test_altEmailDisplayed(self):
-        self.assertContains(self.r, '<div class="altEmail">marcus@gmail.com</div>')
+        self.assertContains(self.r, 'marcus@gmail.com')
     def test_phoneStored(self):
         self.assertEqual(Profile.objects.all()[0].phone, "999-999-9999")
     def test_phoneDisplayed(self):
-        self.assertContains(self.r, "<div>999-999-9999</div>")
+        self.assertContains(self.r, "999-999-9999")
     def test_addressStored(self):
         self.assertEqual(Profile.objects.all()[0].address, "9999")
     def test_addressDisplayed(self):
-        self.assertContains(self.r, "<div>9999</div>")
+        self.assertContains(self.r, "9999")
     def test_profileUser(self):
         self.assertEqual(Profile.objects.all()[0].user, User.objects.all()[1])
     def test_secondNewAccount(self):
@@ -354,11 +354,11 @@ class TestAccountCreationPost(TestCase):
 
     def test_displaySecondNewAccountName(self):
         r=self.client.post("/accountmanagement/", {"username":"Testing1234", "password":"shield1", "email":"testing4@gmail.com", "name":"Manager Maria", "phone":"999-999-9998", "address":"9998", "altemail":"maria@gmail.com"}, follow=True)
-        self.assertContains(r, '<div class="name">Manager Maria</div>')
+        self.assertContains(r, 'Manager Maria')
 
     def test_displaySecondNewAccountEmail(self):
         r=self.client.post("/accountmanagement/", {"username":"Testing1234", "password":"shield1", "email":"testing4@gmail.com", "name":"Manager Maria", "phone":"999-999-9998", "address":"9998", "altemail":"maria@gmail.com"}, follow=True)
-        self.assertContains(r, '<div class="email">testing4@gmail.com</div>')
+        self.assertContains(r, 'testing4@gmail.com')
 
 
     def test_duplicateUserName(self):
