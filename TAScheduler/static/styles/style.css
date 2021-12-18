@@ -164,8 +164,20 @@ section.navigationMenu > div > a, section.navigationMenu > div > a:visited {
 
 /* Styling for '/login'. */
 
+section.login {
+	display: flex;
+	justify-content: center;
+}
+
 form.login {
 	margin: 1em 0 0 2vw;
+}
+
+/* Styling for '/profile'. */
+
+section.profile {
+	display: flex;
+	justify-content: center;
 }
 
 /* Styling for '/accountmanagement'. */
