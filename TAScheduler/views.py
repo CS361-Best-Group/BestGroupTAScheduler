@@ -1,12 +1,14 @@
 from hashlib import sha256
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth import authenticate, login, logout
 from .models import Profile
 from django.contrib.auth.models import User, Group
 from TAScheduler.determinerole import determineRole
+from django.db.utils import IntegrityError
 
 from TAScheduler.models import Course, Section
 from .button import Button
@@ -65,7 +67,7 @@ class CourseManagement(LoginRequiredMixin, View):
                 newcourse.save()
 
         elif ("course" in request.POST.keys()):
-            
+
             sectioncreationcourse = request.POST["course"]
             targetcourse=Course.objects.filter(name=sectioncreationcourse)[0]
 
@@ -130,11 +132,11 @@ class AccountManagement(LoginRequiredMixin, View):
             address = request.POST.get("address", "")
             phone = request.POST.get("phone", "")
             altemail = request.POST.get("altemail", "")
-            userthere = User.objects.filter(username=user)
+            # userthere = User.objects.filter(username=user)
             groups = Group.objects.filter(name="manager")
             groupthing = groups[0]
 
-            form = {"username": userthere,
+            form = {"username": user,
                     "email": email,
                     "name": name,
                     "password": password,
@@ -167,8 +169,8 @@ class AccountManagement(LoginRequiredMixin, View):
             AccountManagement.deleteUser(self, form)
 
     def createUser(self, form):
-        if len(User.objects.all()) != 0 and form["username"] in form.values():
-            print("No duplicate users")
+        if len(User.objects.all()) != 0 and form["username"] in User.objects.values():
+            raise IntegrityError("No duplicate users")
         else:
             newuser = User.objects.create_user(username=form["username"], email=form["email"],
                                                 first_name=form["name"], password=form["password"])
@@ -176,6 +178,7 @@ class AccountManagement(LoginRequiredMixin, View):
             newprofile = Profile(user=newuser, address=form["address"], phone=form["phone"],
                                  alt_email=form["altemail"])
             newprofile.save()
+
 
     def deleteUser(self, form):
         user = User.objects.get(username=form["username"])
