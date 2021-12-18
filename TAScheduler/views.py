@@ -7,7 +7,8 @@ from django.contrib.auth import authenticate, login, logout
 from .models import Profile
 from django.contrib.auth.models import User, Group
 
-from TAScheduler.models import Course, Section, Button
+from TAScheduler.models import Course, Section
+from .button import Button
 
 class Login(View):
 
@@ -163,10 +164,17 @@ class AccountManagement(LoginRequiredMixin, View):
         currentrole=determineRole(currentUser)
         #admin
         UserList = User.objects.all()
+
         if(currentrole==1):
             ProfileList=Profile.objects.all()
-            SideButtons=[Button(value="Create")]
-            UserButtons=[Button(value="Delete")]
+
+            sidebutton=Button()
+            sidebutton.value="Create"
+            userbutton=Button()
+            userbutton.value="Delete"
+
+            SideButtons=[sidebutton]
+            UserButtons=[userbutton]
         #instructor
         elif(currentrole==2):
             ProfileList=[]

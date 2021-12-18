@@ -1,15 +1,18 @@
 from django.test import TestCase
 from django.test import Client
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User, Group
 from .models import Profile
 
 
 class TestUrls(TestCase):
     def setUp(self):
         self.client=Client()
-        
+        self.admin_group, created = Group.objects.get_or_create(name="manager")
+        self.ta, created = Group.objects.get_or_create(name="ta")
+        self.ta, created = Group.objects.get_or_create(name="instructor")
         self.User1 = User.objects.create_user(username="New Guy", password="testing", email="sethkinney6@gmail.com")
         self.User1.save()
+        self.User1.groups.add(self.admin_group)
         Profile1 = Profile(user=self.User1, address="9999", phone="111-111-1111", alt_email="alt@gmail.com")
         Profile1.save()
 

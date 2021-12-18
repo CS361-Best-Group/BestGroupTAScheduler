@@ -121,7 +121,7 @@ class TestAccountManagementLoad(TestCase):
         self.assertEqual(AccountManagement.load(AccountManagement, self.InstructorUser)[2], [])
 
     def test_returnCorrectSideButtonsAdmin(self):
-        self.assertEqual(AccountManagement.load(AccountManagement, self.AdminUser)[2][0].name, "Create" )
+        self.assertEqual(AccountManagement.load(AccountManagement, self.AdminUser)[2][0].value, "Create" )
 
     def test_returnCorrectUserButtonsTA(self):
         self.assertEqual(AccountManagement.load(AccountManagement, self.TAUser)[3], [])
@@ -130,7 +130,7 @@ class TestAccountManagementLoad(TestCase):
         self.assertEqual(AccountManagement.load(AccountManagement, self.InstructorUser)[3], [])
 
     def test_returnCorrectUserButtonsAdmin(self):
-        self.assertEqual(AccountManagement.load(AccountManagement, self.AdminUser)[3][0].name, "Delete")
+        self.assertEqual(AccountManagement.load(AccountManagement, self.AdminUser)[3][0].value, "Delete")
 
 
 
