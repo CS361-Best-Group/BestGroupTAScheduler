@@ -6,6 +6,7 @@ class Profile(models.Model):
     address = models.TextField('Address', blank = True)
     phone = models.CharField('Phone number', max_length = 32, blank = True)
     alt_email = models.EmailField('Alternate email address', blank = True)
+    skills = models.TextField('Skills List', blank = True)
     
     class Meta:
         ordering = ["user"]
