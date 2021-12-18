@@ -119,7 +119,7 @@ class AccountManagement(LoginRequiredMixin, View):
     def determineForm(self, form):
         # if not createUser or deleteUser then ValueError
         if ("username" not in form.keys()):
-            pass
+            print("Bad form given")
         # if all forms filled => createUser
         elif ("username" in form.keys() and "email" in form.keys() and "name" in form.keys() and "password" in form.keys()
                 and "address" in form.keys() and "phone" in form.keys() and "altemail" in form.keys()
@@ -130,10 +130,27 @@ class AccountManagement(LoginRequiredMixin, View):
             AccountManagement.deleteUser(self, form)
 
     def createUser(self, form):
-        pass
+        username = form["username"]
+        if len(User.objects.all()) == 0:
+            newuser = User.objects.create_user(username=form["username"], email=form["email"],
+                                                first_name=form["name"], password=form["password"])
+            newuser.save()
+            newprofile = Profile(user=newuser, address=form["address"], phone=form["phone"],
+                                 alt_email=form["altemail"])
+            newprofile.save()
+        elif len(User.objects.all()) != 0 and form["username"] in form.values():
+            print("No duplicate users")
+        else:
+            newuser = User.objects.create_user(username=form["username"], email=form["email"],
+                                                first_name=form["name"], password=form["password"])
+            newuser.save()
+            newprofile = Profile(user=newuser, address=form["address"], phone=form["phone"],
+                                 alt_email=form["altemail"])
+            newprofile.save()
 
     def deleteUser(self, form):
-        pass
+        user = User.objects.get(username=form["username"])
+        user.delete()
 
 
 class Home(LoginRequiredMixin, View):

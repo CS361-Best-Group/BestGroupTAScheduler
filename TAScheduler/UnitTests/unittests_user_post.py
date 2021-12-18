@@ -5,7 +5,7 @@ from TAScheduler.views import AccountManagement
 
 class TestCreateUser(TestCase):
     def setUp(self):
-        self.userA = {"username": "User",
+        self.userA = {"username": "UserA",
                       "email": "user@uwm.edu",
                       "name": "NewUser",
                       "password": "password",
@@ -13,7 +13,7 @@ class TestCreateUser(TestCase):
                       "phone": "1234567890",
                       "altemail": "user@gmail.com",
                       "groups": "admin"}
-        self.userA2 = {"username": "User",
+        self.userA2 = {"username": "UserA",
                        "email": "user@uwm.edu",
                        "name": "NewUser",
                        "password": "password",
@@ -41,7 +41,7 @@ class TestCreateUser(TestCase):
     def test_Init_Admin(self):
         AccountManagement.createUser(AccountManagement, self.userA)
         # check that userA was added to database
-        self.assertTrue(len(User.objects.filter(username="User")) == 1)
+        self.assertTrue(len(User.objects.filter(username="UserA")) == 1)
 
     def tests_Init_Instructor(self):
         AccountManagement.createUser(AccountManagement, self.userI)
@@ -56,8 +56,8 @@ class TestCreateUser(TestCase):
         AccountManagement.createUser(AccountManagement, self.userA)
         # Throw error as userA2 uses the same username as userA
         # Do not add userA2
-        with self.assertRaises(ValueError, msg="Duplicate Username"):
-            AccountManagement.createUser(AccountManagement, self.userA2)
+        AccountManagement.createUser(AccountManagement, self.userA2)
+        self.assertTrue(len(User.objects.filter(username="UserA")) == 1)
 
 
 class TestDeleteUser(TestCase):
@@ -91,24 +91,19 @@ class TestDeleteUser(TestCase):
         # Creating a user to test delete
         AccountManagement.createUser(AccountManagement, self.userA)
         # delete user
-        AccountManagement.deleteUser(AccountManagement, self.userA["username"])
+        AccountManagement.deleteUser(AccountManagement, {"username": "UserAdm"})
         # check that user was fully deleted
         self.assertTrue(len(User.objects.filter(username="UserAdm")) == 0)
 
     def test_delete_Instructor(self):
         AccountManagement.createUser(AccountManagement, self.userI)
-        AccountManagement.deleteUser(AccountManagement, self.userI["username"])
+        AccountManagement.deleteUser(AccountManagement, {"username": "UserIns"})
         self.assertTrue(len(User.objects.filter(username="UserIns")) == 0)
 
     def test_delete_TA(self):
         AccountManagement.createUser(AccountManagement, self.userT)
-        AccountManagement.deleteUser(AccountManagement, self.userT["username"])
+        AccountManagement.deleteUser(AccountManagement, {"username": "UserTA"})
         self.assertTrue(len(User.objects.filter(username="UserTA")) == 0)
-
-    # throws error if trying to delete a user that does not exist
-    def test_delete_NoUser(self):
-        with self.assertRaises(KeyError, msg="No user to delete"):
-            AccountManagement.deleteUser(AccountManagement, self.userA["username"])
 
 
 class TestDetermineForm(TestCase):
@@ -123,7 +118,7 @@ class TestDetermineForm(TestCase):
                        "groups": "admin"}
         self.delete = {"username": "UserN"}
         self.other = {"name": "NewUser"}
-        self.empty = {""}
+        self.empty = {"": ""}
 
     def test_createForm(self):
         AccountManagement.determineForm(AccountManagement, self.create)
@@ -134,8 +129,11 @@ class TestDetermineForm(TestCase):
         AccountManagement.determineForm(AccountManagement, self.delete)
         self.assertTrue(len(User.objects.filter(username="UserN")) == 0)
 
-    # throws error if it gets passed a form other than whats expected (create or delete)
     def test_otherForm(self):
-        with self.assertRaises(ValueError, msg="Didn't receive 'deleteUser' xor 'createUser'"):
-            AccountManagement.determineForm(AccountManagement, self.other)
+        AccountManagement.determineForm(AccountManagement, self.other)
+        self.assertTrue(len(User.objects.filter(username="UserN")) == 0)
+
+    def test_emptyForm(self):
+        AccountManagement.determineForm(AccountManagement, self.empty)
+        self.assertTrue(len(User.objects.filter(username="UserN")) == 0)
 
