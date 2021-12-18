@@ -9,29 +9,29 @@ class TestAccountCreationGet(TestCase):
     def setUp(self):
         self.client=Client()
         #need to make this the model and adjust tests accordingly, then mess with code.
-        TA=User.objects.create_user("Timmy", "timmy@gmail.com", "password", first_name="TA Timmy")
+        self.TA=User.objects.create_user("Timmy", "timmy@gmail.com", "password", first_name="TA Timmy")
         self.ta_group, created= Group.objects.get_or_create(name='ta')
-        TA.groups.add(self.ta_group)
+        self.TA.groups.add(self.ta_group)
 
 
 
-        Instructor=User.objects.create_user("Isaac", "issac@gmail.com", "betterpassword", first_name="Instructor Isaac")
+        self.Instructor=User.objects.create_user("Isaac", "issac@gmail.com", "betterpassword", first_name="Instructor Isaac")
         self.instructor_group, created=Group.objects.get_or_create(name='instructor')
 
-        Instructor.groups.add(self.instructor_group)
+        self.Instructor.groups.add(self.instructor_group)
 
         Admin=User.objects.create_user("Adam", "adam@gmail.com", "bestpassW1rd", first_name="Admin Adam")
         self.admin_group, created=Group.objects.get_or_create(name="manager")
         Admin.groups.add(self.admin_group)
 
-        TA.save()
-        Instructor.save()
+        self.TA.save()
+        self.Instructor.save()
         Admin.save()
 
-        TAProfile=Profile(user=TA, address="9999", phone="999-999-9999", alt_email="alt@gmail.com")
+        TAProfile=Profile(user=self.TA, address="9999", phone="999-999-9999", alt_email="alt@gmail.com")
         TAProfile.save()
 
-        InstructorProfile=Profile(user=Instructor, address="9998", phone="999-999-9998", alt_email="alt2@gmail.com")
+        InstructorProfile=Profile(user=self.Instructor, address="9998", phone="999-999-9998", alt_email="alt2@gmail.com")
         InstructorProfile.save()
 
 
@@ -268,21 +268,487 @@ class TestAccountCreationGet(TestCase):
         r = self.client.get("/accountmanagement/")
         self.assertContains(r, 'avery@gmail.com')
 
+    #######################################################################
+    #NOTE: All tests above this point have a logged in admin object and can be considered admin stuff
+
+    def test_instructorLoadTAEmail(self):
+        self.client.force_login(self.Instructor)
+        r=self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["TA"][0].email, "timmy@gmail.com")
 
 
+    def test_instructorLoadInstructorEmail(self):
+        self.client.force_login(self.Instructor)
+        r=self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["Instructor"][0].email, "issac@gmail.com")
+    def test_instructorLoadAdminEmail(self):
+        self.client.force_login(self.Instructor)
+        r=self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["Admin"][0].email, "adam@gmail.com")
+
+    def test_instructorLoadSecondUserEmail(self):
+        TA2 = User.objects.create_user("Tyler", "tyler@gmail.com", "Password", first_name="Tyler")
+        TA2.groups.add(self.ta_group)
+        Profile2 = Profile(user=TA2, address="9988", phone="414-124-4124", alt_email="tyler2@gmail.com")
+        TA2.save()
+        Profile2.save()
+        TA2.groups.add(self.ta_group)
+
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+
+        self.assertEqual(r.context["TA"][1].email, "tyler@gmail.com")
+
+    def test_instructorDisplayTAEmail(self):
+        self.client.force_login(self.Instructor)
+        r=self.client.get("/accountmanagement/")
+        self.assertContains(r, "timmy@gmail.com")
+    def test_instructorDisplayInstructorEmail(self):
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+        self.assertContains(r, "issac@gmail.com")
+
+    def test_instructorDisplayAdminEmail(self):
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+        self.assertContains(r, "adam@gmail.com")
+
+    def test_instructorDisplaySecondEmail(self):
+        TA2=User.objects.create_user("Tyler", "tyler@gmail.com", "Password", first_name="Tyler")
+        TA2.groups.add(self.ta_group)
+        Profile2=Profile(user=TA2, address="9988", phone="414-124-4124", alt_email="tyler2@gmail.com")
+        TA2.save()
+        Profile2.save()
+
+        self.client.force_login(self.Instructor)
+
+        r = self.client.get("/accountmanagement/")
+
+        self.assertContains(r, "tyler@gmail.com")
+
+
+
+    def test_instructorLoadTAName(self):
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["TA"][0].first_name, "TA Timmy")
+    def test_instructorLoadInstructorName(self):
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["Instructor"][0].first_name, "Instructor Isaac")
+
+    def test_instructorLoadAdminName(self):
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["Admin"][0].first_name, "Admin Adam")
+
+    def test_instructorLoadSecondUserName(self):
+        TA2 = User.objects.create_user("Tyler", "tyler@gmail.com", "Password", first_name="Tyler")
+        TA2.groups.add(self.ta_group)
+        Profile2 = Profile(user=TA2, address="9988", phone="414-124-4124", alt_email="tyler2@gmail.com")
+        TA2.save()
+        Profile2.save()
+        TA2.groups.add(self.ta_group)
+
+
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+
+        self.assertEqual(r.context["TA"][1].first_name, "Tyler")
+
+    def test_instructorDisplayTAName(self):
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+        self.assertContains(r, "TA Timmy")
+    def test_instructorDisplayInstructorName(self):
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+        self.assertContains(r, "Instructor Isaac")
+    def test_instructorDisplayAdminName(self):
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+        self.assertContains(r, "Admin Adam")
+    def test_instructorDisplaySecondUserName(self):
+        TA2 = User.objects.create_user("Tyler", "tyler@gmail.com", "Password", first_name="Tyler")
+        TA2.groups.add(self.ta_group)
+        Profile2 = Profile(user=TA2, address="9988", phone="414-124-4124", alt_email="tyler2@gmail.com")
+        TA2.save()
+        TA2.groups.add(self.ta_group)
+        Profile2.save()
+
+        self.client.force_login(self.Instructor)
+
+        r = self.client.get("/accountmanagement/")
+
+        self.assertContains(r, "Tyler")
+
+
+    #end instructor stuff
+
+    def test_taLoadTAEmail(self):
+        self.client.force_login(self.TA)
+        r = self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["TA"][0].email, "timmy@gmail.com")
+
+    def test_taLoadInstructorEmail(self):
+        self.client.force_login(self.TA)
+        r = self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["Instructor"][0].email, "issac@gmail.com")
+
+    def test_taLoadAdminEmail(self):
+        self.client.force_login(self.TA)
+        r = self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["Admin"][0].email, "adam@gmail.com")
+
+    def test_taLoadSecondUserEmail(self):
+        TA2 = User.objects.create_user("Tyler", "tyler@gmail.com", "Password", first_name="Tyler")
+        TA2.groups.add(self.ta_group)
+        Profile2 = Profile(user=TA2, address="9988", phone="414-124-4124", alt_email="tyler2@gmail.com")
+        TA2.save()
+        Profile2.save()
+        TA2.groups.add(self.ta_group)
+
+        self.client.force_login(self.TA)
+        r = self.client.get("/accountmanagement/")
+
+        self.assertEqual(r.context["TA"][1].email, "tyler@gmail.com")
+
+    def test_taDisplayTAEmail(self):
+        self.client.force_login(self.TA)
+        r = self.client.get("/accountmanagement/")
+        self.assertContains(r, "timmy@gmail.com")
+
+    def test_taDisplayInstructorEmail(self):
+        self.client.force_login(self.TA)
+        r = self.client.get("/accountmanagement/")
+        self.assertContains(r, "issac@gmail.com")
+
+    def test_taDisplayAdminEmail(self):
+        self.client.force_login(self.TA)
+        r = self.client.get("/accountmanagement/")
+        self.assertContains(r, "adam@gmail.com")
+
+    def test_taDisplaySecondEmail(self):
+        TA2 = User.objects.create_user("Tyler", "tyler@gmail.com", "Password", first_name="Tyler")
+        TA2.groups.add(self.ta_group)
+        Profile2 = Profile(user=TA2, address="9988", phone="414-124-4124", alt_email="tyler2@gmail.com")
+        TA2.save()
+        Profile2.save()
+
+        self.client.force_login(self.TA)
+
+        r = self.client.get("/accountmanagement/")
+
+        self.assertContains(r, "tyler@gmail.com")
+
+    def test_taLoadTAName(self):
+        self.client.force_login(self.TA)
+        r = self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["TA"][0].first_name, "TA Timmy")
+
+    def test_taLoadInstructorName(self):
+        self.client.force_login(self.TA)
+        r = self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["Instructor"][0].first_name, "Instructor Isaac")
+
+    def test_taLoadAdminName(self):
+        self.client.force_login(self.TA)
+        r = self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["Admin"][0].first_name, "Admin Adam")
+
+    def test_taLoadSecondUserName(self):
+        TA2 = User.objects.create_user("Tyler", "tyler@gmail.com", "Password", first_name="Tyler")
+        TA2.groups.add(self.ta_group)
+        Profile2 = Profile(user=TA2, address="9988", phone="414-124-4124", alt_email="tyler2@gmail.com")
+        TA2.save()
+        Profile2.save()
+        TA2.groups.add(self.ta_group)
+
+        self.client.force_login(self.TA)
+        r = self.client.get("/accountmanagement/")
+
+        self.assertEqual(r.context["TA"][1].first_name, "Tyler")
+
+    def test_taDisplayTAName(self):
+        self.client.force_login(self.TA)
+        r = self.client.get("/accountmanagement/")
+        self.assertContains(r, "TA Timmy")
+
+    def test_taDisplayInstructorName(self):
+        self.client.force_login(self.TA)
+        r = self.client.get("/accountmanagement/")
+        self.assertContains(r, "Instructor Isaac")
+
+    def test_taDisplayAdminName(self):
+        self.client.force_login(self.TA)
+        r = self.client.get("/accountmanagement/")
+        self.assertContains(r, "Admin Adam")
+
+    def test_taDisplaySecondUserName(self):
+        TA2 = User.objects.create_user("Tyler", "tyler@gmail.com", "Password", first_name="Tyler")
+        TA2.groups.add(self.ta_group)
+        Profile2 = Profile(user=TA2, address="9988", phone="414-124-4124", alt_email="tyler2@gmail.com")
+        TA2.save()
+        Profile2.save()
+        TA2.groups.add(self.ta_group)
+
+        self.client.force_login(self.TA)
+        r = self.client.get("/accountmanagement/")
+
+        self.assertContains(r, "Tyler")
+
+    def test_taLoadProfiles(self):
+        self.client.force_login(self.TA)
+        r=self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["Profiles"], [])
+    def test_taLoadMultipleProfiles(self):
+        self.client.force_login(self.TA)
+        r = self.client.get("/accountmanagement/")
+        TA2 = User.objects.create_user("Tyler", "tyler@gmail.com", "Password", first_name="Tyler")
+        TA2.groups.add(self.ta_group)
+        Profile2 = Profile(user=TA2, address="9988", phone="414-124-4124", alt_email="tyler2@gmail.com")
+        TA2.save()
+        Profile2.save()
+
+        self.assertEqual(r.context["Profiles"], [])
+
+    def test_taDisplayTAAddress(self):
+        self.client.force_login(self.TA)
+        r=self.client.get("/accountmanagement/")
+        self.assertNotContains(r, "9999")
+
+    def test_taDisplayInstructorAddress(self):
+        self.client.force_login(self.TA)
+        r=self.client.get("/accountmanagement/")
+        self.assertNotContains(r, "9998")
+    def test_taDisplayAdminAddress(self):
+        self.client.force_login(self.TA)
+        r=self.client.get("/accountmanagement/")
+        self.assertNotContains(r, "9997")
+
+
+
+
+    def test_taDisplayMultipleProfilesAddress(self):
+        self.client.force_login(self.TA)
+        r = self.client.get("/accountmanagement/")
+        TA2 = User.objects.create_user("Tyler", "tyler@gmail.com", "Password", first_name="Tyler")
+        TA2.groups.add(self.ta_group)
+        Profile2 = Profile(user=TA2, address="9988", phone="414-124-4124", alt_email="tyler2@gmail.com")
+        TA2.save()
+        Profile2.save()
+
+        self.assertNotContains(r, "9988")
+
+    def test_taDisplayTAAltEmail(self):
+        self.client.force_login(self.TA)
+        r=self.client.get("/accountmanagement/")
+        self.assertNotContains(r, "alt@gmail.com")
+    def test_taDisplayInstructorAltEmail(self):
+        self.client.force_login(self.TA)
+        r=self.client.get("/accountmanagement/")
+        self.assertNotContains(r, "alt2@gmail.com")
+
+    def test_taDisplayAdminAltEmail(self):
+        self.client.force_login(self.TA)
+        r=self.client.get("/accountmanagement/")
+        self.assertNotContains(r, "alt3@gmail.com")
+
+
+    def test_taDisplayMultipleProfilesAltEmail(self):
+        self.client.force_login(self.TA)
+        r = self.client.get("/accountmanagement/")
+        TA2 = User.objects.create_user("Tyler", "tyler@gmail.com", "Password", first_name="Tyler")
+        TA2.groups.add(self.ta_group)
+        Profile2 = Profile(user=TA2, address="9988", phone="414-124-4124", alt_email="tyler2@gmail.com")
+        TA2.save()
+        Profile2.save()
+
+        self.assertNotContains(r, "tyler2@gmail.com")
+
+    def test_taDisplayTAPhone(self):
+        self.client.force_login(self.TA)
+        r=self.client.get("/accountmanagement/")
+        self.assertNotContains(r, "999-999-9999")
+    def test_taDisplayInstructorPhone(self):
+        self.client.force_login(self.TA)
+        r=self.client.get("/accountmanagement/")
+        self.assertNotContains(r, "999-999-9998")
+    def test_taDisplayAdminPhone(self):
+        self.client.force_login(self.TA)
+        r=self.client.get("/accountmanagement/")
+        self.assertNotContains(r, "999-999-9997")
+
+    def test_taDisplayMultipleProfilePhone(self):
+        self.client.force_login(self.TA)
+        r = self.client.get("/accountmanagement/")
+        TA2 = User.objects.create_user("Tyler", "tyler@gmail.com", "Password", first_name="Tyler")
+        TA2.groups.add(self.ta_group)
+        Profile2 = Profile(user=TA2, address="9988", phone="414-124-4124", alt_email="tyler2@gmail.com")
+        TA2.save()
+        Profile2.save()
+
+        self.assertNotContains(r, "414-124-4124")
+    ###END TA TESTS
+
+    def test_instructorLoadProfiles(self):
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["Profiles"], [])
+
+    def test_instructorLoadMultipleProfiles(self):
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+        TA2 = User.objects.create_user("Tyler", "tyler@gmail.com", "Password", first_name="Tyler")
+        TA2.groups.add(self.ta_group)
+        Profile2 = Profile(user=TA2, address="9988", phone="414-124-4124", alt_email="tyler2@gmail.com")
+        TA2.save()
+        Profile2.save()
+
+        self.assertEqual(r.context["Profiles"], [])
+
+    def test_instructorDisplayTAAddress(self):
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+        self.assertNotContains(r, "9999")
+
+    def test_instructorDisplayInstructorAddress(self):
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+        self.assertNotContains(r, "9998")
+
+    def test_instructorDisplayAdminAddress(self):
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+        self.assertNotContains(r, "9997")
+    def test_instructorDisplayMultipleProfilesAddress(self):
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+        TA2 = User.objects.create_user("Tyler", "tyler@gmail.com", "Password", first_name="Tyler")
+        TA2.groups.add(self.ta_group)
+        Profile2 = Profile(user=TA2, address="9988", phone="414-124-4124", alt_email="tyler2@gmail.com")
+        TA2.save()
+        Profile2.save()
+
+        self.assertNotContains(r, "9988")
+
+    def test_instructorDisplayTAAltEmail(self):
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+        self.assertNotContains(r, "alt@gmail.com")
+
+    def test_instructorDisplayInstructorAltEmail(self):
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+        self.assertNotContains(r, "alt2@gmail.com")
+
+    def test_instructorDisplayAdminAltEmail(self):
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+        self.assertNotContains(r, "alt3@gmail.com")
+
+    def test_instructorDisplayMultipleProfilesAltEmail(self):
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+        TA2 = User.objects.create_user("Tyler", "tyler@gmail.com", "Password", first_name="Tyler")
+        TA2.groups.add(self.ta_group)
+        Profile2 = Profile(user=TA2, address="9988", phone="414-124-4124", alt_email="tyler2@gmail.com")
+        TA2.save()
+        Profile2.save()
+
+        self.assertNotContains(r, "tyler2@gmail.com")
+
+    def test_instructorDisplayTAPhone(self):
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+        self.assertNotContains(r, "999-999-9999")
+
+    def test_instructorDisplayInstructorPhone(self):
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+        self.assertNotContains(r, "999-999-9998")
+
+    def test_instructorDisplayAdminPhone(self):
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+        self.assertNotContains(r, "999-999-9997")
+
+    def test_instructorDisplayMultipleProfilePhone(self):
+        self.client.force_login(self.Instructor)
+        r = self.client.get("/accountmanagement/")
+        TA2 = User.objects.create_user("Tyler", "tyler@gmail.com", "Password", first_name="Tyler")
+        TA2.groups.add(self.ta_group)
+        Profile2 = Profile(user=TA2, address="9988", phone="414-124-4124", alt_email="tyler2@gmail.com")
+        TA2.save()
+        Profile2.save()
+
+        self.assertNotContains(r, "414-124-4124")
+
+    def test_instructorLoadSideButtons(self):
+        self.client.force_login(self.Instructor)
+        r=self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["SideButtons"], [])
+    def test_instructorDisplaySideButtons(self):
+        self.client.force_login(self.Instructor)
+        r=self.client.get("/accountmanagement/")
+        self.assertNotContains(r, "Create")
+    def test_instructorLoadUserButtons(self):
+        self.client.force_login(self.Instructor)
+        r=self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["UserButtons"], [])
+
+    def test_instructorDisplayUserButtons(self):
+        self.client.force_login(self.Instructor)
+        r=self.client.get("/accountmanagement/")
+        self.assertNotContains(r, "Delete")
+    def test_taLoadSideButtons(self):
+        self.client.force_login(self.TA)
+        r=self.client.get("/accountmanagement/")
+
+        self.assertEqual(r.context["SideButtons"], [])
+
+    def test_taLoadUserButtons(self):
+        self.client.force_login(self.TA)
+        r=self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["UserButtons"], [])
+    def test_taDisplaySideButtons(self):
+        self.client.force_login(self.TA)
+        r=self.client.get("/accountmanagement/")
+        self.assertNotContains(r, "Create")
+
+    def test_taDisplayUserButtons(self):
+        self.client.force_login(self.TA)
+        r=self.client.get("/accountmanagement/")
+        self.assertNotContains(r, "Delete")
+
+    def test_adminLoadSideButtons(self):
+        r=self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["SideButtons"][0].value , "Create")
+    def test_adminLoadSideButtons(self):
+        r=self.client.get("/accountmanagement/")
+        self.assertContains(r, "Create")
+    def test_adminLoadUserButtons(self):
+        r=self.client.get("/accountmanagement/")
+        self.assertEqual(r.context["UserButtons"][0].value, "Delete" )
+    def test_adminDisplayUserButtons(self):
+        r=self.client.get("/accountmanagement/")
+        self.assertContains(r, "Delete")
 
 class TestAccountCreationPost(TestCase):
 
     def setUp(self):
         self.client=Client()
         self.admin_group, created = Group.objects.get_or_create(name="manager")
+        self.ta, created = Group.objects.get_or_create(name="ta")
+        self.ta, created = Group.objects.get_or_create(name="instructor")
         newUser=User.objects.create_user(username="logged in larry", password="larryspassword")
         newUser.save()
+        newUser.groups.add(self.admin_group)
         self.client.force_login(newUser)
         self.r=self.client.post("/accountmanagement/", {"username":"Testing123", "password":"sword1", "email":"testing@gmail.com", "name":"Manager Marcus", "altemail":"marcus@gmail.com", "phone":"999-999-9999", "address":"9999"}, follow=True)
 
     def test_newAccount(self):
-        self.assertEqual(len(User.objects.all()), 2)
+        self.assertEqual(len(User.objects.all()),2)
 
     def test_newProfile(self):
         self.assertEqual(len(Profile.objects.all()),1)
@@ -325,7 +791,7 @@ class TestAccountCreationPost(TestCase):
         self.assertEqual(Profile.objects.all()[0].user, User.objects.all()[1])
     def test_secondNewAccount(self):
         self.client.post("/accountmanagement/", {"username":"Testing1234", "password":"shield1", "email":"testing4@gmail.com", "name":"Manager Maria", "phone":"999-999-9998", "address":"9998", "altemail":"maria@gmail.com"}, follow=True)
-        self.assertEqual(len(User.objects.all()), 3)
+        self.assertEqual(len(User.objects.all()) , 3)
     def test_secondNewAccountUser(self):
         self.client.post("/accountmanagement/", {"username":"Testing1234", "password":"shield1", "email":"testing4@gmail.com", "name":"Manager Maria", "phone":"999-999-9998", "address":"9998", "altemail":"maria@gmail.com"}, follow=True)
         self.assertEqual(User.objects.all()[2].username, "Testing1234")
@@ -363,7 +829,7 @@ class TestAccountCreationPost(TestCase):
 
     def test_duplicateUserName(self):
         self.client.post("/accountmanagement/", {"name":"New Guy", "username":"Testing123", "password":"shield1", "email":"testing4@gmail.com", "address":"9998", "phone":"999-999-9998", "altemail":"alt99" }, follow=True)
-        self.assertEqual(len(User.objects.all()), 2)
+        self.assertEqual(len(User.objects.all()),2)
 
     def test_duplicateUserNameKeepEmail(self):
         self.client.post("/accountmanagement/", {"name":"New Guy", "username":"Testing123", "password":"shield1", "email":"testing4@gmail.com", "address":"9998", "phone":"999-999-9998", "altemail":"alt99"}, follow=True)
@@ -371,12 +837,12 @@ class TestAccountCreationPost(TestCase):
 
     def test_duplicatePassword(self):
         self.client.post("/accountmanagement/", {"name":"New Guy", "username":"Testing1234", "password":"sword1", "email":"testing4@gmail.com","address":"9998", "phone":"999-999-9998", "altemail":"alt99" }, follow=True)
-        self.assertEqual(len(User.objects.all()), 3)
+        self.assertEqual(len(User.objects.all()),3)
 
     #entering same username and password when creating a geniuenly new account
     def test_duplicateUserandPassword(self):
         self.client.post("/accountmanagement/", {"name":"New Guy", "username":"shield1", "password":"shield1", "email":"testing4@gmail.com", "address":"9998", "phone":"999-999-9998", "altemail":"alt99"}, follow=True)
-        self.assertEqual(len(User.objects.all()),3)
+        self.assertEqual(len(User.objects.all()), 3)
 
     def test_passwordHashed(self):
         self.assertNotEqual(User.objects.all()[0].password, "sword1")

@@ -9,6 +9,7 @@ from django.contrib.auth.models import User, Group
 from TAScheduler.determinerole import determineRole
 
 from TAScheduler.models import Course, Section
+from .button import Button
 
 class Login(View):
 
@@ -89,37 +90,68 @@ class CourseManagement(LoginRequiredMixin, View):
 
 
     #how can I handle multiple forms on the same page?
+def determineRole(User1):
+    if(User1==None):
+        return -1
+    adminGroup=Group.objects.filter(name="manager")[0]
+    taGroup=Group.objects.filter(name="ta")[0]
+    instructorGroup=Group.objects.filter(name="instructor")[0]
+
+    if(len(User1.groups.all())!=1):
+        return -1
+
+    if(User1.groups.all()[0]==adminGroup):
+        return 1
+    elif(User1.groups.all()[0]==taGroup):
+        return 3
+    elif (User1.groups.all()[0]==instructorGroup):
+        return 2
+
 
 
 
 class AccountManagement(LoginRequiredMixin, View):
     def get(self, request):
-        # Nothing will be mapped course fields if post is from a section creation form submission
 
-        TA = User.objects.filter(groups__name='ta')
-        Instructor = User.objects.filter(groups__name='instructor')
-        Admin = User.objects.filter(groups__name='manager')
-        Profiles = Profile.objects.all()
+        #Nothing will be mapped course fields if post is from a section creation form submission
 
-        return render(request, "usermanagement.html",
-                      {"TA": TA, "Instructor": Instructor, "Admin": Admin, "Profiles": Profiles})
+
+        currentuserid=request.session["_auth_user_id"]
+        currentUser=User.objects.filter(id=currentuserid)[0]
+        Largelist=self.load(currentUser)
+        Profiles=Largelist[1]
+        SideButtons=Largelist[2]
+        UserButtons=Largelist[3]
+
+        TA=[]
+        Instructor=[]
+        Admin=[]
+
+        for i in Largelist[0]:
+            if(determineRole(i)==1):
+                Admin.append(i)
+            elif (determineRole(i)==2):
+                Instructor.append(i)
+            elif (determineRole(i)==3):
+                TA.append(i)
+        return render(request, "usermanagement.html", {"TA":TA, "Instructor":Instructor, "Admin":Admin, "Profiles":Profiles, "SideButtons":SideButtons, "UserButtons":UserButtons})
 
     def post(self, request):
-        if all([(field in request.POST) and (request.POST[field] != '') for field in
-                ['username', 'email', 'name', 'password']]):
-            user = request.POST["username"]
-            email = request.POST["email"]
-            name = request.POST["name"]
-            password = request.POST["password"]
-            address = request.POST.get("address", "")
-            phone = request.POST.get("phone", "")
-            altemail = request.POST.get("altemail", "")
-            userthere = User.objects.filter(username=user)
-            groups = Group.objects.filter(name="manager")
-            groupthing = groups[0]
+        if all([(field in request.POST) and (request.POST[field] != '') for field in ['username', 'email', 'name', 'password']]):
+            user=request.POST["username"]
+            email=request.POST["email"]
+            name=request.POST["name"]
+            password=request.POST["password"]
+            address= request.POST.get("address", "")
+            phone=request.POST.get("phone", "")
+            altemail=request.POST.get("altemail", "")
+            userthere=User.objects.filter(username=user)
+            groups=Group.objects.filter(name="manager")
+            groupthing=groups[0]
 
-            if (len(userthere) == 0):
-                newuser = User.objects.create_user(username=user, email=email, first_name=name, password=password)
+            if(len(userthere)==0):
+
+                newuser=User.objects.create_user(username=user, email=email, first_name=name, password=password)
 
                 newuser.groups.add(groupthing)
                 newuser.save()
@@ -163,6 +195,38 @@ class AccountManagement(LoginRequiredMixin, View):
     def deleteUser(self, form):
         user = User.objects.get(username=form["username"])
         user.delete()
+
+
+    def load(self, currentUser):
+        currentrole=determineRole(currentUser)
+        #admin
+        UserList = User.objects.all()
+
+        if(currentrole==1):
+            ProfileList=Profile.objects.all()
+
+            sidebutton=Button()
+            sidebutton.value="Create"
+            userbutton=Button()
+            userbutton.value="Delete"
+
+            SideButtons=[sidebutton]
+            UserButtons=[userbutton]
+        #instructor
+        elif(currentrole==2):
+            ProfileList=[]
+            SideButtons=[]
+            UserButtons=[]
+        #ta
+        elif(currentrole==3):
+            ProfileList=[]
+            SideButtons=[]
+            UserButtons=[]
+        #determinerolebroke
+        else:
+            pass
+
+        return [UserList, ProfileList, SideButtons, UserButtons]
 
 
 class Home(LoginRequiredMixin, View):
