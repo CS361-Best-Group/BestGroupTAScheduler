@@ -6,6 +6,7 @@ from django.views import View
 from django.contrib.auth import authenticate, login, logout
 from .models import Profile
 from django.contrib.auth.models import User, Group
+from TAScheduler.determinerole import determineRole
 
 from TAScheduler.models import Course, Section
 from .button import Button
@@ -154,10 +155,46 @@ class AccountManagement(LoginRequiredMixin, View):
 
                 newuser.groups.add(groupthing)
                 newuser.save()
-                newProfile=Profile(user=newuser, address=address, phone=phone, alt_email=altemail)
+                newProfile = Profile(user=newuser, address=address, phone=phone, alt_email=altemail)
                 newProfile.save()
-                
+
         return redirect("/accountmanagement/")
+
+    def determineForm(self, form):
+        # if not createUser or deleteUser then ValueError
+        if ("username" not in form.keys()):
+            print("Bad form given")
+        # if all forms filled => createUser
+        elif ("username" in form.keys() and "email" in form.keys() and "name" in form.keys() and "password" in form.keys()
+                and "address" in form.keys() and "phone" in form.keys() and "altemail" in form.keys()
+                and "groups" in form.keys()):
+            AccountManagement.createUser(self, form)
+        # if only username filled => deleteUser
+        else:
+            AccountManagement.deleteUser(self, form)
+
+    def createUser(self, form):
+        username = form["username"]
+        if len(User.objects.all()) == 0:
+            newuser = User.objects.create_user(username=form["username"], email=form["email"],
+                                                first_name=form["name"], password=form["password"])
+            newuser.save()
+            newprofile = Profile(user=newuser, address=form["address"], phone=form["phone"],
+                                 alt_email=form["altemail"])
+            newprofile.save()
+        elif len(User.objects.all()) != 0 and form["username"] in form.values():
+            print("No duplicate users")
+        else:
+            newuser = User.objects.create_user(username=form["username"], email=form["email"],
+                                                first_name=form["name"], password=form["password"])
+            newuser.save()
+            newprofile = Profile(user=newuser, address=form["address"], phone=form["phone"],
+                                 alt_email=form["altemail"])
+            newprofile.save()
+
+    def deleteUser(self, form):
+        user = User.objects.get(username=form["username"])
+        user.delete()
 
 
     def load(self, currentUser):
@@ -201,45 +238,52 @@ class Home(LoginRequiredMixin, View):
 
 class ProfilePage(LoginRequiredMixin, View):
     def get(self, request):
-
         CurrentUserID=request.session["_auth_user_id"]
-
         CurrentUser=User.objects.filter(id=CurrentUserID)[0]
-
         CurrentProfile=Profile.objects.filter(user=CurrentUser)[0]
 
-        return render(request, "profile.html", {"email":CurrentUser.email, "firstname":CurrentUser.first_name, "email":CurrentUser.email, "username":CurrentUser.username, "address":CurrentProfile.address, "phone":CurrentProfile.phone, "altemail":CurrentProfile.alt_email})
+        return render(request, "profile.html", {"email":CurrentUser.email, "firstname":CurrentUser.first_name, "email":CurrentUser.email, "username":CurrentUser.username, "address":CurrentProfile.address, "phone":CurrentProfile.phone, "altemail":CurrentProfile.alt_email, "skills":CurrentProfile.skills})
 
     def post(self, request):
-        newname=request.POST["name"]
-        newusername=request.POST["username"]
-        newphone=request.POST["phone"]
-        newaddress=request.POST["address"]
-        newemail = request.POST["email"]
-        newaltemail=request.POST["altemail"]
-
         currentuser=User.objects.filter(id=request.session["_auth_user_id"])[0]
         currentprofile=Profile.objects.filter(user=currentuser)[0]
 
+        self.otherProfile(currentuser, currentprofile, request.POST)
+        role = determineRole(currentuser)
+        if role == 'ta':
+            self.TAProfile(currentprofile, request.POST["skills"])
 
-        if(newname!=""):
-            currentuser.first_name=newname
-
-        if(newusername!="" and len(User.objects.filter(username=newusername))==0):
-            currentuser.username=newusername
-
-        if(newphone!=""):
-            currentprofile.phone=newphone
-        if(newaddress!=""):
-            print("inside if statement")
-            currentprofile.address=newaddress
-        if(newemail!=""):
-            currentuser.email=newemail
-        if (newaltemail!=""):
-            currentprofile.alt_email=newaltemail
-
-        currentuser.save()
-        currentprofile.save()
         print("New address")
         print(currentprofile.address)
         return redirect("/profile/")
+
+    def otherProfile(self, user, profile, post):
+        newname=post["name"]
+        newusername=post["username"]
+        newemail=post["email"]
+        if(newname!=""):
+            user.first_name=newname
+        if(newusername!="" and len(User.objects.filter(username=newusername))==0):
+            user.username=newusername
+        if(newemail!=""):
+            user.email=newemail
+        user.save()
+
+        newphone=post["phone"]
+        newaddress=post["address"]
+        newaltemail=post["altemail"]
+        if(newphone!=""):
+            profile.phone=newphone
+        if(newaddress!=""):
+            print("inside if statement")
+            profile.address=newaddress
+        if (newaltemail!=""):
+            profile.alt_email=newaltemail
+        profile.save()
+        pass
+
+    def TAProfile(self, profile, skills):
+        profile.skills = skills
+        profile.save()
+        pass
+
