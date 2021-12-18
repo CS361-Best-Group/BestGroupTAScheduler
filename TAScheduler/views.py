@@ -238,11 +238,32 @@ class Home(LoginRequiredMixin, View):
 
 class ProfilePage(LoginRequiredMixin, View):
     def get(self, request):
+        return load(request)
+
+    def load(self, request):
         CurrentUserID=request.session["_auth_user_id"]
         CurrentUser=User.objects.filter(id=CurrentUserID)[0]
         CurrentProfile=Profile.objects.filter(user=CurrentUser)[0]
 
-        return render(request, "profile.html", {"email":CurrentUser.email, "firstname":CurrentUser.first_name, "email":CurrentUser.email, "username":CurrentUser.username, "address":CurrentProfile.address, "phone":CurrentProfile.phone, "altemail":CurrentProfile.alt_email, "skills":CurrentProfile.skills})
+        if determineRole(CurrentUser) == 'ta':
+            return render(request, "profile.html",
+                          {"email":CurrentUser.email,
+                           "firstname":CurrentUser.first_name,
+                           "email":CurrentUser.email,
+                           "username":CurrentUser.username,
+                           "address":CurrentProfile.address,
+                           "phone":CurrentProfile.phone,
+                           "altemail":CurrentProfile.alt_email,
+                           "skills":CurrentProfile.skills})
+        else:
+            return render(request, "profile.html",
+                          {"email":CurrentUser.email,
+                           "firstname":CurrentUser.first_name,
+                           "email":CurrentUser.email,
+                           "username":CurrentUser.username,
+                           "address":CurrentProfile.address,
+                           "phone":CurrentProfile.phone,
+                           "altemail":CurrentProfile.alt_email}) #just don't return skills
 
     def post(self, request):
         currentuser=User.objects.filter(id=request.session["_auth_user_id"])[0]
