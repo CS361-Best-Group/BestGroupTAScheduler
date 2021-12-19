@@ -150,9 +150,7 @@ class AccountManagement(LoginRequiredMixin, View):
             AccountManagement.deleteUser(self, form)
 
     def createUser(self, form):
-        if len(User.objects.all()) != 0 and form["username"] in User.objects.values():
-            return redirect("/accountmanagement/")
-        else:
+        try:
             newuser = User.objects.create_user(username=form["username"], email=form["email"],
                                                first_name=form["name"], password=form["password"])
 
@@ -163,6 +161,8 @@ class AccountManagement(LoginRequiredMixin, View):
             newprofile = Profile(user=newuser, address=form["address"], phone=form["phone"],
                                  alt_email=form["altemail"])
             newprofile.save()
+        except IntegrityError:
+            return redirect("/accountmanagement/")
 
     def deleteUser(self, form):
         user = User.objects.get(username=form["username"])
