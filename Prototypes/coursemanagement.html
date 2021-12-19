@@ -29,18 +29,15 @@
         <summary>
             {{ i.name }}
             {% if Role == "manager" %}
-            <form>
-			  {% csrf_token %}
-			  <input type="hidden" name="kind" value="deleteCourse">
-			  <input type="hidden" name="course" value="{{ i.name }}">
-              <input type="submit" value="Delete Course">
+            <form action="/coursemanagement/" method="post">
+				{% csrf_token %}
+				<input type="hidden" name="kind" value="deleteCourse">
+				<input type="hidden" name="course" value="{{ i.name }}">
+				<input type="submit" value="Delete Course">
             </form>
             <form>
-
                 {% csrf_token %}
-
                 <input type="submit" value="Assign User To Course">
-
             </form>
 
 
@@ -77,9 +74,14 @@
                 <form>
                     {% csrf_token %}
                     <input type="submit" value="Assign User To Section">
-
-
                 </form>
+                <form action="/coursemanagement/" method="post">
+					{% csrf_token %}
+					<input type="hidden" name="kind" value="deleteSection">
+					<input type="hidden" name="course" value="{{ i.name }}">
+					<input type="hidden" value="{{ j.name }}" name="section">
+					<input type="submit" value="Delete Section">
+				</form>
                 {% endif %}
             </details>
              {% endif %}
