@@ -11,7 +11,6 @@ from TAScheduler.models import Course, Section
 from TAScheduler.determinerole import determineRole
 
 class Login(View):
-
     def get(self, request):
         logout(request)
         return render(request, "login.html")
@@ -92,6 +91,8 @@ class CourseManagement(LoginRequiredMixin, View):
 
         if name != '' and len(Course.objects.filter(name = name)) == 0:
             description = context.get('description', 'No description')
+            if description == '':
+                description = 'No description'
             
             course = Course(name = name, description = description)
             course.users.set([])
@@ -100,15 +101,16 @@ class CourseManagement(LoginRequiredMixin, View):
 
     def createSection(context):
         # TODO: group membership check.
-        course = Course.objects.get(name = context.get('course', ''))
-        
-        if course is not None:
+        try:
+            course = Course.objects.get(name = context.get('course', ''))
             name = context.get('section', '')
             
             if name != '' and len(Section.objects.filter(course = course, name = name)) == 0:
                 section = Section(name = name, course = course)
                 section.users.set([])
                 section.save()
+        except Course.DoesNotExist:
+            pass
 
     def deleteCourse(context):
         # To be implemented.
