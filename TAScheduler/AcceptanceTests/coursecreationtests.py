@@ -1,12 +1,17 @@
 from django.db.models import QuerySet
 from django.test import TestCase
 from django.test import Client
-from TAScheduler.models import Course, Section
-from django.contrib.auth.models import User
+
+from TAScheduler.apps import TASchedulerAppConfig
+from TAScheduler.models import Course, Section, Profile
+from django.contrib.auth.models import User, Group
+
 
 class TestCourseCreationGet(TestCase):
 
     def setUp(self):
+        TASchedulerAppConfig.ready(None)
+
         self.client=Client()
         self.dummy=User.objects.create_user(username="dummy23", password="password", email="email@email.com", first_name="dummy")
         self.dummy.save()
@@ -24,7 +29,10 @@ class TestCourseCreationGet(TestCase):
         #self.Section1.course=self.Course1
         self.Section1.users.set([self.TA])
         self.Section1.save()
-        
+
+
+        self.dummy.groups.add(Group.objects.filter(name="manager")[0])
+        self.dummy.save()
         self.client.force_login(self.dummy)
         self.r=self.client.get("/coursemanagement/")
 
@@ -831,6 +839,221 @@ class TestCourseCreationGet(TestCase):
         self.Section1.users.set([self.TA, dummy2])
         r = self.client.get("/coursemanagement/")
         self.assertContains(r, "dummy2")
+
+
+    def test_adminDisplayAssignCourse(self):
+        Admin=User.objects.create_user(username="Admin", password="Admin", email="admin@gmail.com", first_name="Admin Adam")
+        Admin.save()
+        AdminProfile=Profile(user=Admin, address="2345", phone="144-412-4124", alt_email="alternateadmin@gmail.com")
+        AdminProfile.save()
+        Admin.groups.add(Group.objects.filter(name="manager")[0])
+        Admin.save()
+        self.client.force_login(Admin)
+
+        r=self.client.get("/coursemanagement/")
+        self.assertContains(r, "Assign User To Course")
+
+    def test_adminDisplayAssignSection(self):
+        Admin = User.objects.create_user(username="Admin", password="Admin", email="admin@gmail.com",                                         first_name="Admin Adam")
+        Admin.save()
+        AdminProfile = Profile(user=Admin, address="2345", phone="144-412-4124", alt_email="alternateadmin@gmail.com")
+        AdminProfile.save()
+        Admin.groups.add(Group.objects.filter(name="manager")[0])
+        Admin.save()
+        self.client.force_login(Admin)
+
+        r = self.client.get("/coursemanagement/")
+        self.assertContains(r, "Assign User To Section")
+
+    def test_adminDisplayCreateCourse(self):
+        Admin = User.objects.create_user(username="Admin", password="Admin", email="admin@gmail.com",
+                                         first_name="Admin Adam")
+        Admin.save()
+        AdminProfile = Profile(user=Admin, address="2345", phone="144-412-4124", alt_email="alternateadmin@gmail.com")
+        AdminProfile.save()
+        Admin.groups.add(Group.objects.filter(name="manager")[0])
+        Admin.save()
+        self.client.force_login(Admin)
+
+        r = self.client.get("/coursemanagement/")
+        self.assertContains(r, "Create")
+
+    def test_adminDisplayDeleteCourse(self):
+        Admin = User.objects.create_user(username="Admin", password="Admin", email="admin@gmail.com",
+                                         first_name="Admin Adam")
+        Admin.save()
+        AdminProfile = Profile(user=Admin, address="2345", phone="144-412-4124", alt_email="alternateadmin@gmail.com")
+        AdminProfile.save()
+        Admin.groups.add(Group.objects.filter(name="manager")[0])
+        Admin.save()
+        self.client.force_login(Admin)
+
+        r = self.client.get("/coursemanagement/")
+        self.assertContains(r, "Delete Course")
+
+    def test_adminCreateSection(self):
+        Admin = User.objects.create_user(username="Admin", password="Admin", email="admin@gmail.com",
+                                         first_name="Admin Adam")
+        Admin.save()
+        AdminProfile = Profile(user=Admin, address="2345", phone="144-412-4124", alt_email="alternateadmin@gmail.com")
+        AdminProfile.save()
+        Admin.groups.add(Group.objects.filter(name="manager")[0])
+        Admin.save()
+        self.client.force_login(Admin)
+
+        r = self.client.get("/coursemanagement/")
+        self.assertContains(r, "Create Section")
+
+    def test_taNoAssignCourse(self):
+        TA= User.objects.create_user(username="TA", password="TA", email="ta@gmail.com", first_name="TA Tobey")
+        TA.save()
+        TAProfile = Profile(user=TA, address="3243", phone="151-142-4234", alt_email="taalternate@gmail.com", skills="Cool Dude")
+        TAProfile.save()
+        TA.groups.add(Group.objects.filter(name="ta")[0])
+        TA.save()
+        self.client.force_login(TA)
+
+        r=self.client.get("/coursemanagement/")
+        self.assertNotContains(r, "Assign User To Course")
+
+    def test_taNoAssignSection(self):
+        TA = User.objects.create_user(username="TA", password="TA", email="ta@gmail.com", first_name="TA Tobey")
+        TA.save()
+        TAProfile = Profile(user=TA, address="3243", phone="151-142-4234", alt_email="taalternate@gmail.com",
+                            skills="Cool Dude")
+        TAProfile.save()
+        TA.groups.add(Group.objects.filter(name="ta")[0])
+        TA.save()
+        self.client.force_login(TA)
+
+        r = self.client.get("/coursemanagement/")
+        self.assertNotContains(r, "Assign User To Section")
+    def test_taNoCreateCourse(self):
+        TA = User.objects.create_user(username="TA", password="TA", email="ta@gmail.com", first_name="TA Tobey")
+        TA.save()
+        TAProfile = Profile(user=TA, address="3243", phone="151-142-4234", alt_email="taalternate@gmail.com",
+                            skills="Cool Dude")
+        TAProfile.save()
+        TA.groups.add(Group.objects.filter(name="ta")[0])
+        TA.save()
+        self.client.force_login(TA)
+
+        r = self.client.get("/coursemanagement/")
+        self.assertNotContains(r, "Create")
+
+    def test_taNoDeleteCourse(self):
+        TA = User.objects.create_user(username="TA", password="TA", email="ta@gmail.com", first_name="TA Tobey")
+        TA.save()
+        TAProfile = Profile(user=TA, address="3243", phone="151-142-4234", alt_email="taalternate@gmail.com",
+                            skills="Cool Dude")
+        TAProfile.save()
+        TA.groups.add(Group.objects.filter(name="ta")[0])
+        TA.save()
+        self.client.force_login(TA)
+
+        r = self.client.get("/coursemanagement/")
+        self.assertNotContains(r, "Delete Course")
+    def test_taNoCreateSection(self):
+        TA = User.objects.create_user(username="TA", password="TA", email="ta@gmail.com", first_name="TA Tobey")
+        TA.save()
+        TAProfile = Profile(user=TA, address="3243", phone="151-142-4234", alt_email="taalternate@gmail.com",
+                            skills="Cool Dude")
+        TAProfile.save()
+        TA.groups.add(Group.objects.filter(name="ta")[0])
+        TA.save()
+        self.client.force_login(TA)
+
+        r = self.client.get("/coursemanagement/")
+        self.assertNotContains(r, "Create Section")
+
+    def test_instructorNoAssignCourse(self):
+        Instructor = User.objects.create_user(username="Instructor", password="Instructor", email="instructor@gmail.com", first_name="Instructor Isiah")
+        Instructor.save()
+
+        InstructorProfile=Profile(user=Instructor, address="2413", phone="414-412-1351", alt_email="instructoralternateemail.com")
+        InstructorProfile.save()
+
+        Instructor.groups.add(Group.objects.filter(name="instructor")[0])
+        Instructor.save()
+        self.client.force_login(Instructor)
+
+        r=self.client.get("/coursemanagement/")
+        self.assertNotContains(r, "Assign User To Course")
+    def test_instructorAssignSection(self):
+        Instructor = User.objects.create_user(username="Instructor", password="Instructor", email="instructor@gmail.com", first_name="Instructor Isiah")
+        Instructor.save()
+        self.Course1.users.set([Instructor])
+        InstructorProfile=Profile(user=Instructor, address="2413", phone="414-412-1351", alt_email="instructoralternateemail.com")
+        InstructorProfile.save()
+
+        Instructor.groups.add(Group.objects.filter(name="instructor")[0])
+        Instructor.save()
+        self.client.force_login(Instructor)
+
+        r=self.client.get("/coursemanagement/")
+        self.assertContains(r, "Assign User To Section")
+
+    def test_instructorNoCreateCourse(self):
+        Instructor = User.objects.create_user(username="Instructor", password="Instructor", email="instructor@gmail.com", first_name="Instructor Isiah")
+        Instructor.save()
+
+        InstructorProfile=Profile(user=Instructor, address="2413", phone="414-412-1351", alt_email="instructoralternateemail.com")
+        InstructorProfile.save()
+
+        Instructor.groups.add(Group.objects.filter(name="instructor")[0])
+        Instructor.save()
+        self.client.force_login(Instructor)
+
+        r=self.client.get("/coursemanagement/")
+        self.assertNotContains(r, "Create")
+    def test_instructorNoDeleteCourse(self):
+        Instructor = User.objects.create_user(username="Instructor", password="Instructor", email="instructor@gmail.com", first_name="Instructor Isiah")
+        Instructor.save()
+
+        InstructorProfile=Profile(user=Instructor, address="2413", phone="414-412-1351", alt_email="instructoralternateemail.com")
+        InstructorProfile.save()
+
+        Instructor.groups.add(Group.objects.filter(name="instructor")[0])
+        Instructor.save()
+        self.client.force_login(Instructor)
+
+        r=self.client.get("/coursemanagement/")
+        self.assertNotContains(r, "Delete Course")
+    def test_instructorNoCreateSection(self):
+        Instructor = User.objects.create_user(username="Instructor", password="Instructor", email="instructor@gmail.com", first_name="Instructor Isiah")
+        Instructor.save()
+
+        InstructorProfile=Profile(user=Instructor, address="2413", phone="414-412-1351", alt_email="instructoralternateemail.com")
+        InstructorProfile.save()
+
+        Instructor.groups.add(Group.objects.filter(name="instructor")[0])
+        Instructor.save()
+        self.client.force_login(Instructor)
+
+        r=self.client.get("/coursemanagement/")
+        self.assertNotContains(r, "Create Section")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class TestCourseCreationPost(TestCase):

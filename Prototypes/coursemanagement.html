@@ -26,11 +26,22 @@
 		<h2>Courses:</h2>
     {% for i in Courses %}
       <details class="course">
-        <summary name="course">
+        <summary>
             {{ i.name }}
-            <form>
-              <input type="submit" value="Delete Course">
+            {% if Role == "manager" %}
+            <form action="/coursemanagement/" method="post">
+				{% csrf_token %}
+				<input type="hidden" name="kind" value="deleteCourse">
+				<input type="hidden" name="course" value="{{ i.name }}">
+				<input type="submit" value="Delete Course">
             </form>
+            <form>
+                {% csrf_token %}
+                <input type="submit" value="Assign User To Course">
+            </form>
+
+
+            {% endif %}
         </summary>
         <p>{{ i.description }}</p>
         <!--Button for course deletion - correct code needs to be added-->
@@ -59,36 +70,53 @@
                 <li>{{ z.first_name }}</li>
                   {% endfor %}
               </ul>
+                {% if Role == "instructor" or Role == "manager" %}
+                <form>
+                    {% csrf_token %}
+                    <input type="submit" value="Assign User To Section">
+                </form>
+                <form action="/coursemanagement/" method="post">
+					{% csrf_token %}
+					<input type="hidden" name="kind" value="deleteSection">
+					<input type="hidden" name="course" value="{{ i.name }}">
+					<input type="hidden" value="{{ j.name }}" name="section">
+					<input type="submit" value="Delete Section">
+				</form>
+                {% endif %}
             </details>
              {% endif %}
 
            {% endfor %}
+          {% if Role == "manager" %}
             <form action="/coursemanagement/" method="post">
             {% csrf_token %}
+				<input type="hidden" name="kind" value="createSection">
                 <input type="hidden" value="{{ i.name }}" name="course">
-                <input type="submit" value="Add Section">
+                <input type="text" name="section">
+                <input type="submit" value="Create Section">
             </form>
+            {% endif %}
         </details>
 
       </details>
     {% endfor %}
     </section>
-
+    {% if Role == "manager" %}
     <form action="/coursemanagement/" method="post">
 		<h2>Create Course:</h2>
     
         {% csrf_token %}
-        <label for="name">Course Name</label>
-        <input id="name" name="coursename" type="text">
+        
+        <input type="hidden" name="kind" value="createCourse">
+        
+        <label for="course">Course Name</label>
+        <input name="course" type="text">
         <label for="description">Course Description</label>
-        <input id="description" name="coursedescription" type="text">
+        <input name="description" type="text">
 
         <input type="submit" value="Create">
-
-
-
-
     </form>
+    {% endif %}
     </section>
 
   </body>

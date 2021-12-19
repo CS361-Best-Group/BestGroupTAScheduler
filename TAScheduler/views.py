@@ -2,15 +2,19 @@ import time
 from hashlib import sha256
 
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.db import transaction
 from django.shortcuts import render, redirect
 from django.views import View
 from django.contrib.auth import authenticate, login, logout
 from .models import Profile
 from django.contrib.auth.models import User, Group
 from TAScheduler.determinerole import determineRole
+from django.db.utils import IntegrityError
 
 from TAScheduler.models import Course, Section
+
 from .button import Button
+
 
 class Login(View):
 
@@ -23,10 +27,7 @@ class Login(View):
         user=request.POST["name"]
         password=request.POST["password"]
 
-
-
         userobject=authenticate(request, username=user, password=password)
-
 
         if not(userobject == None):
             print("Login")
@@ -39,66 +40,107 @@ class Login(View):
 
 class CourseManagement(LoginRequiredMixin, View):
     def get(self, request):
-
-
-
-        Courses=Course.objects.all()
-        Sections=Section.objects.all()
-
-        return render(request, "coursemanagement.html", {"Courses":Courses, "Sections":Sections})
-
-
+        courses, sections = CourseManagement.load(request.user)
+        print(courses)
+        print(sections)
+        print(request.user.groups.all()[0].name)
+        return render(request, "coursemanagement.html", {"Courses": courses, "Sections": sections, "Role":determineRole(request.user)})
 
     def post(self, request):
-
-
-
-        if("coursename" in request.POST.keys() and "coursedescription" in request.POST.keys() and request.POST["coursename"] != "" and request.POST["coursedescription"] != ""):
-
-            coursecreationName = request.POST["coursename"]
-
-            if(len(Course.objects.filter(name=coursecreationName))==0):
-                coursecreationDescription = request.POST["coursedescription"]
-                newcourse=Course(name=coursecreationName, description=coursecreationDescription)
-
-                newcourse.save()
-                newcourse.users.set([])
-                newcourse.save()
-
-        elif ("course" in request.POST.keys()):
-            
-            sectioncreationcourse = request.POST["course"]
-            targetcourse=Course.objects.filter(name=sectioncreationcourse)[0]
-
-            existingsections=str(len(Section.objects.filter(course=targetcourse))+1)
-            newsectionname=targetcourse.name+"-"
-
-            x=0
-            while x+len(existingsections)<3:
-                newsectionname=newsectionname+"0"
-                x=x+1
-            newsectionname=newsectionname+existingsections
-
-
-            newsection=Section(name=newsectionname, course=targetcourse)
-            newsection.save()
-            newsection.users.set([])
-#            newsection.course=targetcourse
-            newsection.save()
-
+        CourseManagement.handleForm(request.POST)
         return redirect("/coursemanagement/")
 
+    # Data filtering and display functions.
 
+    def getAssociatedInstructors(course):
+        # To be implemented.
+        pass
 
-    #how can I handle multiple forms on the same page?
+    def getAssociatedTAs(course):
+        # To be implemented.
+        pass
 
+    def load(user):
+        role = determineRole(user)
 
+        if role == 'manager':
+            courses = list(Course.objects.all())
+            sections = list(Section.objects.all())
+        elif role == 'instructor':
+            courses = list(Course.objects.filter(users__in = [ user ]))
+            sections = list(Section.objects.filter(users__in = [ user ]) | Section.objects.filter(course__in = courses))
+        else:
+            courses = list(Course.objects.filter(users__in = [ user ]))
+            sections = list(Section.objects.filter(users__in = [ user ]))
 
+            for section in sections:
+                if section.course not in courses:
+                    courses.append(section.course)
+
+        return (courses, sections)
+            
+    # Form handling functions.
+
+    def handleForm(context):
+        formHandlers = {
+            'createCourse': CourseManagement.createCourse,
+            'createSection': CourseManagement.createSection,
+            'deleteCourse': CourseManagement.deleteCourse,
+            'deleteSection': CourseManagement.deleteSection,
+            'assignUser': CourseManagement.assignUser
+        }
+
+        if 'kind' in context.keys():
+            formHandlers.get(context['kind'], lambda *args, **keyArgs: None)(context)
+
+    def createCourse(context):
+        name = context.get('course', '')
+
+        if name != '' and len(Course.objects.filter(name = name)) == 0:
+            description = context.get('description', 'No description')
+            if description == '':
+                description = 'No description'
+
+            course = Course(name = name, description = description)
+            course.users.set([])
+
+            course.save()
+
+    def createSection(context):
+        try:
+            course = Course.objects.get(name = context.get('course', ''))
+            name = context.get('section', '')
+
+            if name != '' and len(Section.objects.filter(course = course, name = name)) == 0:
+                section = Section(name = name, course = course)
+                section.users.set([])
+                section.save()
+        except Course.DoesNotExist:
+            pass
+
+    def deleteCourse(context):
+        try:
+            course = Course.objects.get(name = context.get('course', ''))
+            course.delete()
+        except Course.DoesNotExist:
+            pass
+
+    def deleteSection(context):
+        try:
+            course = Course.objects.get(name = context.get('course', ''))
+            section = Section.objects.get(course = course, name = context.get('section', ''))
+            section.delete()
+        except Course.DoesNotExist:
+            pass
+        except Section.DoesNotExist:
+            pass
+
+    def assignUser(context):
+        # To be implemented.
+        pass
 
 class AccountManagement(LoginRequiredMixin, View):
     def get(self, request):
-
-        #Nothing will be mapped course fields if post is from a section creation form submission
 
 
         currentuserid=request.session["_auth_user_id"]
@@ -119,10 +161,13 @@ class AccountManagement(LoginRequiredMixin, View):
                 Instructor.append(i)
             elif (determineRole(i)=="ta"):
                 TA.append(i)
-        return render(request, "usermanagement.html", {"TA":TA, "Instructor":Instructor, "Admin":Admin, "Profiles":Profiles, "SideButtons":SideButtons, "UserButtons":UserButtons})
+        return render(request, "usermanagement.html",
+                      {"TA": TA, "Instructor": Instructor, "Admin": Admin, "Profiles": Profiles,
+                       "SideButtons": SideButtons, "UserButtons": UserButtons})
 
     def post(self, request):
-        if all([(field in request.POST) and (request.POST[field] != '') for field in ['username', 'email', 'name', 'password']]):
+        if all([(field in request.POST) and (request.POST[field] != '') for field in
+                ['username', 'email', 'name', 'password']]):
             user=request.POST["username"]
             email=request.POST["email"]
             name=request.POST["name"]
@@ -130,27 +175,27 @@ class AccountManagement(LoginRequiredMixin, View):
             address= request.POST.get("address", "")
             phone=request.POST.get("phone", "")
             altemail=request.POST.get("altemail", "")
-            userthere=User.objects.filter(username=user)
-            groups=Group.objects.filter(name="manager")
-            groupthing=groups[0]
+            usergroup = request.POST["groups"]
 
-            if(len(userthere)==0):
-
-                newuser=User.objects.create_user(username=user, email=email, first_name=name, password=password)
-
-                newuser.groups.add(groupthing)
-                newuser.save()
-                newProfile = Profile(user=newuser, address=address, phone=phone, alt_email=altemail)
-                newProfile.save()
+            form = {"username": user,
+                    "email": email,
+                    "name": name,
+                    "password": password,
+                    "address": address,
+                    "phone": phone,
+                    "altemail": altemail,
+                    "groups": usergroup}
+            self.determineForm(form)
 
         return redirect("/accountmanagement/")
 
     def determineForm(self, form):
         # if not createUser or deleteUser then ValueError
-        if ("username" not in form.keys()):
+        if "username" not in form.keys():
             print("Bad form given")
         # if all forms filled => createUser
-        elif ("username" in form.keys() and "email" in form.keys() and "name" in form.keys() and "password" in form.keys()
+        elif (
+                "username" in form.keys() and "email" in form.keys() and "name" in form.keys() and "password" in form.keys()
                 and "address" in form.keys() and "phone" in form.keys() and "altemail" in form.keys()
                 and "groups" in form.keys()):
             AccountManagement.createUser(self, form)
@@ -159,37 +204,33 @@ class AccountManagement(LoginRequiredMixin, View):
             AccountManagement.deleteUser(self, form)
 
     def createUser(self, form):
-        username = form["username"]
-        if len(User.objects.all()) == 0:
+        try:
             newuser = User.objects.create_user(username=form["username"], email=form["email"],
                                                 first_name=form["name"], password=form["password"])
+
+            group = Group.objects.get_or_create(name=form["groups"])
+            newuser.groups.add(group[0])
+
             newuser.save()
             newprofile = Profile(user=newuser, address=form["address"], phone=form["phone"],
                                  alt_email=form["altemail"])
             newprofile.save()
-        elif len(User.objects.all()) != 0 and form["username"] in form.values():
-            print("No duplicate users")
-        else:
-            newuser = User.objects.create_user(username=form["username"], email=form["email"],
-                                                first_name=form["name"], password=form["password"])
-            newuser.save()
-            newprofile = Profile(user=newuser, address=form["address"], phone=form["phone"],
-                                 alt_email=form["altemail"])
-            newprofile.save()
+        except IntegrityError:
+            return redirect("/accountmanagement/")
 
     def deleteUser(self, form):
         user = User.objects.get(username=form["username"])
         user.delete()
-
 
     def load(self, currentUser):
         currentrole=determineRole(currentUser)
         #admin
         UserList = User.objects.all()
         print(UserList)
+
         if(currentrole=="manager"):
             ProfileList=Profile.objects.all()
-
+            print("in manager")
             sidebutton=Button()
             sidebutton.value="Create"
             userbutton=Button()
@@ -220,6 +261,7 @@ class Home(LoginRequiredMixin, View):
 
     def post(self, request):
         pass
+
 
 class ProfilePage(LoginRequiredMixin, View):
     def get(self, request):
@@ -252,6 +294,13 @@ class ProfilePage(LoginRequiredMixin, View):
                            "altemail":CurrentProfile.alt_email}) #just don't return skills
 
     def post(self, request):
+        newname = request.POST["name"]
+        newusername = request.POST["username"]
+        newphone = request.POST["phone"]
+        newaddress = request.POST["address"]
+        newemail = request.POST["email"]
+        newaltemail = request.POST["altemail"]
+
         currentuser=User.objects.filter(id=request.session["_auth_user_id"])[0]
         currentprofile=Profile.objects.filter(user=currentuser)[0]
 
@@ -269,8 +318,11 @@ class ProfilePage(LoginRequiredMixin, View):
         newusername=post["username"]
         newemail=post["email"]
         if(newname!=""):
+            currentuser.first_name = newname
+
             user.first_name=newname
         if(newusername!="" and len(User.objects.filter(username=newusername))==0):
+            currentuser.username = newusername
             user.username=newusername
         if(newemail!=""):
             user.email=newemail
@@ -280,14 +332,24 @@ class ProfilePage(LoginRequiredMixin, View):
         newaddress=post["address"]
         newaltemail=post["altemail"]
         if(newphone!=""):
+            currentprofile.phone = newphone
             profile.phone=newphone
         if(newaddress!=""):
+            currentprofile.address = newaddress
+        if (newemail != ""):
+            currentuser.email = newemail
             profile.address=newaddress
         if (newaltemail!=""):
+            currentprofile.alt_email = newaltemail
             profile.alt_email=newaltemail
 
         profile.save()
 
+        currentuser.save()
+        currentprofile.save()
+        print("New address")
+        print(currentprofile.address)
+        return redirect("/profile/")
     def TAProfile(self, profile, skills):
         profile.skills = skills
         profile.save()
