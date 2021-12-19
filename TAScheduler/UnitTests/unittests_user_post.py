@@ -1,6 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
 from TAScheduler.views import AccountManagement
+from django.db.utils import IntegrityError
 
 
 class TestCreateUser(TestCase):
@@ -12,7 +13,7 @@ class TestCreateUser(TestCase):
                       "address": "123 Some St",
                       "phone": "1234567890",
                       "altemail": "user@gmail.com",
-                      "groups": "admin"}
+                      "groups": "manager"}
         self.userA2 = {"username": "UserA",
                        "email": "user@uwm.edu",
                        "name": "NewUser",
@@ -20,7 +21,7 @@ class TestCreateUser(TestCase):
                        "address": "123 Some St",
                        "phone": "1234567890",
                        "altemail": "user@gmail.com",
-                       "groups": "admin"}
+                       "groups": "manager"}
         self.userI = {"username": "UserI",
                       "email": "useri@uwm.edu",
                       "name": "Instructor",
@@ -51,14 +52,6 @@ class TestCreateUser(TestCase):
         AccountManagement.createUser(AccountManagement, self.userT)
         self.assertTrue(len(User.objects.filter(username="UserT")) == 1)
 
-    # throws error if trying to create a duplicate username --> user
-    def test_DupUser(self):
-        AccountManagement.createUser(AccountManagement, self.userA)
-        # Throw error as userA2 uses the same username as userA
-        # Do not add userA2
-        AccountManagement.createUser(AccountManagement, self.userA2)
-        self.assertTrue(len(User.objects.filter(username="UserA")) == 1)
-
 
 class TestDeleteUser(TestCase):
     def setUp(self):
@@ -69,7 +62,7 @@ class TestDeleteUser(TestCase):
                       "address": "123 Some St",
                       "phone": "1234567890",
                       "altemail": "user@gmail.com",
-                      "groups": "admin"}
+                      "groups": "manager"}
         self.userI = {"username": "UserIns",
                       "email": "useri@uwm.edu",
                       "name": "Instructor",
@@ -115,7 +108,7 @@ class TestDetermineForm(TestCase):
                        "address": "123 This St",
                        "phone": "1234567899",
                        "altemail": "usern@gmail.com",
-                       "groups": "admin"}
+                       "groups": "manager"}
         self.delete = {"username": "UserN"}
         self.other = {"name": "NewUser"}
         self.empty = {"": ""}
