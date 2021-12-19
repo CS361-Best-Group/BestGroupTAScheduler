@@ -163,9 +163,6 @@ class AccountManagement(LoginRequiredMixin, View):
             newuser = User.objects.create_user(username=form["username"], email=form["email"],
                                                 first_name=form["name"], password=form["password"])
             newuser.save()
-            newprofile = Profile(user=newuser, address=form["address"], phone=form["phone"],
-                                 alt_email=form["altemail"])
-            newprofile.save()
         elif len(User.objects.all()) != 0 and form["username"] in form.values():
             print("No duplicate users")
         else:
