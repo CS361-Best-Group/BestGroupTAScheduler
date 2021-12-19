@@ -232,7 +232,6 @@ class ProfilePage(LoginRequiredMixin, View):
         CurrentProfile=Profile.objects.filter(user=CurrentUser)[0]
 
         if determineRole(CurrentUser) == 'ta':
-            print("in if")
             return render(request, "profile.html",
                           {"email":CurrentUser.email,
                            "firstname":CurrentUser.first_name,
@@ -243,7 +242,6 @@ class ProfilePage(LoginRequiredMixin, View):
                            "altemail":CurrentProfile.alt_email,
                            "skills":CurrentProfile.skills})
         else:
-            print("in else")
             return render(request, "profile.html",
                           {"email":CurrentUser.email,
                            "firstname":CurrentUser.first_name,
@@ -256,17 +254,13 @@ class ProfilePage(LoginRequiredMixin, View):
     def post(self, request):
         currentuser=User.objects.filter(id=request.session["_auth_user_id"])[0]
         currentprofile=Profile.objects.filter(user=currentuser)[0]
-        print(currentuser.username)
-        print(currentprofile.alt_email)
-        print(currentprofile.skills)
+
         self.otherProfile(currentuser, currentprofile, request.POST)
+        if(determineRole(currentuser) == 'ta'):
+            self.TAProfile(currentprofile, request.POST["skills"])
 
-
-        print("Here"+currentprofile.skills)
-
-        print(currentprofile.address)
-        currentprofile.save()
-        print("Here"+currentprofile.skills)
+        print("Post username = " + currentuser.username)
+        print("Post skills = " + currentprofile.skills)
 
         return redirect("/profile/")
 
@@ -288,23 +282,12 @@ class ProfilePage(LoginRequiredMixin, View):
         if(newphone!=""):
             profile.phone=newphone
         if(newaddress!=""):
-            print("inside if statement")
             profile.address=newaddress
         if (newaltemail!=""):
             profile.alt_email=newaltemail
 
-        role = determineRole(user)
-        print(role)
-        if role == 'ta':
-            profile.skills = post["skills"]
-            profile.save()
-
-
         profile.save()
 
     def TAProfile(self, profile, skills):
-
         profile.skills = skills
-        print(profile.skills)
         profile.save()
-        print(profile.alt_email)
