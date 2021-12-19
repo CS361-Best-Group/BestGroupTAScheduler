@@ -133,3 +133,31 @@ class TestCreateSection(TestCase):
     def test_invalid(self):
         CourseManagement.createSection({})
         self.assertEqual(list(Section.objects.all()), [])
+
+class TestDeleteCourse(TestCase):
+    def setUp(self):
+        course = Course.objects.create(name = 'CS999', description = 'Example course')
+        Section.objects.create(name = 'ABC', course = course)
+        
+    def test_delete(self):
+        CourseManagement.deleteCourse({ 'course': 'CS999' })
+        self.assertEqual(list(Course.objects.all()), [])
+        self.assertEqual(list(Section.objects.all()), [])
+        
+    def test_invalid(self):
+        CourseManagement.deleteCourse({ 'course': '' })
+        self.assertNotEqual(list(Course.objects.all()), [])
+        self.assertNotEqual(list(Section.objects.all()), [])
+
+class TestDeleteSection(TestCase):
+    def setUp(self):
+        course = Course.objects.create(name = 'CS999', description = 'Example course')
+        Section.objects.create(name = 'ABC', course = course)
+        
+    def test_delete(self):
+        CourseManagement.deleteCourse({ 'course': 'CS999', 'section': 'ABC' })
+        self.assertEqual(list(Section.objects.all()), [])
+        
+    def test_invalid(self):
+        CourseManagement.deleteCourse({ 'section': '' })
+        self.assertNotEqual(list(Section.objects.all()), [])

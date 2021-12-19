@@ -82,18 +82,17 @@ class CourseManagement(LoginRequiredMixin, View):
 
     def handleForm(context):
         formHandlers = {
-            'createCourse': createCourse,
-            'createSection': createSection,
-            'deleteCourse': deleteCourse,
-            'deleteSection': deleteSection,
-            'assignUser': assignUser
+            'createCourse': CourseManagement.createCourse,
+            'createSection': CourseManagement.createSection,
+            'deleteCourse': CourseManagement.deleteCourse,
+            'deleteSection': CourseManagement.deleteSection,
+            'assignUser': CourseManagement.assignUser
         }
         
         if 'kind' in context.keys():
             formHandlers.get(context['kind'], lambda *args, **keyArgs: None)(context)
 
     def createCourse(context):
-        # TODO: group membership check.
         name = context.get('course', '')
 
         if name != '' and len(Course.objects.filter(name = name)) == 0:
@@ -107,7 +106,6 @@ class CourseManagement(LoginRequiredMixin, View):
             course.save()
 
     def createSection(context):
-        # TODO: group membership check.
         try:
             course = Course.objects.get(name = context.get('course', ''))
             name = context.get('section', '')
@@ -120,12 +118,21 @@ class CourseManagement(LoginRequiredMixin, View):
             pass
 
     def deleteCourse(context):
-        # To be implemented.
-        pass
+        try:
+            course = Course.objects.get(name = context.get('course', ''))
+            course.delete()
+        except Course.DoesNotExist:
+            pass
 
     def deleteSection(context):
-        # To be implemented.
-        pass
+        try:
+            course = Course.objects.get(name = context.get('course', ''))
+            section = Section.objects.get(course = course, name = context.get('section', ''))
+            section.delete()
+        except Course.DoesNotExist:
+            pass
+        except Section.DoesNotExist:
+            pass
 
     def assignUser(context):
         # To be implemented.
