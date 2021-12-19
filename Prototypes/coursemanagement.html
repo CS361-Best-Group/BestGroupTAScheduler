@@ -26,9 +26,12 @@
 		<h2>Courses:</h2>
     {% for i in Courses %}
       <details class="course">
-        <summary name="course">
+        <summary>
             {{ i.name }}
             <form>
+			  {% csrf_token %}
+			  <input type="hidden" name="kind" value="deleteCourse">
+			  <input type="hidden" name="course" value="{{ i.name }}">
               <input type="submit" value="Delete Course">
             </form>
         </summary>
@@ -65,8 +68,10 @@
            {% endfor %}
             <form action="/coursemanagement/" method="post">
             {% csrf_token %}
+				<input type="hidden" name="kind" value="createSection">
                 <input type="hidden" value="{{ i.name }}" name="course">
-                <input type="submit" value="Add Section">
+                <input type="text" name="section">
+                <input type="submit" value="Create Section">
             </form>
         </details>
 
@@ -78,16 +83,15 @@
 		<h2>Create Course:</h2>
     
         {% csrf_token %}
-        <label for="name">Course Name</label>
-        <input id="name" name="coursename" type="text">
+        
+        <input type="hidden" name="kind" value="createCourse">
+        
+        <label for="course">Course Name</label>
+        <input name="course" type="text">
         <label for="description">Course Description</label>
-        <input id="description" name="coursedescription" type="text">
+        <input name="description" type="text">
 
         <input type="submit" value="Create">
-
-
-
-
     </form>
     </section>
 
