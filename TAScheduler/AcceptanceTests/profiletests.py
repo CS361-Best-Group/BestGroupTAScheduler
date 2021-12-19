@@ -1,22 +1,28 @@
+import time
+
 from django.contrib.auth import login
 from django.test import TestCase
 from django.test import Client
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
 from TAScheduler.models import Profile
+from TAScheduler.views import ProfilePage
+
 
 class TestProfileGet(TestCase):
 
     def setUp(self):
         self.client=Client()
 
-        User1=User.objects.create_user(username="TA Timmy", password="testpassword", email="timmy@gmail.com", first_name="Timmy")
-        User1.save()
-        Profile1=Profile(user=User1, address="9999", alt_email="nottimmy@gmail.com", phone="999-999-9999")
+        self.User1=User.objects.create_user(username="TA Timmy", password="testpassword", email="timmy@gmail.com", first_name="Timmy")
+        self.User1.save()
+        Profile1=Profile(user=self.User1, address="9999", alt_email="nottimmy@gmail.com", phone="999-999-9999")
         Profile1.save()
 
-        self.client.force_login(User1)
-
+        self.client.force_login(self.User1)
+        self.ta_group, created = Group.objects.get_or_create(name='ta')
+        self.instructor_group, created = Group.objects.get_or_create(name='instructor')
+        self.admin_group, created=Group.objects.get_or_create(name="manager")
 
     def test_loadFirstName(self):
 
@@ -67,8 +73,36 @@ class TestProfileGet(TestCase):
         r=self.client.get("/profile/")
         self.assertContains(r, 'nottimmy@gmail.com')
 
+    def test_TALoadSkills(self):
+        TAUser=User.objects.create_user(username="TA Joe", password="password101", email="joe@gmail.com", first_name="Joe")
+        TAUser.save()
+        TAUser.groups.add(Group.objects.filter(name="ta")[0])
+        TAProfile=Profile(user=TAUser, address="9998", alt_email="alternateemail@gmail.com", phone="9989")
+        TAProfile.save()
+        self.client.force_login((TAUser))
+        r=self.client.get("/profile/")
+        self.assertContains(r, "Skills")
 
 
+    def test_adminNoSkills(self):
+        self.User1.groups.add(Group.objects.filter(name="manager")[0])
+        r=self.client.get("/profile/")
+        self.assertNotContains(r, "Skills")
+    def test_InstructorNoSkills(self):
+        self.User1.groups.add(Group.objects.filter(name="instructor")[0])
+        r=self.client.get("/profile/")
+        self.assertNotContains(r, "Skills")
+
+    def test_TALoadNonEmptySkill(self):
+        TAUser = User.objects.create_user(username="TA Joe", password="password101", email="joe@gmail.com",first_name="Joe")
+        TAUser.save()
+        TAUser.groups.add(Group.objects.filter(name="ta")[0])
+        TAProfile = Profile(user=TAUser, address="9998", alt_email="alternateemail@gmail.com", phone="9989")
+        TAProfile.skills="Typing"
+        TAProfile.save()
+        self.client.force_login((TAUser))
+        r=self.client.get("/profile/")
+        self.assertContains(r, "Typing")
 class TestProfilePost(TestCase):
 
     def setUp(self):
@@ -81,6 +115,24 @@ class TestProfilePost(TestCase):
         self.Profile1.save()
 
         self.client.force_login(self.User1)
+        self.ta_group, created = Group.objects.get_or_create(name='ta')
+        self.instructor_group, created = Group.objects.get_or_create(name='instructor')
+        self.admin_group, created=Group.objects.get_or_create(name="manager")
+
+        self.TAUser = User.objects.create_user(
+            username="TA Joe",
+            password="password101",
+            email="joe@gmail.com",
+            first_name="Joe")
+        self.TAUser.groups.add(Group.objects.filter(name="ta")[0])
+        self.TAUser.save()
+        self.TAProfile = Profile(
+            user=self.TAUser,
+            address="9998",
+            alt_email="alternateemail@gmail.com",
+            phone="9989")
+        self.TAProfile.save()
+
 
     def test_noChangeName(self):
         r=self.client.post("/profile/", {"username":self.User1.username, "name":self.User1.first_name, "address":self.Profile1.address, "phone":self.Profile1.phone, "email":self.User1.email, "altemail":self.Profile1.alt_email}, follow=True)
@@ -288,3 +340,49 @@ class TestProfilePost(TestCase):
     def test_displayEmptyAltEmail(self):
         r=self.client.post("/profile/", {"username":self.User1.username, "name":self.User1.first_name, "address":self.Profile1.address, "phone":self.Profile1.phone, "email":self.User1.email, "altemail":""}, follow=True)
         self.assertContains(r, 'nottimmy@gmail.com')
+
+    def test_changeSkills(self):
+        #why does this not work?
+        self.client.force_login((self.TAUser))
+        self.client.post("/profile/",
+                         {"username": "fart", #self.TAUser.username,
+                          "name":self.TAUser.first_name,
+                          "address":self.TAProfile.address,
+                          "phone":self.TAProfile.phone,
+                          "email":self.TAUser.email,
+                          "altemail":self.TAProfile.alt_email,
+                          "skills":"Being Cool"}, follow=True)
+
+        print("Test username = " + self.TAUser.username)
+        print("Test skills = " + self.TAProfile.skills)
+
+
+        self.assertEqual(self.TAProfile.skills, "Being Cool")
+
+    def test_deleteSkills(self):
+        TAUser = User.objects.create_user(username="TA Joe", password="password101", email="joe@gmail.com",first_name="Joe")
+        TAUser.save()
+        TAUser.groups.add(Group.objects.filter(name="ta")[0])
+        TAProfile = Profile(user=TAUser, address="9998", alt_email="alternateemail@gmail.com", phone="9989")
+        TAProfile.save()
+        TAProfile.skills = "Typing"
+        self.client.force_login((TAUser))
+        self.client.post("/profile/", {"username": TAUser.username, "password": TAUser.password, "email": TAUser.email,"name": TAUser.first_name, "address": TAProfile.address,"phone": TAProfile.phone, "altemail": TAProfile.alt_email,"skills": ""})
+        self.assertEqual(TAProfile.skills, "")
+
+    def test_changeSkillsAppears(self):
+        self.client.force_login((self.TAUser))
+        r=self.client.post("/profile/", {"username": self.TAUser.username, "password": self.TAUser.password, "email": self.TAUser.email,"name": self.TAUser.first_name, "address": self.TAProfile.address,"phone": self.TAProfile.phone, "altemail": self.TAProfile.alt_email,"skills": "Being Cool"})
+        self.assertContains(r,"Being Cool")
+
+    def test_deleteSkillsAppears(self):
+        TAUser = User.objects.create_user(username="TA Joe", password="password101", email="joe@gmail.com",
+                                          first_name="Joe")
+        TAUser.save()
+        TAUser.groups.add(Group.objects.filter(name="ta")[0])
+        TAProfile = Profile(user=TAUser, address="9998", alt_email="alternateemail@gmail.com", phone="9989")
+        TAProfile.save()
+        TAProfile.skills = "Typing"
+        self.client.force_login((TAUser))
+        r=self.client.post("/profile/", {"username": TAUser.username, "password": TAUser.password, "email": TAUser.email,"name": TAUser.first_name, "address": TAProfile.address,"phone": TAProfile.phone, "altemail": TAProfile.alt_email, "skills": ""})
+        self.assertNotContains(r, "Typing")

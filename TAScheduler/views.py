@@ -1,3 +1,4 @@
+import time
 from hashlib import sha256
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -23,12 +24,12 @@ class Login(View):
 
     def post(self, request):
         print("In post")
-        user = request.POST["name"]
-        password = request.POST["password"]
+        user=request.POST["name"]
+        password=request.POST["password"]
 
-        userobject = authenticate(request, username=user, password=password)
+        userobject=authenticate(request, username=user, password=password)
 
-        if not (userobject == None):
+        if not(userobject == None):
             print("Login")
             login(request, userobject)
             return redirect("/")
@@ -54,14 +55,14 @@ class CourseManagement(LoginRequiredMixin, View):
     def getAssociatedInstructors(course):
         # To be implemented.
         pass
-        
+
     def getAssociatedTAs(course):
         # To be implemented.
         pass
 
     def load(user):
         role = determineRole(user)
-        
+
         if role == 'manager':
             courses = list(Course.objects.all())
             sections = list(Section.objects.all())
@@ -71,13 +72,13 @@ class CourseManagement(LoginRequiredMixin, View):
         else:
             courses = list(Course.objects.filter(users__in = [ user ]))
             sections = list(Section.objects.filter(users__in = [ user ]))
-            
+
             for section in sections:
                 if section.course not in courses:
                     courses.append(section.course)
-        
-        return (courses, sections)
 
+        return (courses, sections)
+            
     # Form handling functions.
 
     def handleForm(context):
@@ -88,7 +89,7 @@ class CourseManagement(LoginRequiredMixin, View):
             'deleteSection': CourseManagement.deleteSection,
             'assignUser': CourseManagement.assignUser
         }
-        
+
         if 'kind' in context.keys():
             formHandlers.get(context['kind'], lambda *args, **keyArgs: None)(context)
 
@@ -99,7 +100,7 @@ class CourseManagement(LoginRequiredMixin, View):
             description = context.get('description', 'No description')
             if description == '':
                 description = 'No description'
-            
+
             course = Course(name = name, description = description)
             course.users.set([])
 
@@ -109,7 +110,7 @@ class CourseManagement(LoginRequiredMixin, View):
         try:
             course = Course.objects.get(name = context.get('course', ''))
             name = context.get('section', '')
-            
+
             if name != '' and len(Section.objects.filter(course = course, name = name)) == 0:
                 section = Section(name = name, course = course)
                 section.users.set([])
@@ -154,11 +155,11 @@ class AccountManagement(LoginRequiredMixin, View):
         Admin=[]
 
         for i in Largelist[0]:
-            if (determineRole(i) == "manager"):
+            if(determineRole(i)=="manager"):
                 Admin.append(i)
-            elif (determineRole(i) == "instructor"):
+            elif (determineRole(i)=="instructor"):
                 Instructor.append(i)
-            elif (determineRole(i) == "ta"):
+            elif (determineRole(i)=="ta"):
                 TA.append(i)
         return render(request, "usermanagement.html",
                       {"TA": TA, "Instructor": Instructor, "Admin": Admin, "Profiles": Profiles,
@@ -167,13 +168,13 @@ class AccountManagement(LoginRequiredMixin, View):
     def post(self, request):
         if all([(field in request.POST) and (request.POST[field] != '') for field in
                 ['username', 'email', 'name', 'password']]):
-            user = request.POST["username"]
-            email = request.POST["email"]
-            name = request.POST["name"]
-            password = request.POST["password"]
-            address = request.POST.get("address", "")
-            phone = request.POST.get("phone", "")
-            altemail = request.POST.get("altemail", "")
+            user=request.POST["username"]
+            email=request.POST["email"]
+            name=request.POST["name"]
+            password=request.POST["password"]
+            address= request.POST.get("address", "")
+            phone=request.POST.get("phone", "")
+            altemail=request.POST.get("altemail", "")
             usergroup = request.POST["groups"]
 
             form = {"username": user,
@@ -205,7 +206,7 @@ class AccountManagement(LoginRequiredMixin, View):
     def createUser(self, form):
         try:
             newuser = User.objects.create_user(username=form["username"], email=form["email"],
-                                               first_name=form["name"], password=form["password"])
+                                                first_name=form["name"], password=form["password"])
 
             group = Group.objects.get_or_create(name=form["groups"])
             newuser.groups.add(group[0])
@@ -222,32 +223,32 @@ class AccountManagement(LoginRequiredMixin, View):
         user.delete()
 
     def load(self, currentUser):
-        currentrole = determineRole(currentUser)
-        # admin
+        currentrole=determineRole(currentUser)
+        #admin
         UserList = User.objects.all()
         print(UserList)
 
-        if (currentrole == "manager"):
-            ProfileList = Profile.objects.all()
+        if(currentrole=="manager"):
+            ProfileList=Profile.objects.all()
             print("in manager")
-            sidebutton = Button()
-            sidebutton.value = "Create"
-            userbutton = Button()
-            userbutton.value = "Delete"
+            sidebutton=Button()
+            sidebutton.value="Create"
+            userbutton=Button()
+            userbutton.value="Delete"
 
-            SideButtons = [sidebutton]
-            UserButtons = [userbutton]
-        # instructor
-        elif (currentrole == "instructor"):
-            ProfileList = []
-            SideButtons = []
-            UserButtons = []
-        # ta
-        elif (currentrole == "ta"):
-            ProfileList = []
-            SideButtons = []
-            UserButtons = []
-        # determinerolebroke
+            SideButtons=[sidebutton]
+            UserButtons=[userbutton]
+        #instructor
+        elif(currentrole=="instructor"):
+            ProfileList=[]
+            SideButtons=[]
+            UserButtons=[]
+        #ta
+        elif(currentrole=="ta"):
+            ProfileList=[]
+            SideButtons=[]
+            UserButtons=[]
+        #determinerolebroke
         else:
             pass
 
@@ -264,11 +265,12 @@ class Home(LoginRequiredMixin, View):
 
 class ProfilePage(LoginRequiredMixin, View):
     def get(self, request):
-        return load(request)
+        return ProfilePage.load(self, request)
 
     def load(self, request):
         CurrentUserID=request.session["_auth_user_id"]
         CurrentUser=User.objects.filter(id=CurrentUserID)[0]
+
         CurrentProfile=Profile.objects.filter(user=CurrentUser)[0]
 
         if determineRole(CurrentUser) == 'ta':
@@ -303,12 +305,12 @@ class ProfilePage(LoginRequiredMixin, View):
         currentprofile=Profile.objects.filter(user=currentuser)[0]
 
         self.otherProfile(currentuser, currentprofile, request.POST)
-        role = determineRole(currentuser)
-        if role == 'ta':
+        if(determineRole(currentuser) == 'ta'):
             self.TAProfile(currentprofile, request.POST["skills"])
 
-        print("New address")
-        print(currentprofile.address)
+        print("Post username = " + currentuser.username)
+        print("Post skills = " + currentprofile.skills)
+
         return redirect("/profile/")
 
     def otherProfile(self, user, profile, post):
@@ -333,7 +335,6 @@ class ProfilePage(LoginRequiredMixin, View):
             currentprofile.phone = newphone
             profile.phone=newphone
         if(newaddress!=""):
-            print("inside if statement")
             currentprofile.address = newaddress
         if (newemail != ""):
             currentuser.email = newemail
@@ -341,8 +342,8 @@ class ProfilePage(LoginRequiredMixin, View):
         if (newaltemail!=""):
             currentprofile.alt_email = newaltemail
             profile.alt_email=newaltemail
+
         profile.save()
-        pass
 
         currentuser.save()
         currentprofile.save()
@@ -352,4 +353,3 @@ class ProfilePage(LoginRequiredMixin, View):
     def TAProfile(self, profile, skills):
         profile.skills = skills
         profile.save()
-        pass
