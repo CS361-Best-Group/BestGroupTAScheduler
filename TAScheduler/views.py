@@ -6,23 +6,30 @@ from django.views import View
 from django.contrib.auth import authenticate, login, logout
 from .models import Profile
 from django.contrib.auth.models import User, Group
-
-from TAScheduler.models import Course, Section
 from TAScheduler.determinerole import determineRole
 
+from TAScheduler.models import Course, Section
+
+from .button import Button
+
+
 class Login(View):
+
     def get(self, request):
         logout(request)
         return render(request, "login.html")
 
     def post(self, request):
         print("In post")
-        user = request.POST["name"]
-        password = request.POST["password"]
+        user=request.POST["name"]
+        password=request.POST["password"]
 
-        userobject = authenticate(request, username=user, password=password)
 
-        if not (userobject == None):
+
+        userobject=authenticate(request, username=user, password=password)
+
+
+        if not(userobject == None):
             print("Login")
             login(request, userobject)
             return redirect("/")
@@ -126,7 +133,8 @@ class CourseManagement(LoginRequiredMixin, View):
 
 class AccountManagement(LoginRequiredMixin, View):
     def get(self, request):
-        # Nothing will be mapped course fields if post is from a section creation form submission
+
+        #Nothing will be mapped course fields if post is from a section creation form submission
 
         TA = User.objects.filter(groups__name='ta')
         Instructor = User.objects.filter(groups__name='instructor')
@@ -135,23 +143,44 @@ class AccountManagement(LoginRequiredMixin, View):
 
         return render(request, "usermanagement.html",
                       {"TA": TA, "Instructor": Instructor, "Admin": Admin, "Profiles": Profiles})
+        currentuserid=request.session["_auth_user_id"]
+        currentUser=User.objects.filter(id=currentuserid)[0]
+        Largelist=self.load(currentUser)
+        Profiles=Largelist[1]
+        SideButtons=Largelist[2]
+        UserButtons=Largelist[3]
+
+        TA=[]
+        Instructor=[]
+        Admin=[]
+
+        for i in Largelist[0]:
+            if(determineRole(i)=="manager"):
+                Admin.append(i)
+            elif (determineRole(i)=="instructor"):
+                Instructor.append(i)
+            elif (determineRole(i)=="ta"):
+                TA.append(i)
+        return render(request, "usermanagement.html", {"TA":TA, "Instructor":Instructor, "Admin":Admin, "Profiles":Profiles, "SideButtons":SideButtons, "UserButtons":UserButtons})
 
     def post(self, request):
         if all([(field in request.POST) and (request.POST[field] != '') for field in
                 ['username', 'email', 'name', 'password']]):
-            user = request.POST["username"]
-            email = request.POST["email"]
-            name = request.POST["name"]
-            password = request.POST["password"]
-            address = request.POST.get("address", "")
-            phone = request.POST.get("phone", "")
-            altemail = request.POST.get("altemail", "")
-            userthere = User.objects.filter(username=user)
-            groups = Group.objects.filter(name="manager")
-            groupthing = groups[0]
+        if all([(field in request.POST) and (request.POST[field] != '') for field in ['username', 'email', 'name', 'password']]):
+            user=request.POST["username"]
+            email=request.POST["email"]
+            name=request.POST["name"]
+            password=request.POST["password"]
+            address= request.POST.get("address", "")
+            phone=request.POST.get("phone", "")
+            altemail=request.POST.get("altemail", "")
+            userthere=User.objects.filter(username=user)
+            groups=Group.objects.filter(name="manager")
+            groupthing=groups[0]
 
-            if (len(userthere) == 0):
-                newuser = User.objects.create_user(username=user, email=email, first_name=name, password=password)
+            if(len(userthere)==0):
+
+                newuser=User.objects.create_user(username=user, email=email, first_name=name, password=password)
 
                 newuser.groups.add(groupthing)
                 newuser.save()
@@ -197,6 +226,38 @@ class AccountManagement(LoginRequiredMixin, View):
         user.delete()
 
 
+    def load(self, currentUser):
+        currentrole=determineRole(currentUser)
+        #admin
+        UserList = User.objects.all()
+        print(UserList)
+        if(currentrole=="manager"):
+            ProfileList=Profile.objects.all()
+
+            sidebutton=Button()
+            sidebutton.value="Create"
+            userbutton=Button()
+            userbutton.value="Delete"
+
+            SideButtons=[sidebutton]
+            UserButtons=[userbutton]
+        #instructor
+        elif(currentrole=="instructor"):
+            ProfileList=[]
+            SideButtons=[]
+            UserButtons=[]
+        #ta
+        elif(currentrole=="ta"):
+            ProfileList=[]
+            SideButtons=[]
+            UserButtons=[]
+        #determinerolebroke
+        else:
+            pass
+
+        return [UserList, ProfileList, SideButtons, UserButtons]
+
+
 class Home(LoginRequiredMixin, View):
     def get(self, request):
         return render(request, "index.html")
@@ -208,16 +269,17 @@ class Home(LoginRequiredMixin, View):
 class ProfilePage(LoginRequiredMixin, View):
     def get(self, request):
 
-        CurrentUserID = request.session["_auth_user_id"]
+        CurrentUserID=request.session["_auth_user_id"]
 
-        CurrentUser = User.objects.filter(id=CurrentUserID)[0]
+        CurrentUser=User.objects.filter(id=CurrentUserID)[0]
 
-        CurrentProfile = Profile.objects.filter(user=CurrentUser)[0]
+        CurrentProfile=Profile.objects.filter(user=CurrentUser)[0]
 
         return render(request, "profile.html",
                       {"email": CurrentUser.email, "firstname": CurrentUser.first_name, "email": CurrentUser.email,
                        "username": CurrentUser.username, "address": CurrentProfile.address,
                        "phone": CurrentProfile.phone, "altemail": CurrentProfile.alt_email})
+        return render(request, "profile.html", {"email":CurrentUser.email, "firstname":CurrentUser.first_name, "email":CurrentUser.email, "username":CurrentUser.username, "address":CurrentProfile.address, "phone":CurrentProfile.phone, "altemail":CurrentProfile.alt_email, "skills":CurrentProfile.skills})
 
     def post(self, request):
         newname = request.POST["name"]
@@ -227,27 +289,58 @@ class ProfilePage(LoginRequiredMixin, View):
         newemail = request.POST["email"]
         newaltemail = request.POST["altemail"]
 
-        currentuser = User.objects.filter(id=request.session["_auth_user_id"])[0]
-        currentprofile = Profile.objects.filter(user=currentuser)[0]
+        currentuser=User.objects.filter(id=request.session["_auth_user_id"])[0]
+        currentprofile=Profile.objects.filter(user=currentuser)[0]
 
-        if (newname != ""):
+        self.otherProfile(currentuser, currentprofile, request.POST)
+        role = determineRole(currentuser)
+        if role == 'ta':
+            self.TAProfile(currentprofile, request.POST["skills"])
+
+        print("New address")
+        print(currentprofile.address)
+        return redirect("/profile/")
+
+    def otherProfile(self, user, profile, post):
+        newname=post["name"]
+        newusername=post["username"]
+        newemail=post["email"]
+        if(newname!=""):
             currentuser.first_name = newname
 
-        if (newusername != "" and len(User.objects.filter(username=newusername)) == 0):
+            user.first_name=newname
+        if(newusername!="" and len(User.objects.filter(username=newusername))==0):
             currentuser.username = newusername
+            user.username=newusername
+        if(newemail!=""):
+            user.email=newemail
+        user.save()
 
-        if (newphone != ""):
+        newphone=post["phone"]
+        newaddress=post["address"]
+        newaltemail=post["altemail"]
+        if(newphone!=""):
             currentprofile.phone = newphone
-        if (newaddress != ""):
+            profile.phone=newphone
+        if(newaddress!=""):
             print("inside if statement")
             currentprofile.address = newaddress
         if (newemail != ""):
             currentuser.email = newemail
-        if (newaltemail != ""):
+            profile.address=newaddress
+        if (newaltemail!=""):
             currentprofile.alt_email = newaltemail
+            profile.alt_email=newaltemail
+        profile.save()
+        pass
 
         currentuser.save()
         currentprofile.save()
         print("New address")
         print(currentprofile.address)
         return redirect("/profile/")
+    def TAProfile(self, profile, skills):
+        profile.skills = skills
+        profile.save()
+        pass
+

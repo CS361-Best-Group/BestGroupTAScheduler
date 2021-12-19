@@ -3,7 +3,7 @@ from django.test import TestCase
 from django.test import Client
 from django.contrib.auth.models import User
 from django.contrib.auth.models import Group
-from .models import Profile
+from TAScheduler.models import Profile
 
 class TestProfileGet(TestCase):
 

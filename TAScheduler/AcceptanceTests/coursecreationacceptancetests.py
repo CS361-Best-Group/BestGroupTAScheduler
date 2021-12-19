@@ -1,8 +1,8 @@
 from django.test import TestCase
 from django.test import Client
 from django.contrib.auth.models import User, Group
-from .models import Course, Section
-from .apps import TASchedulerAppConfig
+from TAScheduler.models import Course, Section
+from TAScheduler.apps import TASchedulerAppConfig
 
 # As an administrator, I must be able to create courses within the system, in order to assign them to instructors and TAs.
 class TestCourseCreationAcceptance(TestCase):
