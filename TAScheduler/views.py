@@ -42,7 +42,8 @@ class CourseManagement(LoginRequiredMixin, View):
         courses, sections = CourseManagement.load(request.user)
         print(courses)
         print(sections)
-        return render(request, "coursemanagement.html", {"Courses": courses, "Sections": sections})
+        print(request.user.groups.all()[0].name)
+        return render(request, "coursemanagement.html", {"Courses": courses, "Sections": sections, "Role":determineRole(request.user)})
 
     def post(self, request):
         CourseManagement.handleForm(request.POST)
@@ -133,15 +134,7 @@ class CourseManagement(LoginRequiredMixin, View):
 class AccountManagement(LoginRequiredMixin, View):
     def get(self, request):
 
-        # Nothing will be mapped course fields if post is from a section creation form submission
 
-        TA = User.objects.filter(groups__name='ta')
-        Instructor = User.objects.filter(groups__name='instructor')
-        Admin = User.objects.filter(groups__name='manager')
-        Profiles = Profile.objects.all()
-
-        return render(request, "usermanagement.html",
-                      {"TA": TA, "Instructor": Instructor, "Admin": Admin, "Profiles": Profiles})
         currentuserid=request.session["_auth_user_id"]
         currentUser=User.objects.filter(id=currentuserid)[0]
         Largelist=self.load(currentUser)
@@ -226,9 +219,10 @@ class AccountManagement(LoginRequiredMixin, View):
         # admin
         UserList = User.objects.all()
         print(UserList)
+
         if (currentrole == "manager"):
             ProfileList = Profile.objects.all()
-
+            print("in manager")
             sidebutton = Button()
             sidebutton.value = "Create"
             userbutton = Button()

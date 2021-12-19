@@ -28,12 +28,23 @@
       <details class="course">
         <summary>
             {{ i.name }}
+            {% if Role == "manager" %}
             <form>
 			  {% csrf_token %}
 			  <input type="hidden" name="kind" value="deleteCourse">
 			  <input type="hidden" name="course" value="{{ i.name }}">
               <input type="submit" value="Delete Course">
             </form>
+            <form>
+
+                {% csrf_token %}
+
+                <input type="submit" value="Assign User To Course">
+
+            </form>
+
+
+            {% endif %}
         </summary>
         <p>{{ i.description }}</p>
         <!--Button for course deletion - correct code needs to be added-->
@@ -62,10 +73,19 @@
                 <li>{{ z.first_name }}</li>
                   {% endfor %}
               </ul>
+                {% if Role == "instructor" or Role == "manager" %}
+                <form>
+                    {% csrf_token %}
+                    <input type="submit" value="Assign User To Section">
+
+
+                </form>
+                {% endif %}
             </details>
              {% endif %}
 
            {% endfor %}
+          {% if Role == "manager" %}
             <form action="/coursemanagement/" method="post">
             {% csrf_token %}
 				<input type="hidden" name="kind" value="createSection">
@@ -73,12 +93,13 @@
                 <input type="text" name="section">
                 <input type="submit" value="Create Section">
             </form>
+            {% endif %}
         </details>
 
       </details>
     {% endfor %}
     </section>
-
+    {% if Role == "manager" %}
     <form action="/coursemanagement/" method="post">
 		<h2>Create Course:</h2>
     
@@ -93,6 +114,7 @@
 
         <input type="submit" value="Create">
     </form>
+    {% endif %}
     </section>
 
   </body>
