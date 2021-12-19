@@ -166,7 +166,6 @@ class AccountManagement(LoginRequiredMixin, View):
     def post(self, request):
         if all([(field in request.POST) and (request.POST[field] != '') for field in
                 ['username', 'email', 'name', 'password']]):
-        if all([(field in request.POST) and (request.POST[field] != '') for field in ['username', 'email', 'name', 'password']]):
             user=request.POST["username"]
             email=request.POST["email"]
             name=request.POST["name"]
