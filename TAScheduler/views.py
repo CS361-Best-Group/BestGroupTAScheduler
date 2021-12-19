@@ -43,7 +43,7 @@ class CourseManagement(LoginRequiredMixin, View):
         print(courses)
         print(sections)
         print(request.user.groups.all()[0].name)
-        return render(request, "coursemanagement.html", {"Courses": courses, "Sections": sections, "Role":request.user.groups.all()[0].name})
+        return render(request, "coursemanagement.html", {"Courses": courses, "Sections": sections, "Role":determineRole(request.user)})
 
     def post(self, request):
         CourseManagement.handleForm(request.POST)

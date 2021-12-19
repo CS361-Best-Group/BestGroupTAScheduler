@@ -1,6 +1,8 @@
 from django.db.models import QuerySet
 from django.test import TestCase
 from django.test import Client
+
+from TAScheduler.apps import TASchedulerAppConfig
 from TAScheduler.models import Course, Section, Profile
 from django.contrib.auth.models import User, Group
 
@@ -8,10 +10,7 @@ from django.contrib.auth.models import User, Group
 class TestCourseCreationGet(TestCase):
 
     def setUp(self):
-        self.ta_group, created = Group.objects.get_or_create(name='ta')
-
-        self.instructor_group, created=Group.objects.get_or_create(name='instructor')
-        self.admin_group, created=Group.objects.get_or_create(name="manager")
+        TASchedulerAppConfig.ready(None)
 
         self.client=Client()
         self.dummy=User.objects.create_user(username="dummy23", password="password", email="email@email.com", first_name="dummy")
