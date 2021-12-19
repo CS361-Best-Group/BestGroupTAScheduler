@@ -151,7 +151,7 @@ class AccountManagement(LoginRequiredMixin, View):
 
     def createUser(self, form):
         if len(User.objects.all()) != 0 and form["username"] in User.objects.values():
-            raise IntegrityError("No duplicate users")
+            return redirect("/accountmanagement/")
         else:
             newuser = User.objects.create_user(username=form["username"], email=form["email"],
                                                first_name=form["name"], password=form["password"])

@@ -52,15 +52,6 @@ class TestCreateUser(TestCase):
         AccountManagement.createUser(AccountManagement, self.userT)
         self.assertTrue(len(User.objects.filter(username="UserT")) == 1)
 
-    # throws error if trying to create a duplicate username --> user
-    def test_DupUser(self):
-        AccountManagement.createUser(AccountManagement, self.userA)
-        # Throw error as userA2 uses the same username as userA
-        # Do not add userA2
-        with self.assertRaises(IntegrityError, msg="No duplicate users"):
-            AccountManagement.createUser(AccountManagement, self.userA2)
-        # self.assertTrue(len(User.objects.filter(username="UserA")) == 1)
-
 
 class TestDeleteUser(TestCase):
     def setUp(self):
