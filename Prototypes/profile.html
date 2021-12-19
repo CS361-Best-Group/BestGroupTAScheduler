@@ -42,8 +42,14 @@
 
 			<label for="altemail">Alt. Email:</label>
 			<input value="{{ altemail }}" type="email" id="altemail" name="altemail" required minlength="4" maxlength="20">
-			
+            {% if skills != None %}
+            <label for="skills">Skills</label>
+            <input value="{{skills}}" name="skills", type="text", id="skills">
+            {% endif %}
 			<input type="submit" value="Save Changes">
+
+
+
         </form>
     </section>
   </body>

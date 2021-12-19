@@ -1,3 +1,4 @@
+import time
 from hashlib import sha256
 
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -222,14 +223,16 @@ class Home(LoginRequiredMixin, View):
 
 class ProfilePage(LoginRequiredMixin, View):
     def get(self, request):
-        return load(request)
+        return ProfilePage.load(self, request)
 
     def load(self, request):
         CurrentUserID=request.session["_auth_user_id"]
         CurrentUser=User.objects.filter(id=CurrentUserID)[0]
+
         CurrentProfile=Profile.objects.filter(user=CurrentUser)[0]
 
         if determineRole(CurrentUser) == 'ta':
+            print("in if")
             return render(request, "profile.html",
                           {"email":CurrentUser.email,
                            "firstname":CurrentUser.first_name,
@@ -240,6 +243,7 @@ class ProfilePage(LoginRequiredMixin, View):
                            "altemail":CurrentProfile.alt_email,
                            "skills":CurrentProfile.skills})
         else:
+            print("in else")
             return render(request, "profile.html",
                           {"email":CurrentUser.email,
                            "firstname":CurrentUser.first_name,
@@ -252,14 +256,18 @@ class ProfilePage(LoginRequiredMixin, View):
     def post(self, request):
         currentuser=User.objects.filter(id=request.session["_auth_user_id"])[0]
         currentprofile=Profile.objects.filter(user=currentuser)[0]
-
+        print(currentuser.username)
+        print(currentprofile.alt_email)
+        print(currentprofile.skills)
         self.otherProfile(currentuser, currentprofile, request.POST)
-        role = determineRole(currentuser)
-        if role == 'ta':
-            self.TAProfile(currentprofile, request.POST["skills"])
 
-        print("New address")
+
+        print("Here"+currentprofile.skills)
+
         print(currentprofile.address)
+        currentprofile.save()
+        print("Here"+currentprofile.skills)
+
         return redirect("/profile/")
 
     def otherProfile(self, user, profile, post):
@@ -284,11 +292,19 @@ class ProfilePage(LoginRequiredMixin, View):
             profile.address=newaddress
         if (newaltemail!=""):
             profile.alt_email=newaltemail
+
+        role = determineRole(user)
+        print(role)
+        if role == 'ta':
+            profile.skills = post["skills"]
+            profile.save()
+
+
         profile.save()
-        pass
 
     def TAProfile(self, profile, skills):
-        profile.skills = skills
-        profile.save()
-        pass
 
+        profile.skills = skills
+        print(profile.skills)
+        profile.save()
+        print(profile.alt_email)
