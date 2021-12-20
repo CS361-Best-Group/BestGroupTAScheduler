@@ -55,7 +55,15 @@
        <summary>
          <div class="name">{{ i.first_name }}</div>
          <div class="role">Instructor</div>
-
+	<form action= "/accountmanagement/" method="post">
+	{% csrf_token %}
+		<label for="assignInstructor">Choose an instructor for course assignment:</label>
+		<select name="instructors" id="assignInstructor">
+			{% for i in Courses %}
+			<option>{{ i.name }}</option>
+                   	{% endfor %}
+			<input type="submit" value=""Assign Instructor To Course"">
+		<select>
        </summary>
          <div class="email"><span>Email address:</span> {{ i.email }}</div>
          {%  for j in Profiles %}
