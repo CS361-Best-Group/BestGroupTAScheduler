@@ -46,7 +46,7 @@ class CourseManagement(LoginRequiredMixin, View):
         print(request.user.groups.all()[0].name)
         instructors = []
         users = user.objects.all()
-        for(i in users):
+        for i in users:
             if determineRole(i) == "instructor":
                 instructors.append(i)
         return render(request, "coursemanagement.html", {"Courses": courses, "Sections": sections, "Role":determineRole(request.user)})
