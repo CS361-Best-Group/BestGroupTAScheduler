@@ -182,31 +182,17 @@ class AccountManagement(LoginRequiredMixin, View):
                        "SideButtons": SideButtons, "UserButtons": UserButtons})
 
     def post(self, request):
-        if all([(field in request.POST) and (request.POST[field] != '') for field in
-                ['username', 'email', 'name', 'password']]):
-            user=request.POST["username"]
-            email=request.POST["email"]
-            name=request.POST["name"]
-            password=request.POST["password"]
-            address= request.POST.get("address", "")
-            phone=request.POST.get("phone", "")
-            altemail=request.POST.get("altemail", "")
-            usergroup = request.POST["groups"]
 
-            form = {"username": user,
-                    "email": email,
-                    "name": name,
-                    "password": password,
-                    "address": address,
-                    "phone": phone,
-                    "altemail": altemail,
-                    "groups": usergroup}
-            self.determineForm(form)
+
+        form=request.POST
+
+        self.determineForm(form)
 
         return redirect("/accountmanagement/")
 
     def determineForm(self, form):
         # if not createUser or deleteUser then ValueError
+        print("In determineForm")
         if "username" not in form.keys():
             print("Bad form given")
         # if all forms filled => createUser
@@ -235,7 +221,9 @@ class AccountManagement(LoginRequiredMixin, View):
             return redirect("/accountmanagement/")
 
     def deleteUser(self, form):
+        print("Made it into form")
         user = User.objects.get(username=form["username"])
+        print(user)
         user.delete()
 
     def load(self, currentUser):

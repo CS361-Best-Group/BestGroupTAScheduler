@@ -75,7 +75,10 @@
                  <summary>{{ j.name }}</summary>
               <ul>
                   {% for z in j.users.all %}
-                <li>{{ z.first_name }}</li>
+                        {% if z.groups.all.0.name == 'ta' %}
+
+                      <li>{{ z.first_name }}</li>
+                      {% endif %}
                   {% endfor %}
               </ul>
                 {% if Role == "instructor" or Role == "manager" %}
