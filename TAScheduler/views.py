@@ -45,7 +45,7 @@ class CourseManagement(LoginRequiredMixin, View):
         print(sections)
         print(request.user.groups.all()[0].name)
         instructors = []
-        users = user.objects.all()
+        users = User.objects.all()
         for i in users:
             if determineRole(i) == "instructor":
                 instructors.append(i)
