@@ -78,7 +78,10 @@
                  <summary>{{ j.name }}</summary>
               <ul>
                   {% for z in j.users.all %}
-                <li>{{ z.first_name }}</li>
+                        {% if z.groups.all.0.name == 'ta' %}
+
+                      <li>{{ z.first_name }}</li>
+                      {% endif %}
                   {% endfor %}
               </ul>
                 {% if Role == "instructor" or Role == "manager" %}
@@ -86,9 +89,13 @@
                     {% csrf_token %}
                     <input type="hidden" name="kind" value="assignUser">
                     <select name="user" id="assignTA">
-			    {% for z in i.users.all %}
-			        <option>{{ z.first_name }}</option>
-                {% endfor %}
+
+			{% for z in i.users.all %}
+                {% if z.groups.all.0.name == "ta" %}
+			<option>{{ z.first_name }}</option>
+                {% endif %}
+                   	{% endfor %}
+
 			
 		        </select>
                     <input type="hidden" name="section" value="{{ j.name }}">
