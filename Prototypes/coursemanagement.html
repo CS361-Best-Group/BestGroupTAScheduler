@@ -35,8 +35,11 @@
 				<input type="hidden" name="course" value="{{ i.name }}">
 				<input type="submit" value="Delete Course">
             </form>
-            <form>
+            <form action="/coursemanagement/" method="post">
                 {% csrf_token %}
+                <input type="hidden" name="kind" value="assignUser">
+                <input type="text" name="user">
+                <input type="hidden" name="course" value="{{ i.name }}">
                 <input type="submit" value="Assign User To Course">
             </form>
 
@@ -71,8 +74,11 @@
                   {% endfor %}
               </ul>
                 {% if Role == "instructor" or Role == "manager" %}
-                <form>
+                <form action="/coursemanagement/" method="post">
                     {% csrf_token %}
+                    <input type="hidden" name="kind" value="assignUser">
+                    <input type=text" name="user">
+                    <input type="hidden" name="section" value="{{ j.name }}">
                     <input type="submit" value="Assign User To Section">
                 </form>
                 <form action="/coursemanagement/" method="post">
