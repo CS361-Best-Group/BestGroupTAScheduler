@@ -59,7 +59,10 @@
           <ul>
 
             {% for j in i.users.all %}
+                {% if j.groups.all.0.name == "instructor" %}
+
               <li>{{ j.first_name }}</li>
+                {% endif %}
             {% endfor %}
                 </ul>
         </details>
@@ -83,9 +86,9 @@
                     {% csrf_token %}
                     <input type="hidden" name="kind" value="assignUser">
                     <select name="user" id="assignTA">
-			{% for z in i.users.all %}
-			<option>{{ z.first_name }}</option>
-                   	{% endfor %}
+			    {% for z in i.users.all %}
+			        <option>{{ z.first_name }}</option>
+                {% endfor %}
 			
 		        </select>
                     <input type="hidden" name="section" value="{{ j.name }}">
