@@ -73,7 +73,7 @@ class CourseManagement(LoginRequiredMixin, View):
             sections = list(Section.objects.all())
         elif role == 'instructor':
             courses = list(Course.objects.filter(users__in = [ user ]))
-            sections = list(Section.objects.filter(users__in = [ user ]) | Section.objects.filter(course__in = courses))
+            sections = list(Section.objects.filter(course__in = courses))
         else:
             courses = list(Course.objects.filter(users__in = [ user ]))
             sections = list(Section.objects.filter(users__in = [ user ]))
@@ -147,6 +147,7 @@ class CourseManagement(LoginRequiredMixin, View):
             targetsection=Section.objects.filter(name=context["section"])[0]
             targetuser=User.objects.filter(first_name=context["user"])[0]
             targetsection.users.add(targetuser)
+            print(len(Section.objects.all()))
             print(targetsection.users)
             print(len(Section.objects.all()))
         elif ("course" in context.keys()):
