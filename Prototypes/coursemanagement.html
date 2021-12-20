@@ -101,13 +101,16 @@
                     <input type="hidden" name="section" value="{{ j.name }}">
                     <input type="submit" value="Assign User To Section">
                 </form>
-                <form action="/coursemanagement/" method="post">
+                {% if Role == "manager" %}
+                    <form action="/coursemanagement/" method="post">
 					{% csrf_token %}
 					<input type="hidden" name="kind" value="deleteSection">
 					<input type="hidden" name="course" value="{{ i.name }}">
 					<input type="hidden" value="{{ j.name }}" name="section">
 					<input type="submit" value="Delete Section">
 				</form>
+                {% endif %}
+
                 {% endif %}
             </details>
              {% endif %}
