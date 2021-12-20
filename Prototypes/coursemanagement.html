@@ -35,14 +35,15 @@
 				<input type="hidden" name="course" value="{{ i.name }}">
 				<input type="submit" value="Delete Course">
             </form>
+
             <form action="/coursemanagement/" method="post">
                 {% csrf_token %}
                 <input type="hidden" name="kind" value="assignUser">
-                <select name="instructors" id="assignInstructor">
+                <select name="user" id="assignInstructor">
 			{% for j in instructors %}
 			<option>{{ j.first_name }}</option>
                    	{% endfor %}
-		<select>
+		</select>
                 <input type="hidden" name="course" value="{{ i.name }}">
                 <input type="submit" value="Assign User To Course">
             </form>
@@ -86,7 +87,7 @@
 			<option>{{ z.first_name }}</option>
                    	{% endfor %}
 			
-		    <select>
+		        </select>
                     <input type="hidden" name="section" value="{{ j.name }}">
                     <input type="submit" value="Assign User To Section">
                 </form>
