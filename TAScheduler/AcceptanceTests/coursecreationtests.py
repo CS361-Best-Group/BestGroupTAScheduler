@@ -1060,9 +1060,11 @@ class TestCourseCreationPost(TestCase):
 
     def setUp(self):
         self.client=Client()
-        
+        TASchedulerAppConfig.ready(None)
+
         self.dummy=User.objects.create_user(username="dummy23", password="password", email="email@email.com", first_name="dummy")
         self.dummy.save()
+        self.dummy.groups.add(Group.objects.filter(name="manager")[0])
         
         self.client.force_login(self.dummy)
 
@@ -2053,3 +2055,332 @@ class TestCourseCreationPost(TestCase):
         self.client.post("/coursemanagement/", {"coursename": "CS361", "coursedescription": "A really cool course"},follow=True)
         self.assertEqual(Course.objects.all()[0].description, "A really neat course")
 #duplicates also
+    def test_assignInstructortoCourse(self):
+        Admin=User.objects.create_user(username="Admin", password="password", email="admin@gmail.com", first_name="Admin Adam")
+        Admin.save()
+        Profile1=Profile(user=Admin, address="9924", phone="412-412-4235", alt_email="alternateemail@gmail.com")
+        Profile1.save()
+        Course1=Course(name="CS361", description="neat")
+        Course1.save()
+
+        Instructor = User.objects.create_user(username="Instructor", password="Instructor", email="instructor@gmail.com", first_name="Instructor Isiah")
+        Instructor.save()
+
+        InstructorProfile=Profile(user=Instructor, address="2413", phone="414-412-1351", alt_email="instructoralternateemail.com")
+        InstructorProfile.save()
+
+
+        r=self.client.post("/coursemanagement/", {"user":"Instructor Isiah", "kind":"assignUser", "course":"CS361"})
+        self.assertEqual(Course1.users.first().first_name,"Instructor Isiah")
+
+
+    def test_assignTAtoCourse(self):
+        Admin = User.objects.create_user(username="Admin", password="password", email="admin@gmail.com",
+                                         first_name="Admin Adam")
+        Admin.save()
+        Profile1 = Profile(user=Admin, address="9924", phone="412-412-4235", alt_email="alternateemail@gmail.com")
+        Profile1.save()
+        Course1 = Course(name="CS361", description="neat")
+        Course1.save()
+
+        TA = User.objects.create_user(username="TA", password="TA", email="ta@gmail.com", first_name="TA Tobey")
+        TA.save()
+        TAProfile = Profile(user=TA, address="3243", phone="151-142-4234", alt_email="taalternate@gmail.com",
+                            skills="Cool Dude")
+        TAProfile.save()
+        TA.groups.add(Group.objects.filter(name="ta")[0])
+        TA.save()
+
+
+        r=self.client.post("/coursemanagement/", {"user":"TA Tobey", "kind":"assignUser", "course":"CS361"})
+        self.assertEqual(Course1.users.first().first_name,"TA Tobey")
+
+
+    def test_assignTAtoSection(self):
+        Admin = User.objects.create_user(username="Admin", password="password", email="admin@gmail.com",
+                                         first_name="Admin Adam")
+        Admin.save()
+        Profile1 = Profile(user=Admin, address="9924", phone="412-412-4235", alt_email="alternateemail@gmail.com")
+        Profile1.save()
+        Course1 = Course(name="CS361", description="neat")
+        Course1.save()
+
+        TA = User.objects.create_user(username="TA", password="TA", email="ta@gmail.com", first_name="TA Tobey")
+        TA.save()
+        TAProfile = Profile(user=TA, address="3243", phone="151-142-4234", alt_email="taalternate@gmail.com",skills="Cool Dude")
+        TAProfile.save()
+        TA.groups.add(Group.objects.filter(name="ta")[0])
+        TA.save()
+
+        Section1=Section(course=Course1, name="CS361-001")
+        Section1.save()
+        r=self.client.post("/coursemanagement/", {"user":"TA Tobey", "kind":"assignUser", "section":"CS361-001"})
+        self.assertEqual(Section1.users.first().first_name,"TA Tobey")
+
+    def test_assignSecondInstructorToCourse(self):
+        Admin = User.objects.create_user(username="Admin", password="password", email="admin@gmail.com",
+                                         first_name="Admin Adam")
+        Admin.save()
+        Profile1 = Profile(user=Admin, address="9924", phone="412-412-4235", alt_email="alternateemail@gmail.com")
+        Profile1.save()
+        Course1 = Course(name="CS361", description="neat")
+        Course1.save()
+
+        Instructor = User.objects.create_user(username="Instructor", password="Instructor",
+                                              email="instructor@gmail.com", first_name="Instructor Isiah")
+        Instructor.save()
+
+        InstructorProfile = Profile(user=Instructor, address="2413", phone="414-412-1351",
+                                    alt_email="instructoralternateemail.com")
+        InstructorProfile.save()
+
+        Instructor2 = User.objects.create_user(username="Instructor2", password="Instructor2",
+                                              email="instructo2r@gmail.com", first_name="Instructor Isiah2")
+        Instructor2.save()
+
+        InstructorProfile2 = Profile(user=Instructor2, address="2413", phone="413-412-1351",
+                                    alt_email="instructor2alternateemail.com")
+        InstructorProfile2.save()
+
+        self.client.post("/coursemanagement/", {"kind":"assignUser", "course":"CS361", "user":"Instructor Isiah2"})
+        r=self.client.post("/coursemanagement/", {"user":"Instructor Isiah", "kind":"assignUser", "course":"CS361"})
+
+        self.assertEqual(Course1.users.all()[1].first_name, "Instructor Isiah2")
+    def test_assignSecondTAToSection(self):
+        Admin = User.objects.create_user(username="Admin", password="password", email="admin@gmail.com",
+                                         first_name="Admin Adam")
+        Admin.save()
+        Profile1 = Profile(user=Admin, address="9924", phone="412-412-4235", alt_email="alternateemail@gmail.com")
+        Profile1.save()
+        Course1 = Course(name="CS361", description="neat")
+        Course1.save()
+
+        TA = User.objects.create_user(username="TA", password="TA", email="ta@gmail.com", first_name="TA Tobey")
+        TA.save()
+        TAProfile = Profile(user=TA, address="3243", phone="151-142-4234", alt_email="taalternate@gmail.com",
+                            skills="Cool Dude")
+        TAProfile.save()
+        TA.groups.add(Group.objects.filter(name="ta")[0])
+        TA.save()
+
+        TA2 = User.objects.create_user(username="TA2", password="TA2", email="ta2@gmail.com", first_name="TA Maguire")
+        TA2.save()
+        TAProfile2 = Profile(user=TA2, address="3543", phone="154-142-4234", alt_email="taalternate2@gmail.com",
+                            skills="Bully Maguire")
+        TAProfile2.save()
+
+        Section1 = Section(course=Course1, name="CS361-001")
+        Section1.save()
+        self.client.post("/coursemanagement/", {"user": "TA Tobey", "kind": "assignUser", "section": "CS361-001"})
+        r=self.client.post("/coursemanagement/", {"user": "TA Maguire", "kind": "assignUser", "section": "CS361-001"})
+
+        self.assertEqual(Section1.users.all()[1].first_name, "TA Maguire")
+    def test_assignInstructorToSecondCourse(self):
+        Admin = User.objects.create_user(username="Admin", password="password", email="admin@gmail.com",
+                                         first_name="Admin Adam")
+        Admin.save()
+        Profile1 = Profile(user=Admin, address="9924", phone="412-412-4235", alt_email="alternateemail@gmail.com")
+        Profile1.save()
+        Course1 = Course(name="CS361", description="neat")
+        Course1.save()
+
+        Course2= Course(name="CS423", description="also neat")
+        Course2.save()
+
+        Instructor = User.objects.create_user(username="Instructor", password="Instructor",
+                                              email="instructor@gmail.com", first_name="Instructor Isiah")
+        Instructor.save()
+
+        InstructorProfile = Profile(user=Instructor, address="2413", phone="414-412-1351",
+                                    alt_email="instructoralternateemail.com")
+        InstructorProfile.save()
+
+        r = self.client.post("/coursemanagement/",
+                             {"user": "Instructor Isiah", "kind": "assignUser", "course": "CS423"})
+        self.assertEqual(Course2.users.first().first_name, "Instructor Isiah")
+
+    def test_assignTAToSecondSection(self):
+        Admin = User.objects.create_user(username="Admin", password="password", email="admin@gmail.com",
+                                         first_name="Admin Adam")
+        Admin.save()
+        Profile1 = Profile(user=Admin, address="9924", phone="412-412-4235", alt_email="alternateemail@gmail.com")
+        Profile1.save()
+        Course1 = Course(name="CS361", description="neat")
+        Course1.save()
+
+
+
+        TA = User.objects.create_user(username="TA", password="TA", email="ta@gmail.com", first_name="TA Tobey")
+        TA.save()
+        TAProfile = Profile(user=TA, address="3243", phone="151-142-4234", alt_email="taalternate@gmail.com",
+                            skills="Cool Dude")
+        TAProfile.save()
+        TA.groups.add(Group.objects.filter(name="ta")[0])
+        TA.save()
+
+        Section1 = Section(course=Course1, name="CS423-001")
+        Section1.save()
+        Section2 = Section(course=Course1, name="CS423-002")
+        Section2.save()
+        r = self.client.post("/coursemanagement/", {"user": "TA Tobey", "kind": "assignUser", "section": "CS423-002"})
+        self.assertEqual(Section2.users.first().first_name, "TA Tobey")
+
+    def test_displayAssignedInstructor(self):
+        Admin=User.objects.create_user(username="Admin", password="password", email="admin@gmail.com", first_name="Admin Adam")
+        Admin.save()
+        Admin.groups.add(Group.objects.filter(name="manager")[0])
+        self.client.force_login(Admin)
+        Profile1=Profile(user=Admin, address="9924", phone="412-412-4235", alt_email="alternateemail@gmail.com")
+        Profile1.save()
+        Course1=Course(name="CS361", description="neat")
+        Course1.save()
+
+        Instructor = User.objects.create_user(username="Instructor", password="Instructor", email="instructor@gmail.com", first_name="Instructor Isiah")
+        Instructor.save()
+
+        InstructorProfile=Profile(user=Instructor, address="2413", phone="414-412-1351", alt_email="instructoralternateemail.com")
+        InstructorProfile.save()
+
+
+        r=self.client.post("/coursemanagement/", {"user":"Instructor Isiah", "kind":"assignUser", "course":"CS361"}, follow=True)
+        self.assertContains(r, "Instructor Isiah")
+    def test_displayAssignedTA(self):
+        Admin = User.objects.create_user(username="Admin", password="password", email="admin@gmail.com",
+                                         first_name="Admin Adam")
+        Admin.save()
+        Admin.groups.add(Group.objects.filter(name="manager")[0])
+        self.client.force_login(Admin)
+        Profile1 = Profile(user=Admin, address="9924", phone="412-412-4235", alt_email="alternateemail@gmail.com")
+        Profile1.save()
+        Course1 = Course(name="CS361", description="neat")
+        Course1.save()
+
+        TA = User.objects.create_user(username="TA", password="TA", email="ta@gmail.com", first_name="TA Tobey")
+        TA.save()
+        TAProfile = Profile(user=TA, address="3243", phone="151-142-4234", alt_email="taalternate@gmail.com",
+                            skills="Cool Dude")
+        TAProfile.save()
+        TA.groups.add(Group.objects.filter(name="ta")[0])
+        TA.save()
+
+        Section1 = Section(course=Course1, name="CS361-001")
+        Section1.save()
+        r = self.client.post("/coursemanagement/", {"user": "TA Tobey", "kind": "assignUser", "section": "CS361-001"}, follow=True)
+        self.assertContains(r, "TA Tobey")
+
+    def test_displaySecondInstructor(self):
+        Admin = User.objects.create_user(username="Admin", password="password", email="admin@gmail.com",
+                                         first_name="Admin Adam")
+        Admin.save()
+        Admin.groups.add(Group.objects.filter(name="manager")[0])
+        self.client.force_login(Admin)
+        Profile1 = Profile(user=Admin, address="9924", phone="412-412-4235", alt_email="alternateemail@gmail.com")
+        Profile1.save()
+        Course1 = Course(name="CS361", description="neat")
+        Course1.save()
+
+        Instructor = User.objects.create_user(username="Instructor", password="Instructor",
+                                              email="instructor@gmail.com", first_name="Instructor Isiah")
+        Instructor.save()
+
+        InstructorProfile = Profile(user=Instructor, address="2413", phone="414-412-1351",
+                                    alt_email="instructoralternateemail.com")
+        InstructorProfile.save()
+
+        Instructor2 = User.objects.create_user(username="Instructor2", password="Instructor2",
+                                               email="instructo2r@gmail.com", first_name="Instructor Isiah2")
+        Instructor2.save()
+
+        InstructorProfile2 = Profile(user=Instructor2, address="2413", phone="413-412-1351",
+                                     alt_email="instructor2alternateemail.com")
+        InstructorProfile2.save()
+
+        self.client.post("/coursemanagement/", {"kind": "assignUser", "course": "CS361", "user": "Instructor Isiah2"})
+        r = self.client.post("/coursemanagement/",
+                             {"user": "Instructor Isiah", "kind": "assignUser", "course": "CS361"}, follow=True)
+
+        self.assertContains(r, "Instructor Isiah2")
+
+    def test_displaySecondTA(self):
+        Admin = User.objects.create_user(username="Admin", password="password", email="admin@gmail.com",
+                                         first_name="Admin Adam")
+        Admin.save()
+        Admin.groups.add(Group.objects.filter(name="manager")[0])
+        self.client.force_login((Admin))
+        Profile1 = Profile(user=Admin, address="9924", phone="412-412-4235", alt_email="alternateemail@gmail.com")
+        Profile1.save()
+        Course1 = Course(name="CS361", description="neat")
+        Course1.save()
+
+        TA = User.objects.create_user(username="TA", password="TA", email="ta@gmail.com", first_name="TA Tobey")
+        TA.save()
+        TAProfile = Profile(user=TA, address="3243", phone="151-142-4234", alt_email="taalternate@gmail.com",
+                            skills="Cool Dude")
+        TAProfile.save()
+        TA.groups.add(Group.objects.filter(name="ta")[0])
+        TA.save()
+
+        TA2 = User.objects.create_user(username="TA2", password="TA2", email="ta2@gmail.com", first_name="TA Maguire")
+        TA2.save()
+        TAProfile2 = Profile(user=TA2, address="3543", phone="154-142-4234", alt_email="taalternate2@gmail.com",
+                             skills="Bully Maguire")
+        TAProfile2.save()
+
+        Section1 = Section(course=Course1, name="CS361-001")
+        Section1.save()
+        self.client.post("/coursemanagement/", {"user": "TA Tobey", "kind": "assignUser", "section": "CS361-001"})
+        r = self.client.post("/coursemanagement/", {"user": "TA Maguire", "kind": "assignUser", "section": "CS361-001"}, follow=True)
+
+        self.assertContains(r, "TA Maguire")
+
+    def test_displaySecondCourseInstructor(self):
+        Admin = User.objects.create_user(username="Admin", password="password", email="admin@gmail.com",
+                                         first_name="Admin Adam")
+        Admin.save()
+        Admin.groups.add(Group.objects.filter(name="manager")[0])
+        self.client.force_login(Admin)
+        Profile1 = Profile(user=Admin, address="9924", phone="412-412-4235", alt_email="alternateemail@gmail.com")
+        Profile1.save()
+        Course1 = Course(name="CS361", description="neat")
+        Course1.save()
+
+        Course2 = Course(name="CS423", description="also neat")
+        Course2.save()
+
+        Instructor = User.objects.create_user(username="Instructor", password="Instructor",
+                                              email="instructor@gmail.com", first_name="Instructor Isiah")
+        Instructor.save()
+
+        InstructorProfile = Profile(user=Instructor, address="2413", phone="414-412-1351",
+                                    alt_email="instructoralternateemail.com")
+        InstructorProfile.save()
+
+        r = self.client.post("/coursemanagement/",
+                             {"user": "Instructor Isiah", "kind": "assignUser", "course": "CS423"}, follow=True)
+        self.assertContains(r, "Instructor Isiah")
+
+    def test_displaySecondSectionTA(self):
+        Admin = User.objects.create_user(username="Admin", password="password", email="admin@gmail.com",
+                                         first_name="Admin Adam")
+        Admin.save()
+        Admin.groups.add(Group.objects.filter(name="manager")[0])
+        self.client.force_login(Admin)
+        Profile1 = Profile(user=Admin, address="9924", phone="412-412-4235", alt_email="alternateemail@gmail.com")
+        Profile1.save()
+        Course1 = Course(name="CS361", description="neat")
+        Course1.save()
+
+        TA = User.objects.create_user(username="TA", password="TA", email="ta@gmail.com", first_name="TA Tobey")
+        TA.save()
+        TAProfile = Profile(user=TA, address="3243", phone="151-142-4234", alt_email="taalternate@gmail.com",
+                            skills="Cool Dude")
+        TAProfile.save()
+        TA.groups.add(Group.objects.filter(name="ta")[0])
+        TA.save()
+
+        Section1 = Section(course=Course1, name="CS423-001")
+        Section1.save()
+        Section2 = Section(course=Course1, name="CS423-002")
+        Section2.save()
+        r = self.client.post("/coursemanagement/", {"user": "TA Tobey", "kind": "assignUser", "section": "CS423-002"}, follow=True)
+        self.assertContains(r, "TA Tobey")

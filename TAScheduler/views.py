@@ -137,8 +137,17 @@ class CourseManagement(LoginRequiredMixin, View):
 
     def assignUser(context):
         # To be implemented.
-        pass
-
+        #assign to section
+        if("section" in context.keys()):
+            targetsection=Section.objects.filter(name=context["section"])[0]
+            targetuser=User.objects.filter(first_name=context["user"])[0]
+            targetsection.users.add(targetuser)
+            print(targetsection.users)
+        elif ("course" in context.keys()):
+            targetcourse=Course.objects.filter(name=context["course"])[0]
+            targetuser = User.objects.filter(first_name=context["user"])[0]
+            targetcourse.users.add(targetuser)
+            print(targetcourse.users)
 class AccountManagement(LoginRequiredMixin, View):
     def get(self, request):
 
@@ -318,11 +327,11 @@ class ProfilePage(LoginRequiredMixin, View):
         newusername=post["username"]
         newemail=post["email"]
         if(newname!=""):
-            currentuser.first_name = newname
+            user.first_name = newname
 
             user.first_name=newname
         if(newusername!="" and len(User.objects.filter(username=newusername))==0):
-            currentuser.username = newusername
+            user.username = newusername
             user.username=newusername
         if(newemail!=""):
             user.email=newemail
@@ -332,23 +341,23 @@ class ProfilePage(LoginRequiredMixin, View):
         newaddress=post["address"]
         newaltemail=post["altemail"]
         if(newphone!=""):
-            currentprofile.phone = newphone
+            profile.phone = newphone
             profile.phone=newphone
         if(newaddress!=""):
-            currentprofile.address = newaddress
+            profile.address = newaddress
         if (newemail != ""):
-            currentuser.email = newemail
+            user.email = newemail
             profile.address=newaddress
         if (newaltemail!=""):
-            currentprofile.alt_email = newaltemail
+            profile.alt_email = newaltemail
             profile.alt_email=newaltemail
 
         profile.save()
 
-        currentuser.save()
-        currentprofile.save()
+        user.save()
+        profile.save()
         print("New address")
-        print(currentprofile.address)
+        print(profile.address)
         return redirect("/profile/")
     def TAProfile(self, profile, skills):
         profile.skills = skills
