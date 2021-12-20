@@ -40,8 +40,8 @@
          {% endfor %}
         {% for j in UserButtons %}
         <form action="/accountmanagement/" method="post">
-
-
+            {% csrf_token %}
+            <input type="hidden" name="username" value="{{ i.username }}">
             <input type="submit" value="{{ j.value }}">
         </form>
          {% endfor %}
@@ -67,8 +67,8 @@
          {% endfor %}
         {% for j in UserButtons %}
         <form action="/accountmanagement/" method="post">
-
-
+            {% csrf_token %}
+            <input type="hidden" name="username" value="{{ i.username }}">
             <input type="submit" value="{{ j.value }}">
         </form>
          {% endfor %}
@@ -93,8 +93,8 @@
          {% endfor %}
         {% for j in UserButtons %}
         <form action="/accountmanagement/" method="post">
-
-
+            {% csrf_token %}
+            <input type="hidden" name="username" value="{{ i.username }}">
             <input type="submit" value="{{ j.value }}">
         </form>
          {% endfor %}
