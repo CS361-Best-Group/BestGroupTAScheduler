@@ -148,6 +148,7 @@ class CourseManagement(LoginRequiredMixin, View):
             targetuser=User.objects.filter(first_name=context["user"])[0]
             targetsection.users.add(targetuser)
             print(targetsection.users)
+            print(len(Section.objects.all()))
         elif ("course" in context.keys()):
             targetcourse=Course.objects.filter(name=context["course"])[0]
             print(context.keys())
