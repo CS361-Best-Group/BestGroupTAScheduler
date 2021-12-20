@@ -44,7 +44,12 @@ class CourseManagement(LoginRequiredMixin, View):
         print(courses)
         print(sections)
         print(request.user.groups.all()[0].name)
-        return render(request, "coursemanagement.html", {"Courses": courses, "Sections": sections, "Role":determineRole(request.user)})
+        instructors = []
+        users = User.objects.all()
+        for i in users:
+            if determineRole(i) == "instructor" or determineRole(i)=="ta":
+                instructors.append(i)
+        return render(request, "coursemanagement.html", {"Courses": courses, "Sections": sections, "Role":determineRole(request.user), "instructors":instructors})
 
     def post(self, request):
         CourseManagement.handleForm(request.POST)
@@ -145,7 +150,9 @@ class CourseManagement(LoginRequiredMixin, View):
             print(targetsection.users)
         elif ("course" in context.keys()):
             targetcourse=Course.objects.filter(name=context["course"])[0]
+            print(context.keys())
             targetuser = User.objects.filter(first_name=context["user"])[0]
+
             targetcourse.users.add(targetuser)
             print(targetcourse.users)
 class AccountManagement(LoginRequiredMixin, View):
