@@ -82,8 +82,8 @@
                     {% csrf_token %}
                     <input type="hidden" name="kind" value="assignUser">
                     <select name="user" id="assignTA">
-			{% for z in i.users.all() %}
-			<option>{{ Z.first_name }}</option>
+			{% for z in i.users.all %}
+			<option>{{ z.first_name }}</option>
                    	{% endfor %}
 			
 		    <select>
